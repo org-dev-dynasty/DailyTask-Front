@@ -1,35 +1,34 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
 
   return (
     <Tabs
+      initialRouteName='home/index'
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
       }}>
+      {/* Aqui para baixo chama-se as rotas | Sigam o modelo*/}
       <Tabs.Screen
-        name="index"
+        name="calendar/index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-          ),
+          title: 'Calendário',
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="home/index"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
-          ),
+          title: 'Home',
+          tabBarStyle: {
+            backgroundColor: '#F06B41',
+          },
+          }}
+      />
+      <Tabs.Screen
+        name="configs/index"
+        options={{
+          title: 'Configurações',
         }}
       />
     </Tabs>
