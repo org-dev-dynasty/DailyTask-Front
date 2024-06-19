@@ -1,3 +1,3 @@
-export default function Cadastro() {
+export default function SignUp() {
     return null;
 }

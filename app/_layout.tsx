@@ -24,12 +24,14 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack>
+    <Stack
+      initialRouteName='login'
+    >
+      <Stack.Screen name='index' />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="+not-found" />
       {/* Aqui para baixo chama-se as rotas */}
-      <Stack.Screen name='signUp' />
       <Stack.Screen name='login' />
+      <Stack.Screen name='signUp' />
       <Stack.Screen name='forgetPassword' />
     </Stack>
   );
