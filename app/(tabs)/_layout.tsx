@@ -7,7 +7,10 @@ import { Octicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 // ------
 // React Native Components
-import { Platform, View } from 'react-native';
+import { Platform, View, Text } from 'react-native';
+// -----------------------
+// Tema
+import theme from '../../themes/theme';
 // -----------------------
 
 export default function TabLayout() {
@@ -30,7 +33,7 @@ export default function TabLayout() {
             <View style={{
               alignItems: "center",
               justifyContent: "center",
-              backgroundColor: "#F06B41",
+              backgroundColor: theme.COLORS.MAIN,
               top: focused ? -40 : 0,
               width: focused ? 120 : 80,
               height: focused ? 120 : 80,
