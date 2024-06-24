@@ -1,13 +1,33 @@
-import {View} from "react-native";
+import {Background} from "@/components/background";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import {Screen} from "@/app/(tabs)/home/styles";
+import React from "react";
+import {Container, Line, MiddleContainer, TextMiddle, Title} from "@/app/(tabs)/home/styles";
 
 export default function Home() {
     return(
         <>
-            <Screen>
+            <Background>
+                <Container>
+                    <Title >Segure para gravar</Title>
 
-            </Screen>
+                    <MaterialCommunityIcons
+                        name="microphone-outline"
+                        size={ 72 }
+                        color="white"
+                    />
+                    <MiddleContainer>
+                        <Line />
+                        <TextMiddle >ou</TextMiddle>
+                        <Line />
+
+                    </MiddleContainer>
+                    <MaterialCommunityIcons
+                        name="keyboard"
+                        size={ 72 }
+                        color="white"
+                    />
+                </Container>
+            </Background>
         </>
     )
 }
