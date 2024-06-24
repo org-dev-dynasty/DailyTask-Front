@@ -22,6 +22,7 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: '#F06B41',
           height: 100,
+          borderTopWidth: 0,
         },
       }}>
       {/* Aqui para baixo chama-se as rotas | Sigam o modelo*/}
