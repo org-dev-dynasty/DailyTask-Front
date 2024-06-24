@@ -39,9 +39,9 @@ export default function RootLayout() {
       <Stack.Screen name='index' />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       {/* Aqui para baixo chama-se as rotas */}
-      <Stack.Screen name='login' />
-      <Stack.Screen name='signUp' />
-      <Stack.Screen name='forgetPassword' />
+      <Stack.Screen name='login/index' />
+      <Stack.Screen name='signUp/index' />
+      <Stack.Screen name='forgetPassword/index' />
     </Stack>
   );
 }

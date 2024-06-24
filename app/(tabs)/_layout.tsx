@@ -22,6 +22,7 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: '#F06B41',
           height: 100,
+          borderTopWidth: 0,
         },
       }}>
       {/* Aqui para baixo chama-se as rotas | Sigam o modelo*/}
@@ -39,7 +40,7 @@ export default function TabLayout() {
               height: focused ? 120 : 80,
               borderRadius: 360,
             }}>
-              <AntDesign name="calendar" size={60} color="white" />
+              <AntDesign name="calendar" size={60} color={focused ? "white" : "black"} />
             </View>
           ),
         }}
@@ -61,7 +62,7 @@ export default function TabLayout() {
               <MaterialCommunityIcons 
                 name="microphone-outline" 
                 size={ 72 }
-                color="white" 
+                color={focused ? "white" : "black"} 
               />
             </View>
           ),
@@ -81,7 +82,7 @@ export default function TabLayout() {
               height: focused ? 120 : 80,
               borderRadius: 360,
             }}>
-              <Octicons name="gear" size={60} color="white" />
+              <Octicons name="gear" size={60} color={focused ? "white" : "black"} />
             </View>
           ),
         }}
