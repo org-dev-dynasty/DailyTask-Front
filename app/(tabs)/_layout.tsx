@@ -11,6 +11,7 @@ import { Platform, View, Text } from 'react-native';
 // -----------------------
 // Tema
 import theme from '../../themes/theme';
+import {Microphone, Gear, CalendarDots} from "@phosphor-icons/react";
 // -----------------------
 
 export default function TabLayout() {
@@ -40,7 +41,7 @@ export default function TabLayout() {
               height: focused ? 120 : 80,
               borderRadius: 360,
             }}>
-              <AntDesign name="calendar" size={60} color={focused ? "white" : "black"} />
+              <CalendarDots size={72} color={focused ? "white" : "black"} />
             </View>
           ),
         }}
@@ -59,11 +60,9 @@ export default function TabLayout() {
               height: focused ? 120 : 80,
               borderRadius: 360,
             }}>
-              <MaterialCommunityIcons 
-                name="microphone-outline" 
-                size={ 72 }
-                color={focused ? "white" : "black"} 
-              />
+                <Microphone
+                    size={ 72 }
+                    color="white"/>
             </View>
           ),
         }}
@@ -82,7 +81,7 @@ export default function TabLayout() {
               height: focused ? 120 : 80,
               borderRadius: 360,
             }}>
-              <Octicons name="gear" size={60} color={focused ? "white" : "black"} />
+              <Gear size={72} color={focused ? "white" : "black"} />
             </View>
           ),
         }}
