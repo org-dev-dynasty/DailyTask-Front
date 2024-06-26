@@ -2,8 +2,8 @@ import { CenteredView, ForgotPasswordText, InputView, LoginButton, LoginButtonTe
 import { Background } from '@/components/background';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import { Link } from 'expo-router';
-import { Image, Text } from 'react-native';
-import { useState } from 'react';
+import { Image, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
 import { TextInput } from 'react-native-paper';
 import { Input } from '@/components/input/input';
 
@@ -15,26 +15,50 @@ const LogoGitHub = require('../../assets/appImages/logo-gitHub.png');
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [erroPassword, setErroPassword] = useState('');
+  const [erroEmail, setErroEmail] = useState('');
 
-  async function handleLogin() {
+  function handleLogin() {
     if (email === '' && password === '') {
-      alert('Preencha os campos de email e senha para continuar');
+      console.log('Nome vazio');
+      console.log('Senha vazia');
+      setErroEmail('Preencha todos os campos');
+      setErroPassword('Preencha todos os campos');
+      return;
+    }
+    if (email === '') {
+      console.log('Nome vazio');
+      setErroEmail('Preencha o campo email');
+      return;
+    }
+    if (password === '') {
+      console.log('Senha vazia');
+      setErroPassword('Preencha o campo senha');
+      return;
     }
   }
+
+  useEffect(() => {
+    if (email !== '') {
+      setErroEmail('');
+    }
+    if (password !== '') {
+      setErroPassword('');
+    }
+  }, [email, password]);
 
   return (
     <Background>
       <CenteredView>
         <LogoImage source={Logo} />
-        <Title>Login</Title>
+        {/* <Title>Login</Title> */}
         <InputView>
-          <Input label='Email' value={email} onChangeText={setEmail} error="Email vazio"/>
-          <Input label='Senha' value={password} onChangeText={setPassword} error="Email vazio"/>
+          <Input label='Email' value={email} onChangeText={setEmail} error={erroEmail} />
+          <Input label='Senha' value={password} onChangeText={setPassword} error={erroPassword} hide/>
         </InputView>
-        <Link href={"/forgetPassword"}>
-          <ForgotPasswordText>Esqueceu sua senha?</ForgotPasswordText>
-        </Link>
+          <Link href={"/forgetPassword"} style={{ marginTop: 10, alignSelf: 'flex-end', paddingRight: 50 }}>
+            <ForgotPasswordText>Esqueceu sua senha?</ForgotPasswordText>
+          </Link>
         <LoginButton onPress={handleLogin}>
           <LoginButtonText>Entrar</LoginButtonText>
         </LoginButton>

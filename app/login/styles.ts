@@ -24,13 +24,13 @@ export const Title = styled.Text`
 export const InputView = styled.View`
   width: 75%;
   margin: 0 70px;
+  gap: 10px
 `;
 
 export const ForgotPasswordText = styled.Text`
   color: ${theme.COLORS.MAIN};
-  margin-left: 140px;
   font-family: ${theme.FONT_FAMILY.REGULAR};
-  font-size: ${theme.FONT_SIZE.SM};
+  font-size: ${theme.FONT_SIZE.SM};  
 `;
 
 export const LoginButton = styled.TouchableOpacity`
@@ -83,6 +83,7 @@ export const SignUpLink = styled.View`
     flex-direction: row;
     justify-content: center;
     margin-top: 20px;
+    font-family: ${theme.FONT_FAMILY.REGULAR};
 `;
 
 export const SignUpLinkText = styled.Text`
