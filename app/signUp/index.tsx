@@ -25,7 +25,9 @@ export default function SignUp() {
     };
 
     const handleButtonPress = () => {
-        if (!validateEmail(email)) {
+        if (nome == "") {
+            setErroNome('Preencha o campo de nome.')
+        } else if (!validateEmail(email)) {
             setErroEmail('Por favor, insira um e-mail válido.');
         } else if (senha.length < 8) {
             setErroSenha('A senha deve ter no mínimo 8 caracteres.');
@@ -71,7 +73,7 @@ export default function SignUp() {
             <Container>
                 <Titulo>Crie sua Conta</Titulo>
                 <View>
-                    <Input label="Nome" value={nome} onChangeText={(text: SetStateAction<string>) => setNome(text)} error=''/>
+                    <Input label="Nome" value={nome} onChangeText={(text: SetStateAction<string>) => setNome(text)} error={erroNome} />
                 </View>
                 <View>
                     <Input label="Email" value={email} onChangeText={(text: SetStateAction<string>) => setEmail(text)} error={erroEmail}/>
