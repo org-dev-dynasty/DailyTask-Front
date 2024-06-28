@@ -5,7 +5,7 @@ import { Icon, TaskBody, TaskContainer, TaskHeader, TaskText } from './styles';
 
 export const TaskCard = ({ title, color, content }: any) => {
   const [expanded, setExpanded] = useState(false);
-  const [height] = useState(new Animated.Value(50));
+  const [height] = useState(new Animated.Value(150));
 
   const toggleExpand = () => {
     if (expanded) {
