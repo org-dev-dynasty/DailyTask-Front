@@ -1,7 +1,7 @@
 import React, { useState, SetStateAction, useEffect } from 'react';
 import { Background } from "@/components/background";
-import { Container, Titulo, TouchableOpacityConta, Text, TextFooter, Logo, ErrorMessage, View } from "./styles";
-import { Image, TouchableOpacity } from "react-native"; 
+import { Container, Titulo, TouchableOpacityConta, TextFooter, Logo, View, ButtonText, ContainerLogin, Details, Footer} from "./styles";
+import { Image } from "react-native"; 
 import { Input } from "@/components/input/input";
 import { Link } from 'expo-router';
 import theme from '@/themes/theme';
@@ -12,7 +12,6 @@ export default function SignUp() {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [confirmarSenha, setConfirmarSenha] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
     const [erroSenha, setErroSenha] = useState('');
     const [erroEmail, setErroEmail] = useState('');
     const [erroNome, setErroNome] = useState('');
@@ -42,7 +41,6 @@ export default function SignUp() {
         } else if (senha !== confirmarSenha) {
             setErroConfirmarSenha('As senhas não coincidem. Por favor, verifique.');
         } else {
-            setErrorMessage('');
             setNome('');
             setEmail('');
             setSenha('');
@@ -84,20 +82,20 @@ export default function SignUp() {
                 <View>
                     <Input label="Confirmar Senha" value={confirmarSenha} onChangeText={(text: SetStateAction<string>) => setConfirmarSenha(text)} error={erroConfirmarSenha} hide/>
                 </View>
-                {errorMessage ? <ErrorMessage>{errorMessage}</ErrorMessage> : null}
                 <TouchableOpacityConta onPress={handleButtonPress}>
-                    Criar Conta
+                    <ButtonText>Criar Conta</ButtonText>
                 </TouchableOpacityConta>
-                <Text>
-                    Já tem uma conta?
-                    <TouchableOpacity>
-                        <Link href='/login' style={{color: theme.COLORS.MAIN}}> Faça seu login</Link>
-                    </TouchableOpacity>
-                </Text>
-                <TextFooter>Desenvolvido por DevDynasty</TextFooter>
-                <Image
-                    source={require('../../assets/appImages/logo-dev-dynasty.png')}
-                />
+                <ContainerLogin>
+                    <TextFooter>
+                        <Link href='/login'>Já tem uma conta? <Details>Faça seu login</Details></Link>
+                    </TextFooter>
+                </ContainerLogin>
+                <Footer>
+                    <TextFooter>Desenvolvido por DevDynasty</TextFooter>
+                    <Image
+                        source={require('../../assets/appImages/logo-dev-dynasty.png')}
+                    />
+                </Footer>
             </Container>
         </Background>
     )
