@@ -3,16 +3,6 @@ import CalendarTasks from "@/components/calendarTasks";
 import { CaretDown } from "@phosphor-icons/react";
 import { FlatList, TouchableOpacity, View } from "react-native"
 
-
-// type ItemProps = {
-//   id: number;
-//   label: string;
-//   title: string;
-//   hour?: string;
-//   description?: string;
-//   color?: string;
-// }
-
 const data = [
   {
     id: 1,
@@ -39,32 +29,6 @@ const data = [
     description: 'Entrega do projeto de calculo, preciso finalizar os ultimos detalhes para entregar'
   },
 ]
-
-// const Item = ({ label, hour, title, description, color }: ItemProps) => (
-//   <>
-//     <Container>
-//       <LabelView>
-//         <LabelText>{label}</LabelText>
-//         <TouchableOpacity>
-//           <CaretDown size={24} style={{ color: 'white' }} />
-//         </TouchableOpacity>
-//       </LabelView>
-//       <View style={{ backgroundColor: {color} }}>
-//         <TaskHeader>
-//           <TaskText>{title}</TaskText>
-//           <TaskText>{hour}</TaskText>
-//           <TouchableOpacity>
-//             <CaretDown size={24} style={{ color: 'white' }} />
-//           </TouchableOpacity>
-//         </TaskHeader>
-//         <TaskDescription>
-//           <TaskDescriptionText>{description}</TaskDescriptionText>
-//         </TaskDescription>
-//       </View>
-//     </Container>
-//   </>
-// )
-
 
 export default function Calendar() {
   return (
