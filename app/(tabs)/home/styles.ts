@@ -30,9 +30,6 @@ export const Title = styled.Text`
     color: ${theme.COLORS.WHITE};
     font-family: ${theme.FONT_FAMILY.REGULAR};
     font-size: ${theme.FONT_SIZE.XL};
-    padding: 0;
-    top: 20%;
-    position: absolute;
 `;
 
 export const TextMiddle = styled.Text`
@@ -41,4 +38,23 @@ export const TextMiddle = styled.Text`
     font-size: ${theme.FONT_SIZE.MD};
     margin: 0 10px;
     padding-bottom: 2px;
+`;
+
+export const TopView = styled.View`
+    padding: 0;
+    top: 0;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 40%;
+`;
+
+export const LockIcon = styled.View`
+    width: 100;
+    height: 100;
+    background-Color: ${theme.COLORS.MAIN};
+    border-Radius: 90px;
+    justify-Content: center;
+    align-Items: center;
 `;

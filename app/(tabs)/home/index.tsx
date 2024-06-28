@@ -1,35 +1,49 @@
 import {Background} from "@/components/background";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React from "react";
-import {Container, Line, MiddleContainer, TextMiddle, Title} from "@/app/(tabs)/home/styles";
-import {Microphone, Keyboard} from "@phosphor-icons/react"
+import {Container, Line, MiddleContainer, TextMiddle, Title, TopView, LockIcon} from "@/app/(tabs)/home/styles";
+import { TouchableOpacity, View } from "react-native";
 
 // Ícones
-import { Feather } from "@expo/vector-icons";
+import {Microphone, Keyboard, LockSimpleOpen} from "@phosphor-icons/react"
+import theme from "@/themes/theme";
 
 export default function Home() {
+    const [recording, setRecording] = React.useState(false);
+
+    function startRecording() {
+
+    }
+
     return(
         <>
             <Background>
                 <Container>
-                    <Title>Segure para gravar</Title>
-                    {/* <Feather name="unlock" size={ 72 } color="white" style={{position: "absolute", top: "15%"}}/> */}
-                    {/* <Feather name="trash" size={ 72 } color="white" style={{position: "absolute", top: "15%", start: 0}}/> */}
+                    <TopView>
+                        <Title>Segure para gravar</Title>
+                        <LockIcon>
+                            <LockSimpleOpen size={ 64 } color="white" />
+                        </LockIcon>
+                    </TopView>
 
-                    <Microphone
-                        size={ 72 }
-                        color="white"
-                    />
+                    <TouchableOpacity>
+                        <Microphone
+                            size={ 72 }
+                            color="white"
+                        />
+                    </TouchableOpacity>
+
                     <MiddleContainer>
                         <Line />
                         <TextMiddle >ou</TextMiddle>
                         <Line />
-
                     </MiddleContainer>
-                    <Keyboard
-                        size={ 72 }
-                        color="white"
-                    />
+
+                    <TouchableOpacity>
+                        <Keyboard
+                            size={ 72 }
+                            color="white"
+                        />
+                    </TouchableOpacity>
                 </Container>
             </Background>
         </>

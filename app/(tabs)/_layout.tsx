@@ -62,7 +62,7 @@ export default function TabLayout() {
             }}>
                 <Microphone
                     size={ 72 }
-                    color="white"/>
+                    color={focused ? "white" : "black"}/>
             </View>
           ),
         }}
