@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@expo-google-fonts/jost": "^0.2.3",
-    "@phosphor-icons/react": "^2.1.6",
     "expo": "~51.0.14",
     "expo-app-loading": "^2.1.1",
     "expo-constants": "~16.0.2",
@@ -27,6 +26,7 @@
     "expo-status-bar": "~1.12.1",
     "expo-system-ui": "~3.0.6",
     "expo-web-browser": "~13.0.3",
+    "phosphor-react-native": "^2.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.74.2",
