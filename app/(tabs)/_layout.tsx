@@ -7,11 +7,11 @@ import { Octicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 // ------
 // React Native Components
-import { Platform, View, Text } from 'react-native';
+import { View, Text } from 'react-native';
 // -----------------------
 // Tema
 import theme from '../../themes/theme';
-import {Microphone, Gear, CalendarDots} from "@phosphor-icons/react";
+import {Microphone, Gear, Calendar} from "phosphor-react-native";
 // -----------------------
 
 export default function TabLayout() {
@@ -41,7 +41,7 @@ export default function TabLayout() {
               height: focused ? 120 : 80,
               borderRadius: 360,
             }}>
-              <CalendarDots size={72} color={focused ? "white" : "black"} />
+              <Calendar size={72} color={focused ? "white" : "black"} />
             </View>
           ),
         }}

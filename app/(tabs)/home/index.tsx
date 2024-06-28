@@ -4,7 +4,7 @@ import {Container, Line, MiddleContainer, TextMiddle, Title, TopView, LockIcon} 
 import { TouchableOpacity, View } from "react-native";
 
 // Ícones
-import {Microphone, Keyboard, LockSimpleOpen} from "@phosphor-icons/react"
+import {Microphone, Keyboard, LockSimpleOpen} from "phosphor-react-native"
 import theme from "@/themes/theme";
 
 export default function Home() {
