@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import theme from '@/themes/theme';
+import { Button } from 'react-native-paper';
 
 export const Logo = styled.Image` 
     margin-top: 100px;
@@ -35,15 +36,14 @@ export const View = styled.View`
 export const TouchableOpacityEnviar = styled.TouchableOpacity`
     color: ${theme.COLORS.WHITE};
     background-color: ${theme.COLORS.MAIN};
-    margin-top: 21px;
     width: 162px;
     height: 30px;
     font-family: ${theme.FONT_FAMILY.MEDIUM}; 
     font-size: ${theme.FONT_SIZE.MD};
-    border-radius: 10px;
-    align-items: center;  
-    justify-content: center; 
+    border-radius: 10px; 
     align-items: center; 
+    justify-content: center;
+    margin-bottom: 20px;
 `;
 
 export const TextLink = styled.Text`
@@ -65,4 +65,23 @@ export const ViewFooter = styled.View`
     bottom: 0;
     align-items: center;
     padding-bottom: 40px;
+`;
+
+export const ContainerCadastro = styled.TouchableOpacity`
+    font-family: ${theme.FONT_FAMILY.MEDIUM}; 
+    font-size: ${theme.FONT_SIZE.MD};
+    color: ${theme.COLORS.WHITE};
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+`;
+
+export const Details = styled.Text`
+    color: ${theme.COLORS.MAIN};
+`;
+
+export const ButtonText = styled.Text`
+    font-family: ${theme.FONT_FAMILY.MEDIUM}; 
+    font-size: ${theme.FONT_SIZE.MD};
+    color: ${theme.COLORS.WHITE};
 `;

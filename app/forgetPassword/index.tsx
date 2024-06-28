@@ -1,9 +1,8 @@
 import { Background } from "@/components/background";
-import { Logo, Titulo, Container, Text, View, TouchableOpacityEnviar, TextLink, TextFooter, ViewFooter } from "./styles";
+import { Logo, Titulo, Container, Text, View, TouchableOpacityEnviar, ButtonText, TextFooter, ViewFooter, ContainerCadastro, Details } from "./styles";
 import { Input } from "@/components/input/input";
 import { SetStateAction, useEffect, useState } from "react";
-import { TouchableOpacity, Image } from "react-native";
-import theme from "@/themes/theme";
+import { Image } from "react-native";
 import { Link } from "expo-router";
 
 export default function ForgetPassword() {
@@ -42,14 +41,13 @@ export default function ForgetPassword() {
                     <Input label="Email" value={email} onChangeText={(text: SetStateAction<string>) => setEmail(text)} error={erroEmail}/>
                 </View>
                 <TouchableOpacityEnviar onPress={handleButtonPress}>
-                    Enviar
+                    <ButtonText>Enviar</ButtonText>
                 </TouchableOpacityEnviar>
-                <TextLink>
-                    Novo por aqui?
-                    <TouchableOpacity>
-                        <Link href='/signUp' style={{color: theme.COLORS.MAIN}}> Crie sua conta</Link>
-                    </TouchableOpacity>
-                </TextLink>
+                <ContainerCadastro>
+                    <TextFooter>
+                        <Link href='/signUp'>Novo por aqui? <Details>Crie sua conta</Details></Link>
+                    </TextFooter>
+                </ContainerCadastro>
                 <ViewFooter>
                     <TextFooter>Desenvolvido por DevDynasty</TextFooter>
                     <Image
