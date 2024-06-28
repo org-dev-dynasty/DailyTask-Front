@@ -42,6 +42,7 @@ export default function RootLayout() {
       <Stack.Screen name='login/index' options={{ headerShown: false }} />
       <Stack.Screen name='signUp/index' options={{ headerShown: false }} />
       <Stack.Screen name='forgetPassword/index' />
+      <Stack.Screen name='calendar/index' />
     </Stack>
   );
 }
