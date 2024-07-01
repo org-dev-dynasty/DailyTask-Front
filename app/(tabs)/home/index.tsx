@@ -272,14 +272,9 @@ export default function Home() {
 
                             <MicrophoneView>
                                 <CircleView>
-                                    <CircleAnimation style={{width: circleSize, height: circleSize, opacity: circleOppacity}}>
-
-                                    </CircleAnimation>
-                                    <SecondCircleAnimation style={{width: auxCircleSize, height: auxCircleSize, opacity:auxCircleOppacity}}>
-
-                                    </SecondCircleAnimation>
+                                    <CircleAnimation style={{width: circleSize, height: circleSize, opacity: circleOppacity}}/>
+                                    <SecondCircleAnimation style={{width: auxCircleSize, height: auxCircleSize, opacity:auxCircleOppacity}}/>
                                     <CircleAnimation style={{width: thirdCircleSize, height: thirdCircleSize, opacity: thirdCircleOppacity}}/>
-
                                 </CircleView>
 
                                 <TouchableOpacity onPress={() => startRecording()}>
