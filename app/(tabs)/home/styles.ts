@@ -34,7 +34,35 @@ export const InitialScreen = styled(Animated.View)`
     align-items: center;
     width: 100%;
     z-index: 1;
+
+    border: 2px;
+    border-color: ${theme.COLORS.MAIN};
 `
+
+export const CenterElementsDisplay = styled(Animated.View)`
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    width: 75%;
+    height: 50%;
+    z-index: 1;
+    position: absolute;
+    top: 25%;
+
+    border: 2px;
+    border-color: ${theme.COLORS.MAIN};
+`
+export const MicrophoneInitialView = styled.TouchableOpacity`
+    height: 40%;
+    flex: auto;
+    justify-content: flex-end;
+`;
+
+export const KeyboardInitialView = styled(Animated.View)`
+    height: 40%;
+    flex: auto;
+    justify-content: flex-start;
+`;
 
 export const Line = styled.View`
     width: 35%;
@@ -47,6 +75,9 @@ export const MiddleContainer = styled.View`
     justify-content: center;
     align-items: center;
     margin: 20px 0;
+
+    border: 2px;
+    border-color: ${theme.COLORS.MAIN};
 `;
 
 export const TextMiddle = styled.Text`
@@ -75,10 +106,24 @@ export const LockIcon = styled.View`
     align-Items: center;
 `;
 
+export const TimerView = styled.View`
+    justify-content: center;
+    align-items: center;
+    height: 10%;
+    width: 100%;
+`;
+
 export const RecordingTime = styled.Text`
     color: ${theme.COLORS.WHITE};
     font-family: ${theme.FONT_FAMILY.REGULAR};
     font-size: ${theme.FONT_SIZE.XL};
+`;
+
+export const RecordingTimeView = styled.View`
+    justify-content: flex-start;
+    align-items: center;
+    height: 40%;
+    width: 100%;
 `;
 
 export const RecordingTextInput = styled.View`
@@ -118,6 +163,7 @@ export const SecondCircleAnimation = styled(Animated.View)`
 `;
 
 export const MicrophoneView = styled.View`
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
+    height: 40%;
 `;

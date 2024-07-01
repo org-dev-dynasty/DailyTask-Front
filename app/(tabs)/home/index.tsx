@@ -14,7 +14,11 @@ import {
     RecordingTime,
     RecordingTextInput,
     RecordingTextInputText,
-    CircleAnimation, SecondCircleAnimation, MicrophoneView
+    CircleAnimation, SecondCircleAnimation, MicrophoneView, CenterElementsDisplay,
+    MicrophoneInitialView,
+    KeyboardInitialView,
+    RecordingTimeView,
+    TimerView
 } from "@/app/(tabs)/home/styles";
 import theme from "@/themes/theme";
 
@@ -235,29 +239,26 @@ export default function Home() {
                                 <Title>Segure para gravar</Title>
                             </Animated.View>
                         </TopViewText>
-                        <InitialScreen>
-                            <TouchableOpacity onPress={() => startRecording()}>
+                        <CenterElementsDisplay>
+                            <MicrophoneInitialView onPress={() => startRecording()}>
                                 <Microphone size={64} color={theme.COLORS.WHITE} />
-                            </TouchableOpacity>
-                            <Animated.View style={{ opacity: fadeTexts }}>
+                            </MicrophoneInitialView>
+                            <Animated.View style={{ opacity: fadeTexts, height: '20%' }}>
                                 <MiddleContainer>
                                     <Line />
                                     <TextMiddle>ou</TextMiddle>
                                     <Line />
                                 </MiddleContainer>
                             </Animated.View>
-                            <Animated.View style={{ opacity: fadeTexts }}>
+                            <KeyboardInitialView style={{ opacity: fadeTexts, height: '40%' }}>
                                 <TouchableOpacity>
                                     <Keyboard size={64} color={theme.COLORS.WHITE} />
                                 </TouchableOpacity>
-                            </Animated.View>
-                        </InitialScreen>
+                            </KeyboardInitialView>
+                        </CenterElementsDisplay>
                     </InitialScreen>
                     {/* <--Initial--> */}
                     {/* <--Recording--> */}
-
-
-
                     <InitialScreen style={{ opacity: fadeLock, display: recording ? "flex" : "none"}}>
                         <TopViewLock>
                             <Animated.View>
@@ -267,7 +268,7 @@ export default function Home() {
                             </Animated.View>
                         </TopViewLock>
 
-                        <InitialScreen>
+                        <CenterElementsDisplay>
 
                             <MicrophoneView>
                                 <CircleAnimation style={{width: circleSize, height: circleSize, opacity: circleOppacity}}>
@@ -280,23 +281,22 @@ export default function Home() {
 
                                 <TouchableOpacity onPress={() => startRecording()}>
                                     <Microphone size={64} color={theme.COLORS.WHITE} />
-
                                 </TouchableOpacity>
                             </MicrophoneView>
 
 
-                            <MiddleContainer>
+                            <TimerView>
                                 <RecordingTime>0:00</RecordingTime>
-                            </MiddleContainer>
+                            </TimerView>
 
-                            <RecordingTextInput>
-                                <RecordingTextInputText>Lorem</RecordingTextInputText>
-                            </RecordingTextInput>
+                            <RecordingTimeView>
+                                <RecordingTextInput>
+                                    <RecordingTextInputText>Lorem</RecordingTextInputText>
+                                </RecordingTextInput>
+                            </RecordingTimeView>
 
-                        </InitialScreen>
+                        </CenterElementsDisplay>
                     </InitialScreen>
-
-
                     {/* <--Recording--> */}
                 </Container>
             </Background>
