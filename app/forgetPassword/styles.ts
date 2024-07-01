@@ -61,10 +61,11 @@ export const TextFooter = styled.Text`
 `;
 
 export const ViewFooter = styled.View`
-    position: absolute;
-    bottom: 0;
+    flex: 1;
+    justify-content: flex-end;
     align-items: center;
-    padding-bottom: 40px;
+    margin-top: 200px;
+    margin-bottom: 40px;
 `;
 
 export const ContainerCadastro = styled.TouchableOpacity`

@@ -85,6 +85,4 @@ export const Footer = styled.View`
     justify-content: flex-end;
     align-items: center;
     margin-bottom: 40px;
-    position: absolute;
-    bottom: 0;
 `;
