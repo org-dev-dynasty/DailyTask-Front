@@ -1,16 +1,16 @@
 import styled from "styled-components/native";
 import theme from "@/themes/theme";
+import { Animated } from "react-native";
 
 export const Container = styled.View`
-  flex: 1;
-  flex-direction: column;
-  margin: 0;
-  top: 32px;
-  padding: 0;
-  padding-top: 40px;
-  align-items: center;
-  height: 100%;
-  width: 100%;
+    flex: 1;
+    flex-direction: column;
+    margin: 0;
+    top: 32px;
+    padding: 40px 0 0;
+    align-items: center;
+    height: 100%;
+    width: 100%;
 `;
 
 export const TopViewText = styled.View`
@@ -28,13 +28,13 @@ export const Title = styled.Text`
     font-size: ${theme.FONT_SIZE.XL};
 `;
 
-export const InitialScreen = styled.View`
+export const InitialScreen = styled(Animated.View)`
     flex: 1;
     justify-content: center;
     align-items: center;
     width: 100%;
     z-index: 1;
-`;
+`
 
 export const Line = styled.View`
     width: 35%;
@@ -100,4 +100,24 @@ export const RecordingTextInputText = styled.TextInput.attrs({
     color: ${theme.COLORS.BLACK};
     height: auto;
     max-height: 100px;
+`;
+
+export const CircleAnimation = styled(Animated.View)`
+    height: 100px;
+    width: 100px;
+    border-radius: 300px;
+    background-color: ${theme.COLORS.MAIN};;
+    position: absolute;
+`;
+export const SecondCircleAnimation = styled(Animated.View)`
+    height: 200px;
+    width: 200px;
+    border-radius: 300px;
+    background-color: ${theme.COLORS.MAIN};;
+    position: absolute;
+`;
+
+export const MicrophoneView = styled.View`
+    justify-content: center;
+    align-items: center;
 `;

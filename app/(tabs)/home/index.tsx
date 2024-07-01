@@ -1,27 +1,47 @@
 import { Background } from "@/components/background";
-import React from "react";
-import { TouchableOpacity, View, Animated, Text } from "react-native";
-import { Container, TopViewText, Title, InitialScreen, Line, MiddleContainer, TextMiddle, TopViewLock, LockIcon, RecordingTime, RecordingTextInput, RecordingTextInputText } from "@/app/(tabs)/home/styles";
+import {useRef, useState} from "react";
+import {TouchableOpacity, View, Animated, Text, Easing} from "react-native";
+import {
+    Container,
+    TopViewText,
+    Title,
+    InitialScreen,
+    Line,
+    MiddleContainer,
+    TextMiddle,
+    TopViewLock,
+    LockIcon,
+    RecordingTime,
+    RecordingTextInput,
+    RecordingTextInputText,
+    CircleAnimation, SecondCircleAnimation, MicrophoneView
+} from "@/app/(tabs)/home/styles";
 import theme from "@/themes/theme";
 
 // Ícones
 import { Microphone, Keyboard, LockSimpleOpen } from "phosphor-react-native";
 
 export default function Home() {
-    const [recording, setRecording] = React.useState(false);
+    const [recording, setRecording] = useState(false);
 
-    const fadeLock = React.useRef(new Animated.Value(0)).current;
-    const fadeTexts = React.useRef(new Animated.Value(1)).current;
+    const fadeLock = useRef(new Animated.Value(0)).current;
+    const fadeTexts = useRef(new Animated.Value(1)).current;
+    const circleSize = useRef(new Animated.Value(100)).current;
+    const circleOppacity = useRef(new Animated.Value(0.75)).current;
+    const auxCircleSize = useRef(new Animated.Value(100)).current;
+    const auxCircleOppacity = useRef(new Animated.Value(0.75)).current;
+    const thirdCircleSize = useRef(new Animated.Value(0)).current;
+    const thirdCircleOppacity = useRef(new Animated.Value(0)).current;
 
     const StartRecordingAnimation = () => {
         Animated.timing(fadeLock, {
             toValue: 1,
             duration: 1000,
-            useNativeDriver: true,
+            useNativeDriver: false,
         }).start();
         Animated.timing(fadeTexts, {
             toValue: 0,
-            duration: 2000,
+            duration: 1000,
             useNativeDriver: true,
         }).start();
     };
@@ -30,13 +50,175 @@ export default function Home() {
         StartRecordingAnimation();
         setTimeout(() => {
             setRecording(true);
-        }, 2100);
+            circleAnimation();
+        }, 1000);
+    }
+
+    function circleAnimation() {
+        Animated.timing(circleSize, {
+            toValue: 250,
+            duration: 1000,
+            useNativeDriver: false,
+            easing: Easing.in(Easing.ease)
+        }).start(() => {
+            circleAnimationCallback();
+        });
+        Animated.timing(circleOppacity, {
+            toValue: 0.5,
+            duration: 1000,
+            useNativeDriver: false,
+        }).start();
+        Animated.timing(auxCircleSize, {
+            toValue: 250,
+            duration: 1000,
+            useNativeDriver: false,
+            easing: Easing.in(Easing.ease)
+        }).start();
+        Animated.timing(auxCircleOppacity, {
+            toValue: 0.5,
+            duration: 1000,
+            useNativeDriver: false,
+        }).start();
+    }
+
+    function circleAnimationCallback() {
+        auxCircleOppacity.setValue(0.5);
+        Animated.timing(auxCircleOppacity, {
+            toValue: 0,
+            duration: 1000,
+            useNativeDriver: false,
+            easing: Easing.out(Easing.ease)
+        }).start();
+        Animated.timing(circleOppacity, {
+            toValue: 0.25,
+            duration: 1000,
+            useNativeDriver: false,
+            easing: Easing.out(Easing.ease)
+        }).start();
+        Animated.timing(auxCircleSize, {
+            toValue: 350,
+            duration: 1000,
+            useNativeDriver: false,
+            easing: Easing.out(Easing.ease)
+        }).start();
+        thirdCircleOppacity.setValue(0.75);
+        Animated.timing(thirdCircleSize, {
+            toValue: 100,
+            duration: 1000,
+            useNativeDriver: false,
+            easing: Easing.out(Easing.ease)
+        }).start(() => {
+            Animated.timing(circleSize, {
+                toValue: 0,
+                duration: 1500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start();
+            Animated.timing(circleOppacity, {
+                toValue: 0,
+                duration: 1500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start();
+            auxCircleSize.setValue(100);
+            auxCircleOppacity.setValue(0.75);
+            Animated.timing(auxCircleSize, {
+                toValue: 250,
+                duration: 1500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start();
+            Animated.timing(auxCircleOppacity, {
+                toValue: 0.5,
+                duration: 1500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start();
+            Animated.timing(thirdCircleSize, {
+                toValue: 250,
+                duration: 1500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start();
+            Animated.timing(thirdCircleOppacity, {
+                toValue: 0.5,
+                duration: 1500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start(() => {
+                Animated.timing(circleSize, {
+                    toValue: 100,
+                    duration: 1500,
+                    useNativeDriver: false,
+                    easing: Easing.out(Easing.ease)
+                }).start();
+                Animated.timing(circleOppacity, {
+                    toValue: 0.75,
+                    duration: 1500,
+                    useNativeDriver: false,
+                    easing: Easing.out(Easing.ease)
+                }).start();
+                Animated.timing(auxCircleSize, {
+                    toValue: 350,
+                    duration: 1500,
+                    useNativeDriver: false,
+                    easing: Easing.out(Easing.ease)
+                }).start();
+                Animated.timing(auxCircleOppacity, {
+                    toValue: 0,
+                    duration: 1500,
+                    useNativeDriver: false,
+                    easing: Easing.out(Easing.ease)
+                }).start();
+                Animated.timing(thirdCircleOppacity, {
+                    toValue: 0.25,
+                    duration: 1500,
+                    useNativeDriver: false,
+                    easing: Easing.out(Easing.ease)
+                }).start(() => {
+                    Animated.timing(circleSize, {
+                        toValue: 250,
+                        duration: 1500,
+                        useNativeDriver: false,
+                        easing: Easing.in(Easing.ease)
+                    }).start();
+                    Animated.timing(circleOppacity, {
+                        toValue: 0.5,
+                        duration: 1000,
+                        useNativeDriver: false,
+                    }).start();
+                    auxCircleSize.setValue(100);
+                    auxCircleOppacity.setValue(0.75);
+                    Animated.timing(auxCircleSize, {
+                        toValue: 250,
+                        duration: 1500,
+                        useNativeDriver: false,
+                        easing: Easing.in(Easing.ease)
+                    }).start();
+                    Animated.timing(auxCircleOppacity, {
+                        toValue: 0.5,
+                        duration: 1500,
+                        useNativeDriver: false,
+                        easing: Easing.in(Easing.ease)
+                    }).start();
+                    Animated.timing(thirdCircleSize, {
+                        toValue: 0,
+                        duration: 1500,
+                        useNativeDriver: false,
+                        easing: Easing.in(Easing.ease)
+                    }).start(() => {
+                        circleAnimationCallback();
+                    });
+                });
+            });
+        });
     }
 
     return (
         <>
             <Background>
                 <Container>
+
                     {/* <--Modal--> */}
                     {/* <--Modal--> */}
                     {/* <--Initial--> */}
@@ -55,7 +237,7 @@ export default function Home() {
                         </TopViewText>
                         <InitialScreen>
                             <TouchableOpacity onPress={() => startRecording()}>
-                                <Microphone size={100} color={theme.COLORS.WHITE} />
+                                <Microphone size={64} color={theme.COLORS.WHITE} />
                             </TouchableOpacity>
                             <Animated.View style={{ opacity: fadeTexts }}>
                                 <MiddleContainer>
@@ -66,14 +248,17 @@ export default function Home() {
                             </Animated.View>
                             <Animated.View style={{ opacity: fadeTexts }}>
                                 <TouchableOpacity>
-                                    <Keyboard size={100} color={theme.COLORS.WHITE} />
+                                    <Keyboard size={64} color={theme.COLORS.WHITE} />
                                 </TouchableOpacity>
                             </Animated.View>
                         </InitialScreen>
                     </InitialScreen>
                     {/* <--Initial--> */}
                     {/* <--Recording--> */}
-                    <InitialScreen style={{ display: recording ? "flex" : "none" }}>
+
+
+
+                    <InitialScreen style={{ opacity: fadeLock, display: recording ? "flex" : "none"}}>
                         <TopViewLock>
                             <Animated.View>
                                 <LockIcon>
@@ -83,9 +268,22 @@ export default function Home() {
                         </TopViewLock>
 
                         <InitialScreen>
-                            <TouchableOpacity onPress={() => startRecording()}>
-                                <Microphone size={100} color={theme.COLORS.WHITE} />
-                            </TouchableOpacity>
+
+                            <MicrophoneView>
+                                <CircleAnimation style={{width: circleSize, height: circleSize, opacity: circleOppacity}}>
+
+                                </CircleAnimation>
+                                <SecondCircleAnimation style={{width: auxCircleSize, height: auxCircleSize, opacity:auxCircleOppacity}}>
+
+                                </SecondCircleAnimation>
+                                <CircleAnimation style={{width: thirdCircleSize, height: thirdCircleSize, opacity: thirdCircleOppacity}}/>
+
+                                <TouchableOpacity onPress={() => startRecording()}>
+                                    <Microphone size={64} color={theme.COLORS.WHITE} />
+
+                                </TouchableOpacity>
+                            </MicrophoneView>
+
 
                             <MiddleContainer>
                                 <RecordingTime>0:00</RecordingTime>
@@ -97,6 +295,8 @@ export default function Home() {
 
                         </InitialScreen>
                     </InitialScreen>
+
+
                     {/* <--Recording--> */}
                 </Container>
             </Background>
