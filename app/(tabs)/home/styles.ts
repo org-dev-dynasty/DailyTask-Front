@@ -109,7 +109,7 @@ export const LockIcon = styled.View`
 export const TimerView = styled.View`
     justify-content: center;
     align-items: center;
-    height: 10%;
+    height: 20%;
     width: 100%;
 `;
 
