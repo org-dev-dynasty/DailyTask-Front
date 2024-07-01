@@ -2,25 +2,13 @@ import { Background } from "@/components/background";
 import {useRef, useState} from "react";
 import {TouchableOpacity, View, Animated, Text, Easing} from "react-native";
 import {
-    Container,
-    TopViewText,
-    Title,
-    InitialScreen,
-    Line,
-    MiddleContainer,
-    TextMiddle,
-    TopViewLock,
-    LockIcon,
-    RecordingTime,
-    RecordingTextInput,
-    RecordingTextInputText,
-    CircleAnimation, SecondCircleAnimation, MicrophoneView, CenterElementsDisplay,
-    MicrophoneInitialView,
-    KeyboardInitialView,
-    RecordingTimeView,
-    TimerView, CircleView
+    Container, TopViewText, Title, InitialScreen, Line, MiddleContainer, TextMiddle, TopViewLock, LockIcon, RecordingTime, RecordingTextInput, 
+    RecordingTextInputText, CircleAnimation, SecondCircleAnimation, MicrophoneView, CenterElementsDisplay, MicrophoneInitialView,
+    KeyboardInitialView, RecordingTimeView, TimerView, CircleView,
+    LockPill
 } from "@/app/(tabs)/home/styles";
 import theme from "@/themes/theme";
+import { Dimensions } from 'react-native';
 
 // Ícones
 import { Microphone, Keyboard, LockSimpleOpen } from "phosphor-react-native";
@@ -36,6 +24,10 @@ export default function Home() {
     const auxCircleOppacity = useRef(new Animated.Value(0.75)).current;
     const thirdCircleSize = useRef(new Animated.Value(0)).current;
     const thirdCircleOppacity = useRef(new Animated.Value(0)).current;
+
+    const lockPillSize = useRef(new Animated.Value(100)).current;
+
+    const { width, height } = Dimensions.get('window');
 
     const StartRecordingAnimation = () => {
         Animated.timing(fadeLock, {
@@ -59,6 +51,13 @@ export default function Home() {
     }
 
     function circleAnimation() {
+        Animated.timing(lockPillSize, {
+            toValue: height/2.4,
+            duration: 1000,
+            easing: Easing.linear,
+            useNativeDriver: false,
+        }).start();
+
         Animated.timing(circleSize, {
             toValue: 250,
             duration: 1000,
@@ -261,11 +260,11 @@ export default function Home() {
                     {/* <--Recording--> */}
                     <InitialScreen style={{ opacity: fadeLock, display: recording ? "flex" : "none"}}>
                         <TopViewLock>
-                            <Animated.View>
+                            <LockPill style={{height: lockPillSize}}>
                                 <LockIcon>
                                     <LockSimpleOpen size={64} color={theme.COLORS.WHITE} />
                                 </LockIcon>
-                            </Animated.View>
+                            </LockPill>
                         </TopViewLock>
 
                         <CenterElementsDisplay>

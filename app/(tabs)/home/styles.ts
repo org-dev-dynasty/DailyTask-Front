@@ -106,6 +106,11 @@ export const LockIcon = styled.View`
     align-Items: center;
 `;
 
+export const LockPill = styled(Animated.View)`
+    background-Color: ${theme.COLORS.MAIN};
+    border-Radius: 90px;
+`;
+
 export const TimerView = styled.View`
     justify-content: center;
     align-items: center;
