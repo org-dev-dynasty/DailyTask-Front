@@ -18,7 +18,7 @@ import {
     MicrophoneInitialView,
     KeyboardInitialView,
     RecordingTimeView,
-    TimerView
+    TimerView, CircleView
 } from "@/app/(tabs)/home/styles";
 import theme from "@/themes/theme";
 
@@ -271,13 +271,16 @@ export default function Home() {
                         <CenterElementsDisplay>
 
                             <MicrophoneView>
-                                <CircleAnimation style={{width: circleSize, height: circleSize, opacity: circleOppacity}}>
+                                <CircleView>
+                                    <CircleAnimation style={{width: circleSize, height: circleSize, opacity: circleOppacity}}>
 
-                                </CircleAnimation>
-                                <SecondCircleAnimation style={{width: auxCircleSize, height: auxCircleSize, opacity:auxCircleOppacity}}>
+                                    </CircleAnimation>
+                                    <SecondCircleAnimation style={{width: auxCircleSize, height: auxCircleSize, opacity:auxCircleOppacity}}>
 
-                                </SecondCircleAnimation>
-                                <CircleAnimation style={{width: thirdCircleSize, height: thirdCircleSize, opacity: thirdCircleOppacity}}/>
+                                    </SecondCircleAnimation>
+                                    <CircleAnimation style={{width: thirdCircleSize, height: thirdCircleSize, opacity: thirdCircleOppacity}}/>
+
+                                </CircleView>
 
                                 <TouchableOpacity onPress={() => startRecording()}>
                                     <Microphone size={64} color={theme.COLORS.WHITE} />

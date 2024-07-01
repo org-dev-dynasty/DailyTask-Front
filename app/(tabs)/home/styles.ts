@@ -43,7 +43,7 @@ export const CenterElementsDisplay = styled(Animated.View)`
     flex: 1;
     justify-content: center;
     align-items: center;
-    width: 75%;
+    width: 100%;
     height: 50%;
     z-index: 1;
     position: absolute;
@@ -166,4 +166,10 @@ export const MicrophoneView = styled.View`
     justify-content: flex-end;
     align-items: center;
     height: 40%;
+`;
+
+export const CircleView = styled.View`
+    top: 25%;
+    justify-content: center;
+    align-items: center;
 `;
