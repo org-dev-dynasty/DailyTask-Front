@@ -1,8 +1,11 @@
 import { Background } from "@/components/background"
 import CalendarTasks, { ItemProps } from "@/components/calendarTasks";
+import { useState } from "react";
 import { FlatList } from "react-native"
+import { View, Text, StyleSheet } from 'react-native';
+import { ExpandableCalendar, AgendaList, CalendarProvider } from 'react-native-calendars';
 
-const data:Array<ItemProps> = [
+const data: Array<ItemProps> = [
   {
     label: 'Hoje - Manha',
     tasks: [
@@ -24,14 +27,39 @@ const data:Array<ItemProps> = [
   },
 ]
 
+
 export default function Calendar() {
+  const [selectedDate, setSelectedDate] = useState('');
+
   return (
     <Background>
-      <FlatList
+      <CalendarProvider
+        date={selectedDate}
+        onDateChanged={(date) => setSelectedDate(date)}
+        showTodayButton
+      >
+        <ExpandableCalendar
+          // initialPosition='open'
+          firstDay={1}
+          markedDates={{
+            [selectedDate]: { selected: true, marked: true, selectedColor: 'blue' }
+          }}
+        />
+        <AgendaList
+          sections={[
+            {
+              title: 'Agenda',
+              data: data.filter(data => data.label === selectedDate)
+            }
+          ]}
+          renderItem={({ item }) => <CalendarTasks label={item.label} tasks={item.tasks} />}
+        />
+        {/* <FlatList
         data={data}
         renderItem={({ item }) => <CalendarTasks label={item.label} tasks={item.tasks} />}
         style={{ width: '90%' }}
-      />
+      /> */}
+      </CalendarProvider>
     </Background>
   )
 }

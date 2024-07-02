@@ -1,7 +1,8 @@
 import { Animated, TouchableOpacity, View } from "react-native";
 import { TaskDescription, TaskDescriptionText, TaskHeader, TaskText, TaskContainer, ColorSection, MainSection } from "./styles";
-import { CaretDown, CaretUp } from "@phosphor-icons/react";
+import { CaretDown, CaretUp } from "phosphor-react-native";
 import { useState } from "react";
+import theme from "@/themes/theme";
 
 export type TaskProps = {
     title: string;
@@ -42,9 +43,9 @@ export default function Task({ hour, title, description, color, secondaryColor }
                         <TaskText style={{ marginHorizontal: 10 }}>{hour}</TaskText>
                         <TouchableOpacity onPress={toggleExpandCard}>
                             {expanded ? (
-                                <CaretUp size={24} style={{ color: 'white' }} />
+                                <CaretUp size={24} color={theme.COLORS.WHITE} />
                             ) : (
-                                <CaretDown size={24} style={{ color: 'white' }} />
+                                <CaretDown size={24} color={theme.COLORS.WHITE} />
                             )}
                         </TouchableOpacity>
                     </TaskHeader>

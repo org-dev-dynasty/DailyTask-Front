@@ -1,8 +1,9 @@
-import { CaretDown, CaretUp } from "@phosphor-icons/react";
+import { CaretDown, CaretUp } from "phosphor-react-native";
 import { Container, LabelContainer, LabelText, LabelView } from "./styles";
 import { Animated, FlatList, TouchableOpacity, View } from "react-native";
 import { useState } from "react";
 import Task, { TaskProps } from "../tasks";
+import theme from "@/themes/theme";
 
 
 export type ItemProps = {
@@ -39,9 +40,9 @@ export default function CalendarTasks({ label, tasks }: ItemProps) {
                         <LabelText>{label}</LabelText>
                         <TouchableOpacity onPress={toggleExpandLabel}>
                             {expanded ? (
-                                <CaretUp size={24} style={{ color: 'white' }} />
+                                <CaretUp size={24} color={theme.COLORS.WHITE} />
                             ) : (
-                                <CaretDown size={24} style={{ color: 'white' }} />
+                                <CaretDown size={24} color={theme.COLORS.WHITE}  />
                             )}
                         </TouchableOpacity>
                     </LabelView>
