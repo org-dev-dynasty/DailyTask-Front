@@ -51,11 +51,6 @@ export const CenterElementsDisplay = styled(Animated.View)`
 
     border: 2px;
     border-color: ${theme.COLORS.MAIN};
-`
-export const MicrophoneInitialView = styled.TouchableOpacity`
-    height: 40%;
-    flex: auto;
-    justify-content: flex-end;
 `;
 
 export const KeyboardInitialView = styled(Animated.View)`
@@ -88,7 +83,7 @@ export const TextMiddle = styled.Text`
     padding-bottom: 2px;
 `;
 
-export const TopViewLock = styled.View`
+export const TopViewLock = styled(Animated.View)`
     padding: 0;
     top: 0;
     position: absolute;
@@ -111,11 +106,35 @@ export const LockPill = styled(Animated.View)`
     border-Radius: 90px;
 `;
 
-export const TimerView = styled.View`
+export const CircleAnimation = styled(Animated.View)`
+    height: 100px;
+    width: 100px;
+    border-radius: 300px;
+    position: absolute;
+`;
+export const SecondCircleAnimation = styled(Animated.View)`
+    height: 200px;
+    width: 200px;
+    border-radius: 300px;
+    position: absolute;
+`;
+
+export const CircleView = styled.View`
+    top: 25%;
     justify-content: center;
     align-items: center;
+`;
+
+export const MicrophoneView = styled.View`
+    justify-content: flex-end;
+    align-items: center;
+    height: 40%;
+    width: 50%;
+`;
+
+export const TimerView = styled.View`
     height: 20%;
-    width: 100%;
+    justify-content: flex-end;
 `;
 
 export const RecordingTime = styled.Text`
@@ -150,31 +169,4 @@ export const RecordingTextInputText = styled.TextInput.attrs({
     color: ${theme.COLORS.BLACK};
     height: auto;
     max-height: 100px;
-`;
-
-export const CircleAnimation = styled(Animated.View)`
-    height: 100px;
-    width: 100px;
-    border-radius: 300px;
-    background-color: ${theme.COLORS.MAIN};;
-    position: absolute;
-`;
-export const SecondCircleAnimation = styled(Animated.View)`
-    height: 200px;
-    width: 200px;
-    border-radius: 300px;
-    background-color: ${theme.COLORS.MAIN};;
-    position: absolute;
-`;
-
-export const MicrophoneView = styled.View`
-    justify-content: flex-end;
-    align-items: center;
-    height: 40%;
-`;
-
-export const CircleView = styled.View`
-    top: 25%;
-    justify-content: center;
-    align-items: center;
 `;

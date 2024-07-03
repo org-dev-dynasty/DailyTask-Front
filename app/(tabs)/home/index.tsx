@@ -1,17 +1,21 @@
 import { Background } from "@/components/background";
 import {useRef, useState} from "react";
-import {TouchableOpacity, View, Animated, Text, Easing} from "react-native";
+import {TouchableOpacity, View, Animated, Text, Easing, Button} from "react-native";
 import {
     Container, TopViewText, Title, InitialScreen, Line, MiddleContainer, TextMiddle, TopViewLock, LockIcon, RecordingTime, RecordingTextInput, 
-    RecordingTextInputText, CircleAnimation, SecondCircleAnimation, MicrophoneView, CenterElementsDisplay, MicrophoneInitialView,
+    RecordingTextInputText, CircleAnimation, SecondCircleAnimation, MicrophoneView, CenterElementsDisplay,
     KeyboardInitialView, RecordingTimeView, TimerView, CircleView,
     LockPill
 } from "@/app/(tabs)/home/styles";
-import theme from "@/themes/theme";
 import { Dimensions } from 'react-native';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 
-// Ícones
+// Theme
+import theme from "@/themes/theme";
+
+// Icons
 import { Microphone, Keyboard, LockSimpleOpen } from "phosphor-react-native";
+const audioRecorderPlayer = new AudioRecorderPlayer();
 
 export default function Home() {
     const [recording, setRecording] = useState(false);
@@ -217,6 +221,25 @@ export default function Home() {
         });
     }
 
+    // Audio Recorder Player
+    const onStartRecord = async () => {
+        const result = await audioRecorderPlayer.startRecorder();
+        audioRecorderPlayer.addRecordBackListener((e) => {
+          console.log('record-back', e);
+          return;
+        });
+        setRecording(true);
+        console.log(result);
+      };
+    
+    const onStopRecord = async () => {
+      const result = await audioRecorderPlayer.stopRecorder();
+      audioRecorderPlayer.removeRecordBackListener();
+      setRecording(false);
+      console.log(result);
+      // Aqui, você pode enviar o áudio para a API de transcrição
+    };
+
     return (
         <>
             <Background>
@@ -224,77 +247,69 @@ export default function Home() {
 
                     {/* <--Modal--> */}
                     {/* <--Modal--> */}
-                    {/* <--Initial--> */}
-                    <InitialScreen style={{ display: recording ? "none" : "flex" }}>
-                        <TopViewLock>
-                            <Animated.View style={{ opacity: fadeLock }}>
-                                <LockIcon>
-                                    <LockSimpleOpen size={64} color={theme.COLORS.WHITE} />
-                                </LockIcon>
-                            </Animated.View>
-                        </TopViewLock>
-                        <TopViewText>
-                            <Animated.View style={{ opacity: fadeTexts }}>
-                                <Title>Segure para gravar</Title>
-                            </Animated.View>
-                        </TopViewText>
-                        <CenterElementsDisplay>
-                            <MicrophoneInitialView onPress={() => startRecording()}>
-                                <Microphone size={64} color={theme.COLORS.WHITE} />
-                            </MicrophoneInitialView>
-                            <Animated.View style={{ opacity: fadeTexts, height: '20%' }}>
-                                <MiddleContainer>
-                                    <Line />
-                                    <TextMiddle>ou</TextMiddle>
-                                    <Line />
-                                </MiddleContainer>
-                            </Animated.View>
-                            <KeyboardInitialView style={{ opacity: fadeTexts, height: '40%' }}>
-                                <TouchableOpacity>
-                                    <Keyboard size={64} color={theme.COLORS.WHITE} />
-                                </TouchableOpacity>
-                            </KeyboardInitialView>
-                        </CenterElementsDisplay>
-                    </InitialScreen>
-                    {/* <--Initial--> */}
-                    {/* <--Recording--> */}
-                    <InitialScreen style={{ opacity: fadeLock, display: recording ? "flex" : "none"}}>
-                        <TopViewLock>
+                    {/* <--Screen--> */}
+
+                    <InitialScreen style={{ display: "flex" }}>
+                        {/* Lock View */}
+                        <TopViewLock style={{ opacity: fadeLock }}>
                             <LockPill style={{height: lockPillSize}}>
                                 <LockIcon>
                                     <LockSimpleOpen size={64} color={theme.COLORS.WHITE} />
                                 </LockIcon>
                             </LockPill>
                         </TopViewLock>
-
+                        {/* Title View */}
+                        <TopViewText>
+                            <Animated.View style={{ opacity: fadeTexts }}>
+                                <Title>Segure para gravar</Title>
+                            </Animated.View>
+                        </TopViewText>
+                        {/* Center Elements */}
                         <CenterElementsDisplay>
-
+                            {/* Microphone */}
                             <MicrophoneView>
                                 <CircleView>
-                                    <CircleAnimation style={{width: circleSize, height: circleSize, opacity: circleOppacity}}/>
-                                    <SecondCircleAnimation style={{width: auxCircleSize, height: auxCircleSize, opacity:auxCircleOppacity}}/>
-                                    <CircleAnimation style={{width: thirdCircleSize, height: thirdCircleSize, opacity: thirdCircleOppacity}}/>
+                                    <CircleAnimation style={{width: circleSize, height: circleSize, opacity: circleOppacity, 
+                                        backgroundColor: recording ? theme.COLORS.MAIN : ''}}/>
+                                    <SecondCircleAnimation style={{width: auxCircleSize, height: auxCircleSize, opacity:auxCircleOppacity, 
+                                        backgroundColor: recording ? theme.COLORS.MAIN : ''}}/>
+                                    <CircleAnimation style={{width: thirdCircleSize, height: thirdCircleSize, opacity: thirdCircleOppacity, 
+                                        backgroundColor: recording ? theme.COLORS.MAIN : ''}}/>
                                 </CircleView>
 
                                 <TouchableOpacity onPress={() => startRecording()}>
                                     <Microphone size={64} color={theme.COLORS.WHITE} />
                                 </TouchableOpacity>
                             </MicrophoneView>
-
-
-                            <TimerView>
+                            {/* Center Itens */}
+                            {/* Initial Center */}
+                            <Animated.View style={{ opacity: fadeTexts, height: '20%', display: recording ? 'none' : 'flex' }}>
+                                <MiddleContainer>
+                                    <Line />
+                                    <TextMiddle>ou</TextMiddle>
+                                    <Line />
+                                </MiddleContainer>
+                            </Animated.View>
+                            {/* Timer */}
+                            <TimerView style={{display: recording ? 'flex' : 'none'}}>
                                 <RecordingTime>0:00</RecordingTime>
                             </TimerView>
-
-                            <RecordingTimeView>
+                            {/* Keyboard */}
+                            <KeyboardInitialView style={{ opacity: fadeTexts, display: recording ? 'none' : 'flex'}}>
+                                <TouchableOpacity>
+                                    <Keyboard size={64} color={theme.COLORS.WHITE} />
+                                </TouchableOpacity>
+                            </KeyboardInitialView>
+                            {/* Audio Trancription */}
+                            <RecordingTimeView style={{display: recording ? 'flex' : 'none'}}>
                                 <RecordingTextInput>
                                     <RecordingTextInputText>Lorem</RecordingTextInputText>
                                 </RecordingTextInput>
                             </RecordingTimeView>
-
                         </CenterElementsDisplay>
+                        {/* -------------- */}
                     </InitialScreen>
-                    {/* <--Recording--> */}
+                    {/* <--Screen--> */}
                 </Container>
             </Background>
         </>
