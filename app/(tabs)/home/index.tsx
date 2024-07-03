@@ -1,6 +1,6 @@
 import { Background } from "@/components/background";
-import {useRef, useState} from "react";
-import {TouchableOpacity, View, Animated, Text, Easing, Button} from "react-native";
+import {useEffect, useRef, useState} from "react";
+import {TouchableOpacity, View, Animated, Text, Easing, Button, Alert, Pressable} from "react-native";
 import {
     Container, TopViewText, Title, InitialScreen, Line, MiddleContainer, TextMiddle, TopViewLock, LockIcon, RecordingTime, RecordingTextInput, 
     RecordingTextInputText, CircleAnimation, SecondCircleAnimation, MicrophoneView, CenterElementsDisplay,
@@ -8,6 +8,7 @@ import {
     LockPill
 } from "@/app/(tabs)/home/styles";
 import { Dimensions } from 'react-native';
+import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 
 // Theme
 import theme from "@/themes/theme";
@@ -16,7 +17,9 @@ import theme from "@/themes/theme";
 import { Microphone, Keyboard, LockSimpleOpen } from "phosphor-react-native";
 
 export default function Home() {
-    const [recording, setRecording] = useState(false);
+    const [start, setStart] = useState(false);
+    const [recording, setRecording] = useState<Audio.Recording | null>(null);
+    const [recordingFileUri, setRecordingFileUri] = useState<string | null>(null);
 
     const fadeLock = useRef(new Animated.Value(0)).current;
     const fadeTexts = useRef(new Animated.Value(1)).current;
@@ -47,8 +50,9 @@ export default function Home() {
     function startRecording() {
         StartRecordingAnimation();
         setTimeout(() => {
-            setRecording(true);
+            setStart(true);
             circleAnimation();
+            handleRecordingStart();
         }, 1000);
     }
 
@@ -58,32 +62,32 @@ export default function Home() {
             duration: 1000,
             easing: Easing.linear,
             useNativeDriver: false,
-        }).start();
-
-        Animated.timing(circleSize, {
-            toValue: 250,
-            duration: 1000,
-            useNativeDriver: false,
-            easing: Easing.in(Easing.ease)
         }).start(() => {
-            circleAnimationCallback();
+            Animated.timing(circleSize, {
+                toValue: 250,
+                duration: 1000,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start(() => {
+                circleAnimationCallback();
+            });
+            Animated.timing(circleOppacity, {
+                toValue: 0.5,
+                duration: 1000,
+                useNativeDriver: false,
+            }).start();
+            Animated.timing(auxCircleSize, {
+                toValue: 250,
+                duration: 1000,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start();
+            Animated.timing(auxCircleOppacity, {
+                toValue: 0.5,
+                duration: 1000,
+                useNativeDriver: false,
+            }).start();
         });
-        Animated.timing(circleOppacity, {
-            toValue: 0.5,
-            duration: 1000,
-            useNativeDriver: false,
-        }).start();
-        Animated.timing(auxCircleSize, {
-            toValue: 250,
-            duration: 1000,
-            useNativeDriver: false,
-            easing: Easing.in(Easing.ease)
-        }).start();
-        Animated.timing(auxCircleOppacity, {
-            toValue: 0.5,
-            duration: 1000,
-            useNativeDriver: false,
-        }).start();
     }
 
     function circleAnimationCallback() {
@@ -219,6 +223,64 @@ export default function Home() {
         });
     }
 
+    // Adudio Recording
+    async function handleRecordingStart(){
+        const {granted} = await Audio.getPermissionsAsync();
+        if(granted){
+            try {
+                const { recording } = await Audio.Recording.createAsync();
+                setRecording( recording );
+            } catch (error) {
+                console.log(error);
+                Alert.alert('Erro ao gravar', 'Ocorreu um erro ao tentar gravar o áudio');
+            }
+        }
+    }
+
+    async function handleRecordingStop(){
+        try {
+            if(recording){
+                await recording.stopAndUnloadAsync();
+                const fileUri = recording.getURI();
+                console.log(fileUri);
+                setRecordingFileUri(fileUri);
+                setRecording(null);
+                // setStart(false);
+            }
+        }
+        catch (error) {
+            console.log(error);
+            Alert.alert('Erro ao pausa', 'Ocorreu um erro ao tentar parar a gravação do áudio');
+        }
+    }
+
+    async function handlePlayAudio(){
+        if(recordingFileUri){
+            const {sound} = await Audio.Sound.createAsync({uri: recordingFileUri}, {shouldPlay: true});
+            
+            await sound.setPositionAsync(0);
+            await sound.playAsync();
+
+        }
+    }
+
+    useEffect(() => {
+        Audio
+        .requestPermissionsAsync()
+        .then(({ granted }) => {
+            if (granted) {
+                Audio.setAudioModeAsync({
+                    allowsRecordingIOS: true,
+                    interruptionModeIOS: InterruptionModeIOS.DoNotMix,
+                    playsInSilentModeIOS: true,
+                    shouldDuckAndroid: true,
+                    interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
+                    playThroughEarpieceAndroid: true,
+                })
+            }
+        })
+    }, [])
+
     return (
         <>
             <Background>
@@ -249,20 +311,22 @@ export default function Home() {
                             <MicrophoneView>
                                 <CircleView>
                                     <CircleAnimation style={{width: circleSize, height: circleSize, opacity: circleOppacity, 
-                                        backgroundColor: recording ? theme.COLORS.MAIN : ''}}/>
+                                        backgroundColor: start ? theme.COLORS.MAIN : ''}}/>
                                     <SecondCircleAnimation style={{width: auxCircleSize, height: auxCircleSize, opacity:auxCircleOppacity, 
-                                        backgroundColor: recording ? theme.COLORS.MAIN : ''}}/>
+                                        backgroundColor: start ? theme.COLORS.MAIN : ''}}/>
                                     <CircleAnimation style={{width: thirdCircleSize, height: thirdCircleSize, opacity: thirdCircleOppacity, 
-                                        backgroundColor: recording ? theme.COLORS.MAIN : ''}}/>
+                                        backgroundColor: start ? theme.COLORS.MAIN : ''}}/>
                                 </CircleView>
 
-                                <TouchableOpacity onPress={() => startRecording()}>
+                                <Pressable 
+                                    onPressIn={startRecording}
+                                    onPressOut={handleRecordingStop}>
                                     <Microphone size={64} color={theme.COLORS.WHITE} />
-                                </TouchableOpacity>
+                                </Pressable>
                             </MicrophoneView>
                             {/* Center Itens */}
                             {/* Initial Center */}
-                            <Animated.View style={{ opacity: fadeTexts, height: '20%', display: recording ? 'none' : 'flex' }}>
+                            <Animated.View style={{ opacity: fadeTexts, height: '20%', display: start ? 'none' : 'flex' }}>
                                 <MiddleContainer>
                                     <Line />
                                     <TextMiddle>ou</TextMiddle>
@@ -270,17 +334,17 @@ export default function Home() {
                                 </MiddleContainer>
                             </Animated.View>
                             {/* Timer */}
-                            <TimerView style={{display: recording ? 'flex' : 'none'}}>
+                            <TimerView style={{display: start ? 'flex' : 'none'}}>
                                 <RecordingTime>0:00</RecordingTime>
                             </TimerView>
                             {/* Keyboard */}
-                            <KeyboardInitialView style={{ opacity: fadeTexts, display: recording ? 'none' : 'flex'}}>
+                            <KeyboardInitialView style={{ opacity: fadeTexts, display: start ? 'none' : 'flex'}}>
                                 <TouchableOpacity>
                                     <Keyboard size={64} color={theme.COLORS.WHITE} />
                                 </TouchableOpacity>
                             </KeyboardInitialView>
                             {/* Audio Trancription */}
-                            <RecordingTimeView style={{display: recording ? 'flex' : 'none'}}>
+                            <RecordingTimeView style={{display: start ? 'flex' : 'none'}}>
                                 <RecordingTextInput>
                                     <RecordingTextInputText>Lorem</RecordingTextInputText>
                                 </RecordingTextInput>
