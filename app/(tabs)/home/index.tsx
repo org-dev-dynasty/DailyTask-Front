@@ -8,14 +8,12 @@ import {
     LockPill
 } from "@/app/(tabs)/home/styles";
 import { Dimensions } from 'react-native';
-import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 
 // Theme
 import theme from "@/themes/theme";
 
 // Icons
 import { Microphone, Keyboard, LockSimpleOpen } from "phosphor-react-native";
-const audioRecorderPlayer = new AudioRecorderPlayer();
 
 export default function Home() {
     const [recording, setRecording] = useState(false);
@@ -220,25 +218,6 @@ export default function Home() {
             });
         });
     }
-
-    // Audio Recorder Player
-    const onStartRecord = async () => {
-        const result = await audioRecorderPlayer.startRecorder();
-        audioRecorderPlayer.addRecordBackListener((e) => {
-          console.log('record-back', e);
-          return;
-        });
-        setRecording(true);
-        console.log(result);
-      };
-    
-    const onStopRecord = async () => {
-      const result = await audioRecorderPlayer.stopRecorder();
-      audioRecorderPlayer.removeRecordBackListener();
-      setRecording(false);
-      console.log(result);
-      // Aqui, você pode enviar o áudio para a API de transcrição
-    };
 
     return (
         <>
