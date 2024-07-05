@@ -38,6 +38,7 @@ export default function Index() {
             <View style={{flex: 1, width: '100%', height: '100%', justifyContent: "center", padding:16, gap:16}}>
                 <Link href="/home" style={{textAlign: "center", fontSize: 32, borderColor: "black", borderWidth: 2, borderRadius: 15, padding:2}}>Ir para as telas principais</Link>
                 <Link href="/login" style={{textAlign: "center", fontSize: 32, borderColor: "black", borderWidth: 2, borderRadius: 15, padding:2}}>Ir para o Login</Link>
+                <Link href="/configs" style={{textAlign: "center", fontSize: 32, borderColor: "black", borderWidth: 2, borderRadius: 15, padding:2}}>Ir para Configuração</Link>
                 <Input label="Email" value={email} onChangeText={(text: SetStateAction<string>) => setEmail(text)} error={erroEmail}/>
                 <Input label="Senha" value={senha} onChangeText={(text: SetStateAction<string>) => setSenha(text)} error={erroSenha} hide/>
                 <TouchableOpacity onPress={testeInput} style={{backgroundColor: "blue", padding: 16, borderRadius: 15}}><Text>Teste</Text></TouchableOpacity>
