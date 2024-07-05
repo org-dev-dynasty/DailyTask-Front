@@ -15,6 +15,7 @@ export const ButtonOut = styled.TouchableOpacity`
     position: absolute;
     top: 10px; 
     right: 10px;
+    z-index: 2;
 `;
 
 export const Subtitle = styled.Text`

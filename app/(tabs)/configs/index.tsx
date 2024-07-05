@@ -91,7 +91,7 @@ export default function Configs() {
                     <ButtonDeleteAccount onPress={() => setDeleteAccountModalVisible(true)}>
                         <ButtonText>Deletar Conta</ButtonText>
                     </ButtonDeleteAccount>
-                    <ModalConfigs type='email' modalVisible={isEmailModalVisible} ></ModalConfigs>
+                    <ModalConfigs type='email' modalVisible={isEmailModalVisible} closeModal={() => setEmailModalVisible(false)}></ModalConfigs>
                     {/* <ModalConfigs type='senha' modalVisible={isPasswordModalVisible}></ModalConfigs>
                     <ModalConfigs type='' modalVisible={isDeleteAccountModalVisible}></ModalConfigs> */}
                 </Container>

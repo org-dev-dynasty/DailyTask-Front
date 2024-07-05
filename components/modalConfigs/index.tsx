@@ -57,6 +57,10 @@ export const ModalConfigs = (props: ModalProps) => {
         }
     }
 
+    function teste() {
+        console.log('teste');
+    }
+
     useEffect(() => {
         if (email !== '') {
             setErroEmail('');
@@ -85,7 +89,7 @@ export const ModalConfigs = (props: ModalProps) => {
                             borderRadius: 15,
                         }}
                     >
-                        <ButtonOut>
+                        <ButtonOut onPress={props.closeModal}>
                             <Image
                                 source={require('../../assets/appImages/button-out.png')}
                             />
