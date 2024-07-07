@@ -125,14 +125,14 @@ export const CircleView = styled.View`
     align-items: center;
 `;
 
-export const MicrophoneView = styled.View`
+export const MicrophoneView = styled(Animated.View)`
     justify-content: flex-end;
     align-items: center;
     height: 40%;
     width: 50%;
 `;
 
-export const TimerView = styled.View`
+export const TimerView = styled(Animated.View)`
     height: 20%;
     justify-content: flex-end;
 `;
@@ -143,7 +143,7 @@ export const RecordingTime = styled.Text`
     font-size: ${theme.FONT_SIZE.XL};
 `;
 
-export const RecordingTimeView = styled.View`
+export const RecordingTimeView = styled(Animated.View)`
     justify-content: flex-start;
     align-items: center;
     height: 40%;
@@ -169,4 +169,33 @@ export const RecordingTextInputText = styled.TextInput.attrs({
     color: ${theme.COLORS.BLACK};
     height: auto;
     max-height: 100px;
+`;
+
+export const ModalView = styled.View`
+    width: 80%;
+    height: 80%;
+    position: absolute;
+    z-index: 3;
+    top: 10%;
+    border: 2px black;
+    border-radius: 15px;
+`;
+
+export const InputModalView = styled.View`
+    top: 10px;
+    width: 90%;
+    justify-content: center;
+    align-self: center;
+    flex-direction: column;
+`;
+
+export const ModalText = styled.Text`
+    color: ${theme.COLORS.WHITE};
+    font-family: ${theme.FONT_FAMILY.REGULAR};
+    font-size: ${theme.FONT_SIZE.MD};
+`;
+
+export const TextModalView = styled.View`
+    width: 90%;
+    align-self: center;
 `;
