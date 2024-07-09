@@ -3,7 +3,7 @@ import { Logo, Titulo, Container, Text, View, TouchableOpacityEnviar, ButtonText
 import { Input } from "@/components/input/input";
 import { SetStateAction, useEffect, useState } from "react";
 import { Image } from "react-native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 
 export default function ForgetPassword() {
     const [email, setEmail] = useState('');
@@ -19,7 +19,7 @@ export default function ForgetPassword() {
         } else if (!validateEmail(email)) {
             setErroEmail('Por favor, insira um e-mail válido.');
         } else {
-            setEmail('');
+            router.replace('/newPassword')
         }
     }
 
