@@ -23,7 +23,15 @@ import {
     TimerView,
     CircleView,
     LockPill,
-    InputModalView, TextModalView, ModalText, ModalView
+    InputModalView,
+    TextModalView,
+    ModalText,
+    ModalView,
+    SendButton,
+    SendButtonText,
+    ConfirmationView,
+    InputCancelButton,
+    InputButtonsView, InputConfirmButton, InputEditButton, TrashView
 } from "@/app/(tabs)/home/styles";
 import { Dimensions } from 'react-native';
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
@@ -34,7 +42,8 @@ import {Input} from "@/components/input/input";
 import theme from "@/themes/theme";
 
 // Icons
-import { Microphone, Keyboard, LockSimpleOpen } from "phosphor-react-native";
+import {Microphone, Keyboard, LockSimpleOpen, TrashSimple, CaretLeft} from "phosphor-react-native";
+import {AnimatedView} from "react-native-reanimated/lib/typescript/reanimated2/component/View";
 
 export default function Home() {
     const [start, setStart] = useState(false);
@@ -43,312 +52,461 @@ export default function Home() {
 
     const fadeLock = useRef(new Animated.Value(0)).current;
     const fadeTexts = useRef(new Animated.Value(1)).current;
-    const fadeRecording = useRef(new Animated.Value(0)).current;
+    const fadeInput = useRef(new Animated.Value(0)).current;
+    const fadeTimer = useRef(new Animated.Value(0)).current;
     const circleSize = useRef(new Animated.Value(100)).current;
     const circleOpacity = useRef(new Animated.Value(0.75)).current;
     const auxCircleSize = useRef(new Animated.Value(100)).current;
     const auxCircleOpacity = useRef(new Animated.Value(0.75)).current;
     const thirdCircleSize = useRef(new Animated.Value(0)).current;
     const thirdCircleOpacity = useRef(new Animated.Value(0)).current;
+    const canRepeat = useRef(true);
 
     const lockPillSize = useRef(new Animated.Value(100)).current;
-    const lockPillY = useRef(new Animated.Value(0)).current;
-    const [lockPillYValue, setLockPillYValue] = useState(0);
 
     const { width, height } = Dimensions.get('window');
 
     const panY = useRef(new Animated.Value(0)).current;
-    const limitY = -(height/2.45 - 100) ; // Defina o ponto até onde o elemento pode subir
+    const circleX = useRef(new Animated.Value(0)).current;
+    const lockX = useRef(new Animated.Value(0)).current;
+    const lockPillLimitY = -(height/2.45 - 100);
+    const lockPillZIndex = useRef(new Animated.Value(0)).current;
     const panMoving = useRef(false);
+    const recordingStarted = useRef(false);
+    const microphoneMove = useRef(true);
+    const microphoneFixed = useRef(false);
+    const microphoneOpacity = useRef(new Animated.Value(1)).current;
+    const sendButtonX = useRef(new Animated.Value(-width * 0.7)).current;
+    const sendButtonY = useRef(new Animated.Value(0)).current;
+    const inputButtonsY = useRef(new Animated.Value(-100)).current;
+    const inputButtonsOpacity = useRef(new Animated.Value(0)).current;
 
-    const [canReapeat, setCanRepeat] = useState(true);
+    const inputY = useRef(new Animated.Value(0)).current;
+    const inputBorderBottomLeftRadius = useRef(new Animated.Value(15)).current;
+    const inputBorderBottomRightRadius = useRef(new Animated.Value(15)).current;
+
+    const iconsOpacity = useRef(new Animated.Value(0)).current;
+    const iconsSeparator = useRef(new Animated.Value(width/2)).current;
+    const moveIconsX = useRef(new Animated.Value(0)).current;
+
+    const [isEditable, setIsEditable] = useState(false);
 
     function startRecording() {
-        if(canReapeat) {
+        if(canRepeat.current && !microphoneFixed.current) {
+            recordingStarted.current = true;
             circleAnimation();
+            setStart(true);
             setTimeout(() => {
-                setStart(true);
                 handleRecordingStart();
             }, 1000);
         }
     }
 
     function circleAnimation() {
-        Animated.parallel([
-            Animated.timing(fadeTexts, {
-                toValue: 0,
-                duration: 1000,
-                useNativeDriver: true,
-            }),
-            Animated.timing(fadeRecording, {
+        Animated.timing(fadeTexts, {
+            toValue: 0,
+            duration: 1000,
+            useNativeDriver: true,
+        }).start()
+        Animated.timing(fadeInput, {
                 toValue: 1,
                 duration: 1000,
                 useNativeDriver: false,
-            }),
-            Animated.sequence([
-                Animated.timing(fadeLock, {
-                    toValue: 1,
+        }).start()
+        Animated.timing(fadeTimer, {
+                toValue: 1,
+                duration: 1000,
+                useNativeDriver: false,
+        }).start()
+        Animated.timing(fadeLock, {
+            toValue: 1,
+            duration: 500,
+            useNativeDriver: false,
+        }).start(() => {
+            if(!panMoving.current && !microphoneFixed.current) {
+                Animated.timing(lockPillSize, {
+                    toValue: height / 2.45,
                     duration: 500,
+                    easing: Easing.inOut(Easing.ease),
                     useNativeDriver: false,
-                }),
-                Animated.sequence([
-                    Animated.timing(lockPillSize, {
-                        toValue: height/2.45,
+                }).start()
+            }
+            Animated.timing(iconsOpacity, {
+                toValue: 1,
+                duration: 500,
+                useNativeDriver: false,
+            }).start(() => {
+                if(canRepeat.current){
+                    Animated.timing(iconsSeparator, {
+                        toValue: width / 8,
                         duration: 500,
-                        easing: Easing.inOut(Easing.ease),
                         useNativeDriver: false,
-                    }),
-                    Animated.parallel([
+                    }).start()
                         Animated.timing(circleSize, {
                             toValue: 250,
                             duration: 1000,
                             useNativeDriver: false,
                             easing: Easing.in(Easing.ease)
-                        }),
-                        Animated.timing(circleOpacity, {
-                            toValue: 0.5,
-                            duration: 1000,
-                            useNativeDriver: false,
-                        }),
-                        Animated.timing(auxCircleSize, {
-                            toValue: 250,
-                            duration: 1000,
-                            useNativeDriver: false,
-                            easing: Easing.in(Easing.ease)
-                        }),
-                        Animated.timing(auxCircleOpacity, {
-                            toValue: 0.5,
-                            duration: 1000,
-                            useNativeDriver: false,
-                        })]),
-                    Animated.loop(
-                        Animated.sequence([
-                            Animated.parallel([
-                                Animated.timing(auxCircleOpacity, {
-                                    toValue: 0.5,
-                                    duration: 0,
-                                    useNativeDriver: false,
-                                }),
-                                Animated.timing(auxCircleOpacity, {
-                                    toValue: 0,
-                                    duration: 1000,
-                                    useNativeDriver: false,
-                                    easing: Easing.out(Easing.ease)
-                                }),
-                                Animated.timing(circleSize, {
-                                    toValue: 250,
-                                    duration: 0,
-                                    useNativeDriver: false,
-                                }),
-                                Animated.timing(circleOpacity, {
-                                    toValue: 0.25,
-                                    duration: 1000,
-                                    useNativeDriver: false,
-                                    easing: Easing.out(Easing.ease)
-                                }),
-                                Animated.timing(auxCircleSize, {
-                                    toValue: 250,
-                                    duration: 0,
-                                    useNativeDriver: false,
-                                }),
-                                Animated.timing(auxCircleSize, {
-                                    toValue: 350,
-                                    duration: 1000,
-                                    useNativeDriver: false,
-                                    easing: Easing.out(Easing.ease)
-                                }),
-                                Animated.timing(thirdCircleOpacity, {
-                                    toValue: 0.75,
-                                    duration: 0,
-                                    useNativeDriver: false,
-                                }),
-                                Animated.timing(thirdCircleSize, {
-                                    toValue: 100,
-                                    duration: 1000,
-                                    useNativeDriver: false,
-                                    easing: Easing.out(Easing.ease)
-                                })]),
-                            Animated.parallel([
-                                Animated.timing(circleSize, {
-                                    toValue: 0,
-                                    duration: 1500,
-                                    useNativeDriver: false,
-                                    easing: Easing.in(Easing.ease)
-                                }),
-                                Animated.timing(circleOpacity, {
-                                    toValue: 0,
-                                    duration: 1500,
-                                    useNativeDriver: false,
-                                    easing: Easing.in(Easing.ease)
-                                }),
-                                Animated.timing(auxCircleSize, {
-                                    toValue: 100,
-                                    duration: 0,
-                                    useNativeDriver: false,
-                                }),
-                                Animated.timing(auxCircleOpacity, {
-                                    toValue: 0.75,
-                                    duration: 0,
-                                    useNativeDriver: false,
-                                }),
-                                Animated.timing(auxCircleSize, {
-                                    toValue: 250,
-                                    duration: 1500,
-                                    useNativeDriver: false,
-                                    easing: Easing.in(Easing.ease)
-                                }),
-                                Animated.timing(auxCircleOpacity, {
-                                    toValue: 0.5,
-                                    duration: 1500,
-                                    useNativeDriver: false,
-                                    easing: Easing.in(Easing.ease)
-                                }),
-                                Animated.timing(thirdCircleSize, {
-                                    toValue: 250,
-                                    duration: 1500,
-                                    useNativeDriver: false,
-                                    easing: Easing.in(Easing.ease)
-                                }),
-                                Animated.timing(thirdCircleOpacity, {
-                                    toValue: 0.5,
-                                    duration: 1500,
-                                    useNativeDriver: false,
-                                    easing: Easing.in(Easing.ease)
-                                })]),
-                            Animated.parallel([
-                                Animated.timing(circleSize, {
-                                    toValue: 100,
-                                    duration: 1500,
-                                    useNativeDriver: false,
-                                    easing: Easing.out(Easing.ease)
-                                }),
-                                Animated.timing(circleOpacity, {
-                                    toValue: 0.75,
-                                    duration: 1500,
-                                    useNativeDriver: false,
-                                    easing: Easing.out(Easing.ease)
-                                }),
-                                Animated.timing(auxCircleSize, {
-                                    toValue: 350,
-                                    duration: 1500,
-                                    useNativeDriver: false,
-                                    easing: Easing.out(Easing.ease)
-                                }),
-                                Animated.timing(auxCircleOpacity, {
-                                    toValue: 0,
-                                    duration: 1500,
-                                    useNativeDriver: false,
-                                    easing: Easing.out(Easing.ease)
-                                }),
-                                Animated.timing(thirdCircleOpacity, {
-                                    toValue: 0.25,
-                                    duration: 1500,
-                                    useNativeDriver: false,
-                                    easing: Easing.out(Easing.ease)
-                                })]),
-                            Animated.parallel([
-                                Animated.timing(circleSize, {
-                                    toValue: 250,
-                                    duration: 1500,
-                                    useNativeDriver: false,
-                                    easing: Easing.in(Easing.ease)
-                                }),
-                                Animated.timing(circleOpacity, {
-                                    toValue: 0.5,
-                                    duration: 1000,
-                                    useNativeDriver: false,
-                                }),
-                                Animated.timing(auxCircleSize, {
-                                    toValue: 100,
-                                    duration: 0,
-                                    useNativeDriver: false,
-                                }),
-                                Animated.timing(auxCircleOpacity, {
-                                    toValue: 0.75,
-                                    duration: 0,
-                                    useNativeDriver: false,
-                                }),
-                                Animated.timing(auxCircleSize, {
-                                    toValue: 250,
-                                    duration: 1500,
-                                    useNativeDriver: false,
-                                    easing: Easing.in(Easing.ease)
-                                }),
-                                Animated.timing(auxCircleOpacity, {
-                                    toValue: 0.5,
-                                    duration: 1500,
-                                    useNativeDriver: false,
-                                    easing: Easing.in(Easing.ease)
-                                }),
-                                Animated.timing(thirdCircleSize, {
-                                    toValue: 0,
-                                    duration: 1500,
-                                    useNativeDriver: false,
-                                    easing: Easing.in(Easing.ease)
-                                })])]))])])
-        ]).start();
+                        }).start( )
+                    Animated.sequence([
+                        Animated.parallel([
+                            Animated.timing(circleOpacity, {
+                                toValue: 0.5,
+                                duration: 1000,
+                                useNativeDriver: false,
+                            }),
+                            Animated.timing(auxCircleSize, {
+                                toValue: 250,
+                                duration: 1000,
+                                useNativeDriver: false,
+                                easing: Easing.in(Easing.ease)
+                            }),
+                            Animated.timing(auxCircleOpacity, {
+                                toValue: 0.5,
+                                duration: 1000,
+                                useNativeDriver: false,
+                            })]),
+                        Animated.loop(
+                            Animated.sequence([
+                                Animated.parallel([
+                                    Animated.timing(auxCircleOpacity, {
+                                        toValue: 0.5,
+                                        duration: 0,
+                                        useNativeDriver: false,
+                                    }),
+                                    Animated.timing(auxCircleOpacity, {
+                                        toValue: 0,
+                                        duration: 1000,
+                                        useNativeDriver: false,
+                                        easing: Easing.out(Easing.ease)
+                                    }),
+                                    Animated.timing(circleSize, {
+                                        toValue: 250,
+                                        duration: 0,
+                                        useNativeDriver: false,
+                                    }),
+                                    Animated.timing(circleOpacity, {
+                                        toValue: 0.25,
+                                        duration: 1000,
+                                        useNativeDriver: false,
+                                        easing: Easing.out(Easing.ease)
+                                    }),
+                                    Animated.timing(auxCircleSize, {
+                                        toValue: 250,
+                                        duration: 0,
+                                        useNativeDriver: false,
+                                    }),
+                                    Animated.timing(auxCircleSize, {
+                                        toValue: 350,
+                                        duration: 1000,
+                                        useNativeDriver: false,
+                                        easing: Easing.out(Easing.ease)
+                                    }),
+                                    Animated.timing(thirdCircleOpacity, {
+                                        toValue: 0.75,
+                                        duration: 0,
+                                        useNativeDriver: false,
+                                    }),
+                                    Animated.timing(thirdCircleSize, {
+                                        toValue: 100,
+                                        duration: 1000,
+                                        useNativeDriver: false,
+                                        easing: Easing.out(Easing.ease)
+                                    })]),
+                                Animated.parallel([
+                                    Animated.timing(circleSize, {
+                                        toValue: 0,
+                                        duration: 1500,
+                                        useNativeDriver: false,
+                                        easing: Easing.in(Easing.ease)
+                                    }),
+                                    Animated.timing(circleOpacity, {
+                                        toValue: 0,
+                                        duration: 1500,
+                                        useNativeDriver: false,
+                                        easing: Easing.in(Easing.ease)
+                                    }),
+                                    Animated.timing(auxCircleSize, {
+                                        toValue: 100,
+                                        duration: 0,
+                                        useNativeDriver: false,
+                                    }),
+                                    Animated.timing(auxCircleOpacity, {
+                                        toValue: 0.75,
+                                        duration: 0,
+                                        useNativeDriver: false,
+                                    }),
+                                    Animated.timing(auxCircleSize, {
+                                        toValue: 250,
+                                        duration: 1500,
+                                        useNativeDriver: false,
+                                        easing: Easing.in(Easing.ease)
+                                    }),
+                                    Animated.timing(auxCircleOpacity, {
+                                        toValue: 0.5,
+                                        duration: 1500,
+                                        useNativeDriver: false,
+                                        easing: Easing.in(Easing.ease)
+                                    }),
+                                    Animated.timing(thirdCircleSize, {
+                                        toValue: 250,
+                                        duration: 1500,
+                                        useNativeDriver: false,
+                                        easing: Easing.in(Easing.ease)
+                                    }),
+                                    Animated.timing(thirdCircleOpacity, {
+                                        toValue: 0.5,
+                                        duration: 1500,
+                                        useNativeDriver: false,
+                                        easing: Easing.in(Easing.ease)
+                                    })]),
+                                Animated.parallel([
+                                    Animated.timing(circleSize, {
+                                        toValue: 100,
+                                        duration: 1500,
+                                        useNativeDriver: false,
+                                        easing: Easing.out(Easing.ease)
+                                    }),
+                                    Animated.timing(circleOpacity, {
+                                        toValue: 0.75,
+                                        duration: 1500,
+                                        useNativeDriver: false,
+                                        easing: Easing.out(Easing.ease)
+                                    }),
+                                    Animated.timing(auxCircleSize, {
+                                        toValue: 350,
+                                        duration: 1500,
+                                        useNativeDriver: false,
+                                        easing: Easing.out(Easing.ease)
+                                    }),
+                                    Animated.timing(auxCircleOpacity, {
+                                        toValue: 0,
+                                        duration: 1500,
+                                        useNativeDriver: false,
+                                        easing: Easing.out(Easing.ease)
+                                    }),
+                                    Animated.timing(thirdCircleOpacity, {
+                                        toValue: 0.25,
+                                        duration: 1500,
+                                        useNativeDriver: false,
+                                        easing: Easing.out(Easing.ease)
+                                    })]),
+                                Animated.parallel([
+                                    Animated.timing(circleSize, {
+                                        toValue: 250,
+                                        duration: 1500,
+                                        useNativeDriver: false,
+                                        easing: Easing.in(Easing.ease)
+                                    }),
+                                    Animated.timing(circleOpacity, {
+                                        toValue: 0.5,
+                                        duration: 1000,
+                                        useNativeDriver: false,
+                                    }),
+                                    Animated.timing(auxCircleSize, {
+                                        toValue: 100,
+                                        duration: 0,
+                                        useNativeDriver: false,
+                                    }),
+                                    Animated.timing(auxCircleOpacity, {
+                                        toValue: 0.75,
+                                        duration: 0,
+                                        useNativeDriver: false,
+                                    }),
+                                    Animated.timing(auxCircleSize, {
+                                        toValue: 250,
+                                        duration: 1500,
+                                        useNativeDriver: false,
+                                        easing: Easing.in(Easing.ease)
+                                    }),
+                                    Animated.timing(auxCircleOpacity, {
+                                        toValue: 0.5,
+                                        duration: 1500,
+                                        useNativeDriver: false,
+                                        easing: Easing.in(Easing.ease)
+                                    }),
+                                    Animated.timing(thirdCircleSize, {
+                                        toValue: 0,
+                                        duration: 1500,
+                                        useNativeDriver: false,
+                                        easing: Easing.in(Easing.ease)
+                                    })])]))
+                    ]).start();
+                }
+            })
+        })
     }
-
-    useEffect(() => {
-        const listenerId = lockPillY.addListener(({ value }) => {
-            setLockPillYValue(value);
-        });
-
-        return () => {
-            lockPillY.removeListener(listenerId);
-        };
-    }, []);
-
 
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: (event, gestureState) => {
-                console.log(panMoving)
-                // Verifica se o gesto é um press (toque longo) ou um arrasto
+                if(!recordingStarted.current) return false;
                 const isLongPress = gestureState.numberActiveTouches === 1 && gestureState.dx === 0 && gestureState.dy === 0;
                 return !isLongPress;
             },
             onMoveShouldSetPanResponder: (event, gestureState) => {
-                return Math.abs(gestureState.dx) > 2 || Math.abs(gestureState.dy) > 2; // Inicia o PanResponder se houver um movimento suficiente
+                return Math.abs(gestureState.dx) > 2 || Math.abs(gestureState.dy) > 2;
             },
             onPanResponderMove: (event, gestureState) => {
                 panMoving.current = true;
-                if (gestureState.dy < limitY) {
-                    panY.setValue(limitY);
+                if(!recordingStarted.current) {
+                    return
+                }
+                if(!canRepeat.current){
+                    panY.setValue(0);
+                    inputY.setValue(0);
+                    lockPillSize.setValue(height/2.45);
+                    microphoneOpacity.setValue(1);
+                    iconsSeparator.setValue(width/8);
+                }
+                if (gestureState.dy < lockPillLimitY) {
+                    panY.setValue(lockPillLimitY);
+                    inputY.setValue(lockPillLimitY);
                     lockPillSize.setValue(100);
+                    microphoneOpacity.setValue(0);
+                    iconsSeparator.setValue(width/2);
                 } else if (gestureState.dy > 0) {
                     panY.setValue(0);
+                    inputY.setValue(0);
                     lockPillSize.setValue(height/2.45);
+                    microphoneOpacity.setValue(1);
                 } else {
                     panY.setValue(gestureState.dy);
+                    inputY.setValue(gestureState.dy);
                     lockPillSize.setValue(height/2.45 + gestureState.dy);
+                    microphoneOpacity.setValue(1 + gestureState.dy * (5/height));
+                    iconsOpacity.setValue(1 + gestureState.dy * (5/height));
+                    iconsSeparator.setValue(width/8 + (-gestureState.dy));
+                    if(gestureState.dy < -(height/5)){
+                        lockPillZIndex.setValue(2);
+                    }
+                    else{
+                        lockPillZIndex.setValue(0);
+                    }
                 }
             },
             onPanResponderRelease: (event, gestureState) => {
-                if (gestureState.dy > limitY) {
+                if(!recordingStarted.current) {
+                    return
+                }
+                microphoneMove.current = true;
+                recordingStarted.current = false;
+                if (gestureState.dy > lockPillLimitY && !microphoneFixed.current) {
                     Animated.spring(
                         panY,
                         { toValue: 0, useNativeDriver: false }
                     ).start();
                     Animated.spring(
-                        lockPillSize,
-                        { toValue: height/2.45, useNativeDriver: false }
-                    ).start(
-                    )
+                        inputY,
+                        { toValue: 0, useNativeDriver: false }
+                    ).start();
+                    handlePressOut();
+                    microphoneFixed.current = false;
                 } else {
-                    panY.setValue(limitY);
+                    microphoneMove.current = false;
+                    microphoneFixed.current = true;
+                    lockPillZIndex.setValue(2);
+                    lockedAnimation();
                 }
                 panMoving.current = false;
-                // handlePressOut();
             }
         })
     ).current;
 
+    function confirmRecording() {
+        Animated.timing(inputBorderBottomLeftRadius, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: false,
+        }).start()
+        Animated.timing(inputBorderBottomRightRadius, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: false,
+        }).start()
+        Animated.timing(lockX, {
+            toValue: width * 0.7,
+            duration: 500,
+            useNativeDriver: false,
+        }).start()
+        Animated.timing(inputY, {
+            toValue: -height/2.7,
+            duration: 500,
+            useNativeDriver: false,
+        }).start()
+        Animated.timing(sendButtonY, {
+            toValue: -120,
+            duration: 500,
+            useNativeDriver: false,
+        }).start()
+        inputButtonsOpacity.setValue(1);
+        Animated.timing(inputButtonsY, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: false,
+        }).start()
+        Animated.timing(moveIconsX, {
+            toValue: -width/2,
+            duration: 500,
+            useNativeDriver: false,
+        }).start()
+        Animated.timing(circleX, {
+            toValue: width * 0.75,
+            duration: 500,
+            useNativeDriver: false,
+        }).start(() => {
+            circleSize.stopAnimation();
+            circleOpacity.stopAnimation();
+            auxCircleSize.stopAnimation();
+            auxCircleOpacity.stopAnimation();
+            thirdCircleSize.stopAnimation();
+            thirdCircleOpacity.stopAnimation();
+            fadeTimer.setValue(0);
+            Animated.timing(circleSize, {
+                toValue: 0,
+                duration: 500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start();
+            Animated.timing(circleOpacity, {
+                toValue: 0,
+                duration: 500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start();
+            Animated.timing(auxCircleSize, {
+                toValue: 0,
+                duration: 500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start();
+            Animated.timing(auxCircleOpacity, {
+                toValue: 0,
+                duration: 500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start();
+            Animated.timing(thirdCircleSize, {
+                toValue: 0,
+                duration: 500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start();
+            Animated.timing(thirdCircleOpacity, {
+                toValue: 0,
+                duration: 500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start()
+            iconsOpacity.setValue(0);
+            fadeLock.setValue(0);
+        })
+    }
 
     function stopCircleAnimation() {
-        setCanRepeat(false);
-
-        // Colocar if para checar o tempo da animação, para adaptar a animação de acordo com o tempo
+        canRepeat.current = false;
+        microphoneFixed.current = false;
+        // Colocar if para checar o tempo da animação, para adaptar a animação conforme o tempo
 
         circleSize.stopAnimation();
         circleOpacity.stopAnimation();
@@ -356,9 +514,19 @@ export default function Home() {
         auxCircleOpacity.stopAnimation();
         thirdCircleSize.stopAnimation();
         thirdCircleOpacity.stopAnimation();
-        lockPillSize.stopAnimation();
         fadeLock.stopAnimation();
         fadeTexts.stopAnimation();
+
+        Animated.timing(iconsOpacity, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: false,
+        }).start();
+        Animated.timing(microphoneOpacity, {
+            toValue: 1,
+            duration: 500,
+            useNativeDriver: false,
+        }).start();
         Animated.timing(circleSize, {
             toValue: 0,
             duration: 500,
@@ -395,7 +563,12 @@ export default function Home() {
             useNativeDriver: false,
             easing: Easing.in(Easing.ease)
         }).start(() => {
-            Animated.timing(fadeRecording, {
+            Animated.timing(fadeInput, {
+                toValue: 0,
+                duration: 1000,
+                useNativeDriver: false,
+            }).start();
+            Animated.timing(fadeTimer, {
                 toValue: 0,
                 duration: 1000,
                 useNativeDriver: false,
@@ -421,8 +594,77 @@ export default function Home() {
             });
         });
         setTimeout(() => {
-            setCanRepeat(true);
+            canRepeat.current = true;
+            microphoneFixed.current = false;
         }, 2000);
+    }
+
+    function cancelAnimation() {
+        Animated.timing(inputY, {
+            toValue: -height * 0.9,
+            duration: 1000,
+            useNativeDriver: false,
+        }).start(() => {
+            setStart(false);
+            inputY.setValue(0);
+            fadeInput.setValue(0);
+            panY.setValue(0);
+            inputButtonsY.setValue(-100);
+            inputButtonsOpacity.setValue(0);
+            inputBorderBottomLeftRadius.setValue(15);
+            inputBorderBottomRightRadius.setValue(15);
+            Animated.timing(fadeTexts, {
+                toValue: 1,
+                duration: 500,
+                useNativeDriver: true,
+            }).start();
+            Animated.timing(microphoneOpacity, {
+                toValue: 1,
+                duration: 500,
+                useNativeDriver: false,
+            }).start(() => {
+                sendButtonX.setValue(-width * 0.7);
+                canRepeat.current = true;
+                microphoneFixed.current = false;
+                lockX.setValue(0);
+                sendButtonY.setValue(0);
+                moveIconsX.setValue(0);
+                circleX.setValue(0);
+            });
+        })
+
+
+
+        // Animated.timing(lockX, {
+        //     toValue: 0,
+        //     duration: 500,
+        //     useNativeDriver: false,
+        // }).start()
+        // Animated.timing(sendButtonY, {
+        //     toValue: 0,
+        //     duration: 500,
+        //     useNativeDriver: false,
+        // }).start()
+        // inputButtonsOpacity.setValue(0);
+        // Animated.timing(moveIconsX, {
+        //     toValue: 0,
+        //     duration: 500,
+        //     useNativeDriver: false,
+        // }).start()
+    }
+
+    function lockedAnimation(){
+        Animated.timing(sendButtonX, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: false,
+        }).start();
+        iconsOpacity.setValue(1);
+        Animated.timing(iconsSeparator, {
+            toValue: width / 8,
+            duration: 500,
+            useNativeDriver: false,
+        }).start();
     }
 
     // Audio Recording
@@ -439,8 +681,18 @@ export default function Home() {
         }
     }
 
+    const handlePressOut = () => {
+        setTimeout(() => {
+            if(!panMoving.current) {
+                if(microphoneMove.current){
+                    stopCircleAnimation()
+                }
+                handleRecordingStop()
+            }
+        },100)
+    };
+
     async function handleRecordingStop(){
-        stopCircleAnimation()
         try {
             if(recording){
                 await recording.stopAndUnloadAsync();
@@ -488,7 +740,6 @@ export default function Home() {
         <>
             <Background>
                 <Container>
-
                     {/* <--Modal--> */}
                     {/*<ModalView>*/}
                     {/*    <LinearGradient*/}
@@ -513,17 +764,18 @@ export default function Home() {
                     {/*        </InputModalView>*/}
                     {/*    </LinearGradient>*/}
                     {/*</ModalView>*/}
-                    {/* <--Screen--> */}
 
+                    {/* <--Screen--> */}
                     <InitialScreen style={{ display: "flex" }}>
                         {/* Lock View */}
-                        <TopViewLock style={{ opacity: fadeLock }}>
+                        <TopViewLock style={{ opacity: fadeLock, transform: [{translateX: lockX}], zIndex: lockPillZIndex}}>
                             <LockPill style={{height: lockPillSize}}>
                                 <LockIcon>
                                     <LockSimpleOpen size={64} color={theme.COLORS.WHITE} />
                                 </LockIcon>
                             </LockPill>
                         </TopViewLock>
+
                         {/* Title View */}
                         <TopViewText>
                             <Animated.View style={{ opacity: fadeTexts }}>
@@ -534,8 +786,8 @@ export default function Home() {
                         <CenterElementsDisplay>
                             {/* Microphone */}
                             <MicrophoneView {...panResponder.panHandlers}
-                                            style={{ transform: [{ translateY: panY }] }}>
-                                <CircleView>
+                                            style={{ transform: [{ translateY: panY }]}}>
+                                <CircleView style={{transform: [{translateX: circleX}]}}>
                                     <CircleAnimation style={{width: circleSize, height: circleSize, opacity: circleOpacity,
                                         backgroundColor: start ? theme.COLORS.MAIN : ''}}/>
                                     <SecondCircleAnimation style={{width: auxCircleSize, height: auxCircleSize, opacity:auxCircleOpacity,
@@ -544,13 +796,23 @@ export default function Home() {
                                         backgroundColor: start ? theme.COLORS.MAIN : ''}}/>
                                 </CircleView>
 
-                                <Pressable
-                                    {...panResponder.panHandlers}
-                                    onPressIn={startRecording}
-                                    onPressOut={handleRecordingStop}>
-                                    <Microphone size={64} color={theme.COLORS.WHITE} />
-                                </Pressable>
+                                <Animated.View style={{opacity: microphoneOpacity, zIndex: 2}}>
+                                    <Pressable
+                                        {...panResponder.panHandlers}
+                                        onPressIn={startRecording}
+                                        onPressOut={handlePressOut}>
+                                        <Microphone size={64} color={theme.COLORS.WHITE} />
+                                    </Pressable>
+                                </Animated.View>
+
+                                <TrashView style={{opacity: iconsOpacity, transform: [{translateX: moveIconsX}]}}>
+                                    <TrashSimple size={48} color={theme.COLORS.RED_300} />
+                                    <Animated.View style={{width: iconsSeparator}} />
+                                    <CaretLeft size={32} color={theme.COLORS.WHITE}/>
+                                </TrashView>
+
                             </MicrophoneView>
+
                             {/* Center Itens */}
                             {/* Initial Center */}
                             <Animated.View style={{ opacity: fadeTexts, height: '20%', display: start ? 'none' : 'flex' }}>
@@ -561,7 +823,7 @@ export default function Home() {
                                 </MiddleContainer>
                             </Animated.View>
                             {/* Timer */}
-                            <TimerView style={{display: start ? 'flex' : 'none', opacity: fadeRecording}}>
+                            <TimerView style={{display: start ? 'flex' : 'none', opacity: fadeTimer, transform: [{ translateY: panY }]}}>
                                 <RecordingTime>0:00</RecordingTime>
                             </TimerView>
                             {/* Keyboard */}
@@ -571,10 +833,35 @@ export default function Home() {
                                 </TouchableOpacity>
                             </KeyboardInitialView>
                             {/* Audio Trancription */}
-                            <RecordingTimeView style={{display: start ? 'flex' : 'none', opacity: fadeRecording}}>
-                                <RecordingTextInput>
-                                    <RecordingTextInputText>Lorem</RecordingTextInputText>
+                            <RecordingTimeView style={{display: start ? 'flex' : 'none', opacity: fadeInput, transform: [{ translateY: inputY}]}}>
+                                <RecordingTextInput style={{borderBottomLeftRadius: inputBorderBottomLeftRadius, borderBottomRightRadius: inputBorderBottomRightRadius}}>
+                                    <RecordingTextInputText editable={isEditable}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</RecordingTextInputText>
                                 </RecordingTextInput>
+                                <InputButtonsView style={{transform: [{ translateY: inputButtonsY}], opacity: inputButtonsOpacity}}>
+                                    <InputCancelButton onPress={cancelAnimation}>
+                                        <SendButtonText>
+                                            Cancelar
+                                        </SendButtonText>
+                                    </InputCancelButton>
+                                    <InputEditButton onPress={() => setIsEditable(true)}>
+                                        <SendButtonText>
+                                            Editar
+                                        </SendButtonText>
+                                    </InputEditButton>
+                                    <InputConfirmButton>
+                                        <SendButtonText>
+                                            Confirmar
+                                        </SendButtonText>
+                                    </InputConfirmButton>
+                                </InputButtonsView>
+
+                                <Animated.View style = {{alignItems: "center" ,width: "100%",  transform: [{ translateX: sendButtonX}, {translateY: sendButtonY}]}}>
+                                    <SendButton onPress={confirmRecording}>
+                                        <SendButtonText>
+                                            Enviar
+                                        </SendButtonText>
+                                    </SendButton>
+                                </Animated.View>
                             </RecordingTimeView>
                         </CenterElementsDisplay>
                         {/* -------------- */}

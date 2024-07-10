@@ -34,9 +34,6 @@ export const InitialScreen = styled(Animated.View)`
     align-items: center;
     width: 100%;
     z-index: 1;
-
-    border: 2px;
-    border-color: ${theme.COLORS.MAIN};
 `
 
 export const CenterElementsDisplay = styled(Animated.View)`
@@ -48,9 +45,6 @@ export const CenterElementsDisplay = styled(Animated.View)`
     z-index: 1;
     position: absolute;
     top: 25%;
-
-    border: 2px;
-    border-color: ${theme.COLORS.MAIN};
 `;
 
 export const KeyboardInitialView = styled(Animated.View)`
@@ -70,9 +64,6 @@ export const MiddleContainer = styled.View`
     justify-content: center;
     align-items: center;
     margin: 20px 0;
-
-    border: 2px;
-    border-color: ${theme.COLORS.MAIN};
 `;
 
 export const TextMiddle = styled.Text`
@@ -80,8 +71,9 @@ export const TextMiddle = styled.Text`
     font-family: ${theme.FONT_FAMILY.REGULAR};
     font-size: ${theme.FONT_SIZE.MD};
     margin: 0 10px;
-    padding-bottom: 2px;
+    line-height: 22px;
 `;
+
 
 export const TopViewLock = styled(Animated.View)`
     padding: 0;
@@ -119,17 +111,18 @@ export const SecondCircleAnimation = styled(Animated.View)`
     position: absolute;
 `;
 
-export const CircleView = styled.View`
+export const CircleView = styled(Animated.View)`
     top: 25%;
     justify-content: center;
     align-items: center;
+    z-index: -1;
 `;
 
 export const MicrophoneView = styled(Animated.View)`
     justify-content: flex-end;
     align-items: center;
     height: 40%;
-    width: 50%;
+    width: 100%;
 `;
 
 export const TimerView = styled(Animated.View)`
@@ -150,12 +143,13 @@ export const RecordingTimeView = styled(Animated.View)`
     width: 100%;
 `;
 
-export const RecordingTextInput = styled.View`
+export const RecordingTextInput = styled(Animated.View)`
     width: 80%;
     background-color: ${theme.COLORS.WHITE};
-    border-radius: 15px;
+    border-radius: 15px 15px 0 0;
     padding: 10px;
-    margin: 20px 0;
+    margin-top: 10px;
+    z-index: 1;
 `;
 
 export const RecordingTextInputText = styled.TextInput.attrs({
@@ -198,4 +192,74 @@ export const ModalText = styled.Text`
 export const TextModalView = styled.View`
     width: 90%;
     align-self: center;
+`;
+
+
+export const SendButton = styled.TouchableOpacity`
+    background-color: ${theme.COLORS.MAIN};
+    border-radius: 10px;
+    padding: 6px 0;
+    width: 40%;
+    align-items: center;
+`;
+
+export const SendButtonText = styled.Text`
+  color: ${theme.COLORS.WHITE};
+  font-size: ${theme.FONT_SIZE.MD};
+  font-family: ${theme.FONT_FAMILY.REGULAR};
+`;
+
+export const ConfirmationView = styled.View`
+    height: 20%;
+    justify-content: flex-end;
+`;
+
+export const ConfirmationText = styled.Text`
+    color: ${theme.COLORS.WHITE};
+    font-family: ${theme.FONT_FAMILY.REGULAR};
+    font-size: ${theme.FONT_SIZE.MD};
+    margin: 20px 0;
+`;
+
+export const InputButtonsView = styled(Animated.View)`
+    flex-direction: row;
+    width: 80%;
+`;
+
+export const InputCancelButton = styled.TouchableOpacity`
+    background-color: ${theme.COLORS.MAIN};
+    border-radius: 0 0 0 10px;
+    padding: 6px 0;
+    align-items: center;
+    flex: 1;
+    border-right-width: 1px;
+`;
+
+export const InputEditButton = styled.TouchableOpacity`
+    background-color: ${theme.COLORS.MAIN};
+    padding: 6px 0;
+    align-items: center;
+    flex: 1;
+    border-right-width: 1px;
+    border-left-width: 1px;
+`;
+
+export const InputConfirmButton = styled.TouchableOpacity`
+    background-color: ${theme.COLORS.MAIN};
+    border-radius: 0 0 10px 0;
+    padding: 6px 0;
+    align-items: center;
+    flex: 1;
+    border-left-width: 1px;
+`;
+
+export const TrashView = styled(Animated.View)`
+    position: absolute;
+    flex-direction: row;
+    left: 12%;
+    justify-content: center;
+    align-items: center;
+    height: 40%;
+    width: 50px;
+    z-index: -1;
 `;
