@@ -22,7 +22,7 @@ export const ModalConfigs = (props: ModalProps) => {
 
     const handleButtonPressDelete = () => {
         props.closeModal;
-        router.replace('/Login')
+        router.replace('/login')
     }
 
     const handleButtonPressEmail = () => {
