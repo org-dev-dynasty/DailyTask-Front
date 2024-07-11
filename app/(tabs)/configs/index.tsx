@@ -20,42 +20,8 @@ export default function Configs() {
     const [senhaNova, setsenhaNova] = useState('');
     const [erroSenhaNova, setErroSenhaNova] = useState('');
 
-    const validateEmail = (email: string) => {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-    };
-
-    const handleButtonPressEmail = () => {
-        if (!validateEmail(email)) {
-            setErroEmail('Por favor, insira um e-mail válido.');
-        } else {
-            setEmail('');
-            Keyboard.dismiss();
-            setEmailModalVisible(false);
-        }
-    }
-
-    
-
-    const handleButtonPressPassword = () => {
-        if (senhaAtual === senhaNova) {
-            setErroSenhaNova('Por favor, insira uma senha diferente.')
-        } else if (senhaNova.length < 8) {
-            setErroSenhaNova('A senha deve ter no mínimo 8 caracteres.');
-        } else if (!/[A-Z]/.test(senhaNova)) {
-            setErroSenhaNova('A senha deve ter pelo menos uma letra maiúscula.');
-        } else if (!/[a-z]/.test(senhaNova)) {
-            setErroSenhaNova('A senha deve ter pelo menos uma letra minúscula.');
-        } else if (!/\d/.test(senhaNova)) {
-            setErroSenhaNova('A senha deve ter pelo menos um número.');
-        } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(senhaNova)) {
-            setErroSenhaNova('A senha deve ter pelo menos um caractere especial.');
-        } else {
-            setsenhaAtual('');
-            setsenhaNova('');
-            Keyboard.dismiss();
-            setPasswordModalVisible(false);
-        }
+    const handleEmailChange = (newEmail: string) => {
+        setEmail(newEmail);
     }
 
     useEffect(() => {
@@ -81,7 +47,7 @@ export default function Configs() {
                         source={require('../../../assets/appImages/user.png')}
                     />
                     <NameUser>José da Silva Pereira</NameUser>
-                    <EmailUser>silvajose@gmail.com</EmailUser>
+                    <EmailUser>{email}</EmailUser>
                     <ButtonChangeEmail onPress={() => setEmailModalVisible(true)}>
                         <ButtonText>Alterar E-mail</ButtonText>
                     </ButtonChangeEmail>
@@ -91,12 +57,12 @@ export default function Configs() {
                     <ButtonDeleteAccount onPress={() => setDeleteAccountModalVisible(true)}>
                         <ButtonText>Deletar Conta</ButtonText>
                     </ButtonDeleteAccount>
-                    <ModalConfigs type='email' modalVisible={isEmailModalVisible} closeModal={() => setEmailModalVisible(false)}></ModalConfigs>
-                    {/* <ModalConfigs type='senha' modalVisible={isPasswordModalVisible}></ModalConfigs>
-                    <ModalConfigs type='' modalVisible={isDeleteAccountModalVisible}></ModalConfigs> */}
+                    <ModalConfigs type='email' modalVisible={isEmailModalVisible} closeModal={() => setEmailModalVisible(false)} onEmailChange={handleEmailChange}></ModalConfigs>
+                    <ModalConfigs type='senha' modalVisible={isPasswordModalVisible} closeModal={() => setPasswordModalVisible(false)} onEmailChange={handleEmailChange}></ModalConfigs>
+                    <ModalConfigs type='' modalVisible={isDeleteAccountModalVisible} closeModal={() => setDeleteAccountModalVisible(false)} onEmailChange={handleEmailChange}></ModalConfigs>
                 </Container>
             </Background>
-        </ThemeProvider>
+        </ThemeProvider>    
     );
 }
 
@@ -104,7 +70,5 @@ export default function Configs() {
 
 
 /* 
-   2- arrumar o ButtonOut do modal do email
-   3- quando o usuario alterar o email, o EmailUser mude tbm
-   4- arrumar o botão deletar do modal de deletar conta, mostrando uma mensagem de conta deletada e levar para tela de login
+   4- arrumar o botão deletar do modal de deletar conta, levar para tela de login
    5- fazer o display de dark mode e light mode*/

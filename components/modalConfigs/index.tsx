@@ -5,15 +5,9 @@ import { Title, ButtonOut, Subtitle, ButtonModal, ButtonTextModal, ModalContaine
 import { Background } from "../background";
 import { Input } from "../input/input";
 import { LinearGradient } from "expo-linear-gradient";
-import { Link } from "expo-router";
-
-
-
+import { Link, router } from "expo-router";
 
 export const ModalConfigs = (props: ModalProps) => {
-    const [isEmailModalVisible, setEmailModalVisible] = useState(false);
-    const [isPasswordModalVisible, setPasswordModalVisible] = useState(false);
-    const [isDeleteAccountModalVisible, setDeleteAccountModalVisible] = useState(false);
     const [email, setEmail] = useState('');
     const [erroEmail, setErroEmail] = useState('');
     const [senhaAtual, setsenhaAtual] = useState('');
@@ -26,13 +20,19 @@ export const ModalConfigs = (props: ModalProps) => {
         return re.test(email);
     };
 
+    const handleButtonPressDelete = () => {
+        props.closeModal;
+        router.replace('/Login')
+    }
+
     const handleButtonPressEmail = () => {
         if (!validateEmail(email)) {
             setErroEmail('Por favor, insira um e-mail válido.');
         } else {
+            props.onEmailChange(email);
             setEmail('');
             Keyboard.dismiss();
-            setEmailModalVisible(false);
+            props.closeModal(); 
         }
     }
 
@@ -53,12 +53,8 @@ export const ModalConfigs = (props: ModalProps) => {
             setsenhaAtual('');
             setsenhaNova('');
             Keyboard.dismiss();
-            setPasswordModalVisible(false);
+            props.closeModal(); 
         }
-    }
-
-    function teste() {
-        console.log('teste');
     }
 
     useEffect(() => {
@@ -127,18 +123,18 @@ export const ModalConfigs = (props: ModalProps) => {
                             :
                             props.type == 'senha' ?
                             <>
-                                <Input label="Digite a senha atual..." value={senhaAtual} onChangeText={(text: SetStateAction<string>) => setsenhaAtual(text)} error={erroSenhaAtual} />
-                                <Input label="Digite a nova senha..." value={senhaNova} onChangeText={(text: SetStateAction<string>) => setsenhaNova(text)} error={erroSenhaNova} />
+                                <View style={{ width: '100%', paddingLeft: '8%', paddingRight: '8%' }}>
+                                    <Input label="Digite a senha atual..." value={senhaAtual} onChangeText={(text: SetStateAction<string>) => setsenhaAtual(text)} error={erroSenhaAtual} />
+                                    <Input label="Digite a nova senha..." value={senhaNova} onChangeText={(text: SetStateAction<string>) => setsenhaNova(text)} error={erroSenhaNova} />
+                                </View>
                                 <ButtonModal onPress={handleButtonPressPassword}>
                                     <ButtonTextModal>Confirmar</ButtonTextModal>
                                 </ButtonModal>
                             </>
                             :
                             <>
-                                <ButtonDelete>
-                                    <Link href='/login'>
-                                        <ButtonTextModal>Deletar</ButtonTextModal>
-                                    </Link>
+                                <ButtonDelete onPress={handleButtonPressDelete}>
+                                    <ButtonTextModal>Deletar</ButtonTextModal>
                                 </ButtonDelete>
                             </>
                             }
