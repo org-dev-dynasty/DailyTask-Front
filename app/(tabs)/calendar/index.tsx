@@ -68,7 +68,7 @@ export default function CalendarTasks() {
     <Background>
       <CalendarContainer>
         <CalendarComponent
-          style={{ width: width/100*90 }}
+          style={{ width: width/100*90, }}
           theme={{
             calendarBackground: '#310842',
             textSectionTitleColor: theme.COLORS.WHITE,
@@ -126,6 +126,7 @@ export default function CalendarTasks() {
         <Bar/>
       </CalendarContainer>
       <TasksContainer>
+        {/* Map the tasks */}
         <View>
           <TaskLabel>
             <TextLabel>Hoje - Manhã</TextLabel>
