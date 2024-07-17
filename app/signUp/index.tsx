@@ -1,10 +1,13 @@
-import React, { useState, SetStateAction, useEffect } from 'react';
+import React, { useState, SetStateAction, useEffect, useContext } from 'react';
 import { Background } from "@/components/background";
 import { Container, Titulo, TouchableOpacityConta, TextFooter, Logo, View, ButtonText, ContainerLogin, Details, Footer} from "./styles";
 import { Image } from "react-native"; 
 import { Input } from "@/components/input/input";
 import { Link } from 'expo-router';
 import theme from '@/themes/theme';
+import { UserContext } from '../../context/user_context';
+import { User } from '@/@clean/shared/domain/entities/user';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function SignUp() {
@@ -16,14 +19,16 @@ export default function SignUp() {
     const [erroEmail, setErroEmail] = useState('');
     const [erroNome, setErroNome] = useState('');
     const [erroConfirmarSenha, setErroConfirmarSenha] = useState('');
-
+    const [user, setUser] = useState({} as User);
+    const { create } = useContext(UserContext);
 
     const validateEmail = (email: string) => {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
     };
 
-    const handleButtonPress = () => {
+
+    async function handleButtonPress() {
         if (nome == "") {
             setErroNome('Preencha o campo de nome.')
         } else if (!validateEmail(email)) {
@@ -46,6 +51,14 @@ export default function SignUp() {
             setSenha('');
             setConfirmarSenha('');
         }
+        // const user = { nome, email, senha }
+        // // const result = await create(user);
+        // if(result) { 
+        //     await AsyncStorage.setItem('email', email);
+        //     console.log('Usuário criado com sucesso')
+        // } else {
+        //     console.log('Erro ao criar usuário')
+        // }
     };
 
     useEffect(() => {
