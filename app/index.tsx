@@ -1,48 +1,55 @@
 import { Background } from "@/components/background";
-import { Input } from "@/components/input/input";
-import { Link } from "expo-router";
-import { SetStateAction, useEffect, useState } from "react";
-import { TouchableOpacity, View, Text } from "react-native";
+import { useEffect } from "react";
+import { useRouter } from 'expo-router';
+import { Animated, Image, Text } from 'react-native';
+import { View } from "./forgetPassword/styles";
+import theme from "@/themes/theme";
 
 export default function Index() {
-    const [senha, setSenha] = useState('');
-    const [email, setEmail] = useState('');
-    const [erroSenha, setErroSenha] = useState('');
-    const [erroEmail, setErroEmail] = useState('');
-
-    function testeInput() {
-        if (email === '') {
-            console.log('Nome vazio');
-            setErroEmail('Email vazio');
-            return;
-        }
-        if (senha === '') {
-            console.log('Senha vazia');
-            setErroSenha('Senha vazia');
-            return;
-        }
-    }
+    const router = useRouter();
+    const logo = require('../assets/appImages/logo-daily-branca.png');
+    const dev = require('../assets/appImages/logo-dev-dynasty.png');
+    
+    const spinValue = new Animated.Value(0);
+    const rotate = spinValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '360deg']
+    });
 
     useEffect(() => {
-        if (email !== '') {
-            setErroEmail('');
-        }
-        if (senha !== '') {
-            setErroSenha('');
-        }
-    }, [email, senha]);
+        Animated.loop(
+            Animated.timing(spinValue, {
+                toValue: 1,
+                duration: 3000,
+                useNativeDriver: true
+            })
+        ).start();
+    }, []);
+
+    // useEffect(() => {
+    //     // Simule uma carga de dados ou verificação de autenticação
+    //     setTimeout(() => {
+    //       // Redirecione para a tela principal após a conclusão do carregamento
+    //       router.push('/home'); // Altere '/home' para a sua rota principal
+    //     }, 2000); // Exemplo de 2 segundos de espera
+    //   }, []);
 
     return (
-        <>
         <Background>
-            <View style={{flex: 1, width: '100%', height: '100%', justifyContent: "center", padding:16, gap:16}}>
-                <Link href="/home" style={{textAlign: "center", fontSize: 32, borderColor: "black", borderWidth: 2, borderRadius: 15, padding:2}}>Ir para as telas principais</Link>
-                <Link href="/login" style={{textAlign: "center", fontSize: 32, borderColor: "black", borderWidth: 2, borderRadius: 15, padding:2}}>Ir para o Login</Link>
-                <Input label="Email" value={email} onChangeText={(text: SetStateAction<string>) => setEmail(text)} error={erroEmail}/>
-                <Input label="Senha" value={senha} onChangeText={(text: SetStateAction<string>) => setSenha(text)} error={erroSenha} hide/>
-                <TouchableOpacity onPress={testeInput} style={{backgroundColor: "blue", padding: 16, borderRadius: 15}}><Text>Teste</Text></TouchableOpacity>
+            <View style={{height: '50%', flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
+                <Image source={logo}  />
+            </View>
+            <View style={{height: '35%', flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
+                <View style={{width: 100, height: 100, borderRadius: 360, borderWidth: 8, borderColor: '#FFA183'}}>
+                    <Animated.View style={{transform: [{rotate}], height: 100, width: 100}}>     
+                        <View style={{width: 10, height: 10, borderRadius: 360, backgroundColor: theme.COLORS.MAIN}}></View>
+                    </Animated.View>    
+                </View>
+            </View>
+            <View style={{height: '15%', flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
+                <Text style={{fontFamily: theme.FONT_FAMILY.REGULAR, color: theme.COLORS.WHITE, fontSize: 16}}>Desenvolvido por DevDynasty</Text>
+                <Image source={dev} />
             </View>
         </Background>
-        </>
     );
 }

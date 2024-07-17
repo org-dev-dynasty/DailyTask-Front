@@ -36,7 +36,7 @@ export default function RootLayout() {
     <Stack
       initialRouteName='login'
     >
-      <Stack.Screen name='index' />
+      <Stack.Screen name='index' options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       {/* Aqui para baixo chama-se as rotas */}
       <Stack.Screen name='login/index' options={{ headerShown: false }} />
