@@ -1,11 +1,11 @@
 import { CenteredView, ForgotPasswordText, InputView, LoginButton, LoginButtonText, LogoImage, SeparatorContainer, SeparatorLine, SeparatorText, Title, SocialIcons, SignUpLink, SignUpLinkText, DevDynastyText } from './styles';
 import { Background } from '@/components/background';
-// import Icon from 'react-native-vector-icons/FontAwesome';
-import { Link } from 'expo-router';
-import { Image, Text, View } from 'react-native';
-import { useEffect, useState } from 'react';
-import { TextInput } from 'react-native-paper';
+import { Link, router } from 'expo-router';
+import { Image, Text } from 'react-native';
+import { useContext, useEffect, useState } from 'react';
 import { Input } from '@/components/input/input';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { UserContext } from '../../context/user_context';
 
 const Logo = require('../../assets/appImages/logo-daily-branca.png');
 const LogoDevDynasty = require('../../assets/appImages/logo-dev-dynasty.png');
@@ -17,26 +17,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [erroPassword, setErroPassword] = useState('');
   const [erroEmail, setErroEmail] = useState('');
-
-  function handleLogin() {
-    if (email === '' && password === '') {
-      console.log('Nome vazio');
-      console.log('Senha vazia');
-      setErroEmail('Preencha todos os campos');
-      setErroPassword('Preencha todos os campos');
-      return;
-    }
-    if (email === '') {
-      console.log('Nome vazio');
-      setErroEmail('Preencha o campo email');
-      return;
-    }
-    if (password === '') {
-      console.log('Senha vazia');
-      setErroPassword('Preencha o campo senha');
-      return;
-    }
-  }
+  const { login } = useContext(UserContext);
 
   useEffect(() => {
     if (email !== '') {
@@ -47,6 +28,41 @@ export default function Login() {
     }
   }, [email, password]);
 
+  useEffect(() => {
+    async function loginVerify() {
+      const response = await AsyncStorage.getItem('token');
+      if (response) {
+        // console.log('Login efetuado com sucesso');
+        router.replace('/home');
+      }
+    }
+    loginVerify();
+  }, [])
+
+  async function handleLogin() {
+    const result = await login(email, password);
+    if (result) {
+      console.log('Login efetuado com sucesso');
+    }
+    if (email === '' && password === '') {
+      console.log('Email vazio');
+      console.log('Senha vazia');
+      setErroEmail('Preencha todos os campos');
+      setErroPassword('Preencha todos os campos');
+      return;
+    }
+    if (email === '') {
+      console.log('Email vazio');
+      setErroEmail('Preencha o campo email');
+      return;
+    }
+    if (password === '') {
+      console.log('Senha vazia');
+      setErroPassword('Preencha o campo senha');
+      return;
+    }
+  }
+
   return (
     <Background>
       <CenteredView>
@@ -54,11 +70,11 @@ export default function Login() {
         {/* <Title>Login</Title> */}
         <InputView>
           <Input label='Email' value={email} onChangeText={setEmail} error={erroEmail} />
-          <Input label='Senha' value={password} onChangeText={setPassword} error={erroPassword} hide/>
+          <Input label='Senha' value={password} onChangeText={setPassword} error={erroPassword} hide />
         </InputView>
-          <Link href={"/forgetPassword"} style={{ marginTop: 10, alignSelf: 'flex-end', paddingRight: 50 }}>
-            <ForgotPasswordText>Esqueceu sua senha?</ForgotPasswordText>
-          </Link>
+        <Link href={"/forgetPassword"} style={{ marginTop: 10, alignSelf: 'flex-end', paddingRight: 50 }}>
+          <ForgotPasswordText>Esqueceu sua senha?</ForgotPasswordText>
+        </Link>
         <LoginButton onPress={handleLogin}>
           <LoginButtonText>Entrar</LoginButtonText>
         </LoginButton>
