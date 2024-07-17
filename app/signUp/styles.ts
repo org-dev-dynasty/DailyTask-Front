@@ -86,3 +86,56 @@ export const Footer = styled.View`
     align-items: center;
     margin-bottom: 40px;
 `;
+
+export const CheckBoxContainer = styled.View`
+    flex-direction: row;
+    align-items: center;
+`;
+
+export const CheckBoxText = styled.Text`
+    font-family: ${theme.FONT_FAMILY.LIGHT};
+    font-size: ${theme.FONT_SIZE.XS};
+    color: ${theme.COLORS.WHITE};
+`;
+
+export const CheckBoxTextTermsTouchable = styled.TouchableOpacity`
+    flex-direction: row;
+    align-items: flex-end;
+`;
+
+export const CheckBoxTextTerms = styled.Text`
+    font-family: ${theme.FONT_FAMILY.LIGHT};
+    font-size: ${theme.FONT_SIZE.XS};
+    color: ${theme.COLORS.MAIN};
+    text-decoration-line: underline;
+`;
+
+export const ModalContainer = styled.View`
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 20;
+    width: 100%;
+    height: 100%;
+`;
+
+export const ModalView = styled.View`
+    margin: 20px;
+    width: 80%;
+    height: 70%;
+    background-color: ${theme.COLORS.NEGATIVE_ALT};
+    border-width: 2px;
+    border-color: ${theme.COLORS.WHITE};
+    border-radius: 20px;
+    padding: 35px;
+    align-items: center;
+`;
+
+export const ModalText = styled.Text`
+    font-family: ${theme.FONT_FAMILY.MEDIUM};
+    font-size: ${theme.FONT_SIZE.MD};
+    color: ${theme.COLORS.WHITE};
+    text-align: center;
+`;

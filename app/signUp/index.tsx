@@ -1,13 +1,15 @@
 import React, { useState, SetStateAction, useEffect, useContext } from 'react';
 import { Background } from "@/components/background";
-import { Container, Titulo, TouchableOpacityConta, TextFooter, Logo, View, ButtonText, ContainerLogin, Details, Footer} from "./styles";
-import { Image } from "react-native"; 
+import { Container, Titulo, TouchableOpacityConta, TextFooter, Logo, View, ButtonText, ContainerLogin, Details, Footer, CheckBoxContainer, CheckBoxText, CheckBoxTextTerms, ModalContainer, ModalView, ModalText, CheckBoxTextTermsTouchable} from "./styles";
+import { Image, ScrollView, TouchableOpacity } from "react-native"; 
 import { Input } from "@/components/input/input";
 import { Link } from 'expo-router';
-import theme from '@/themes/theme';
+import { X } from 'phosphor-react-native';
+import { Checkbox } from 'react-native-paper';
 import { UserContext } from '../../context/user_context';
 import { User } from '@/@clean/shared/domain/entities/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import theme from '@/themes/theme';
 
 
 export default function SignUp() {
@@ -19,6 +21,10 @@ export default function SignUp() {
     const [errorEmail, setErrorEmail] = useState('');
     const [errorName, setErrorName] = useState('');
     const [errorConfPassword, setErrorConfPassword] = useState('');
+    const [acceptedTermsModalOpen, setAcceptedTermsModalOpen] = useState(false);
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
+    const [acceptedNotificationsEmail, setAcceptedNotificationsEmail] = useState(false);
+
     const [user, setUser] = useState({} as User);
     const { create } = useContext(UserContext);
 
@@ -26,7 +32,6 @@ export default function SignUp() {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
     };
-
 
     async function handleButtonPress() {
         if (name == "") {
@@ -45,20 +50,20 @@ export default function SignUp() {
             setErrorPassword('A senha deve ter pelo menos um caractere especial.');
         } else if (password !== confPassword) {
             setErrorConfPassword('As senha não coincidem. Por favor, verifique.');
+        } else if (!acceptedTerms) {
+            alert('Aceite os termos de uso')
+        } else if (!acceptedNotificationsEmail) {
+            alert('Aceite as notificações por email')
         } else {
-            setName('');
-            setEmail('');
-            setPassword('');
-            setConfPassword('');
+            const user = new User(null, name, email, password, null, acceptedTerms, acceptedNotificationsEmail);
+            const result = await create(user);
+            if(result) { 
+                await AsyncStorage.setItem('email', email);
+                console.log('Usuário criado com sucesso')
+            } else {
+                console.log('Erro ao criar usuário')
+            }
         }
-        // const user = { name, email, password }
-        // // const result = await create(user);
-        // if(result) { 
-        //     await AsyncStorage.setItem('email', email);
-        //     console.log('Usuário criado com sucesso')
-        // } else {
-        //     console.log('Erro ao criar usuário')
-        // }
     };
 
     useEffect(() => {
@@ -78,6 +83,29 @@ export default function SignUp() {
 
     return (
         <Background>
+            <ModalContainer style={{display: acceptedTermsModalOpen ? 'flex' : 'none'}}>
+                <ModalView>
+                    <TouchableOpacity onPress={() => setAcceptedTermsModalOpen(false)} style={{position: 'absolute', right: 12, top: 12}}>
+                        <X color={theme.COLORS.NEGATIVE}/>
+                    </TouchableOpacity>
+                    <ScrollView>
+                        <ModalText>
+                            Lorem ipsum dolor, sit amet consectetur adipisicing 
+                            elit. Explicabo, repudiandae quae. Inventore, deleniti, natus 
+                            illo fugiat quasi magni fugit, nam ullam rerum sunt minus adipisci 
+                            laudantium? Minima enim odio inventore. Lorem ipsum dolor sit amet 
+                            consectetur adipisicing elit. Ullam nam incidunt est asperiores sequi, 
+                            voluptas sit illo, aliquam repellendus corrupti numquam! Error quas enim rerum ut, 
+                            earum iure facere consequatur. Lorem ipsum dolor sit amet consectetur, adipisicing 
+                            elit. Fugiat ratione, harum qui quis recusandae totam voluptas blanditiis neque sint 
+                            porro! Molestiae sequi aspernatur officiis ipsam? Ipsam ea consequatur repellat molestias! 
+                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fugiat, hic! Atque unde, 
+                            nostrum voluptatibus tempora eius eos perferendis temporibus ex quis. Quidem vel neque 
+                            recusandae suscipit. Voluptas nulla nam magnam.
+                        </ModalText>
+                    </ScrollView>
+                </ModalView>
+            </ModalContainer>
             <Logo
                 source={require('../../assets/appImages/logo-daily-branca.png')}
             />
@@ -94,6 +122,26 @@ export default function SignUp() {
                 </View>
                 <View>
                     <Input label="Confirmar senha" value={confPassword} onChangeText={(text: SetStateAction<string>) => setConfPassword(text)} error={errorConfPassword} hide/>
+                </View>
+                <View style={{marginBottom: 12}}>
+                    <CheckBoxContainer>
+                        <Checkbox
+                          status={acceptedTerms ? 'checked' : 'unchecked'}
+                          onPress={() => {
+                            setAcceptedTerms(!acceptedTerms);
+                          }}
+                        />
+                        <CheckBoxText>Aceito os <CheckBoxTextTerms onPress={() => setAcceptedTermsModalOpen(true)}>termos de uso</CheckBoxTextTerms></CheckBoxText>
+                    </CheckBoxContainer>
+                    <CheckBoxContainer>
+                        <Checkbox
+                          status={acceptedNotificationsEmail ? 'checked' : 'unchecked'}
+                          onPress={() => {
+                            setAcceptedNotificationsEmail(!acceptedNotificationsEmail);
+                          }}
+                        />
+                        <CheckBoxText>Aceito receber notificações via email</CheckBoxText>
+                    </CheckBoxContainer>
                 </View>
                 <TouchableOpacityConta onPress={handleButtonPress}>
                     <ButtonText>Criar Conta</ButtonText>
