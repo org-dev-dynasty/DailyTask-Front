@@ -47,6 +47,10 @@ export default function Login() {
     }
   }, [email, password]);
 
+  useEffect(() => {
+    alert(process.env.STAGE);
+  }, []);
+
   return (
     <Background>
       <CenteredView>
