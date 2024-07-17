@@ -7,10 +7,8 @@ export const Container = styled.View`
     align-items: center;
 `;
 
-export const UserImage = styled.Image`
+export const UserImage = styled.View`
     margin-top: 128px;
-    width: 64px;
-    height: 64px;
 `;
 
 export const NameUser = styled.Text`
@@ -28,7 +26,7 @@ export const EmailUser = styled.Text`
 
 export const ButtonChangeEmail = styled.TouchableOpacity`
     background-color: ${theme.COLORS.MAIN};
-    margin-top: 90px;
+    margin-top: 35px;
     width: 162px;
     height: 35px;
     border-radius: 10px;
@@ -135,4 +133,12 @@ export const Logout = styled(Link)`
     top: 55px;
     right: 20px;
     z-index: 1;
+`;
+
+export const ViewSwitch = styled.View`
+    margin-top: 27px;
+    
+    transform: scaleX(1.3) scaleY(1.3);
+    flex-direction: row;
+    align-items: center;
 `;

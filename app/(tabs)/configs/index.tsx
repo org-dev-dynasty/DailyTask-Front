@@ -1,13 +1,13 @@
 import React, { useState, SetStateAction, useEffect } from 'react';
-import { Modal, Image, View, Keyboard } from 'react-native';
 import { Background } from "@/components/background";
-import { UserImage, Container, NameUser, EmailUser, ButtonChangeEmail, ButtonText, ButtonChangePassword, ButtonDeleteAccount, ModalContainer, ModalContent, TitleModal, Subtitle, ButtonModal, ButtonTextModal, ButtonOut, ButtonModalDelete, ViewButtons, Logout } from "./styles";
+import { UserImage, Container, NameUser, EmailUser, ButtonChangeEmail, ButtonText, ButtonChangePassword, ButtonDeleteAccount, Logout, ViewSwitch } from "./styles";
 import theme from "@/themes/theme";
 import { ThemeProvider } from 'styled-components/native';
-import { Input } from '@/components/input/input';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ModalConfigs } from '@/components/modalConfigs';
-
+import { SignOut, User, Moon, Sun} from 'phosphor-react-native';
+import ToggleSwitch from 'toggle-switch-react-native';
+import CustomToggleSwitch from '@/components/switch';
 
 export default function Configs() {
     const [isEmailModalVisible, setEmailModalVisible] = useState(false);
@@ -19,11 +19,13 @@ export default function Configs() {
     const [erroSenhaAtual, setErroSenhaAtual] = useState('');
     const [senhaNova, setsenhaNova] = useState('');
     const [erroSenhaNova, setErroSenhaNova] = useState('');
-
-    const handleEmailChange = (newEmail: string) => {
-        setEmail(newEmail);
+    const [isEnabled, setIsEnabled] = useState(false);
+    const [isOn, setIsOn] = useState(false);
+    
+    const alternateSwitch = () => {
+        setIsEnabled(previousState => !previousState);
     }
-
+   
     useEffect(() => {
         if (email !== '') {
             setErroEmail('');
@@ -40,14 +42,26 @@ export default function Configs() {
         <ThemeProvider theme={theme}>
             <Background>
                 <Logout href='/login'>
-                    <Image source={require('../../../assets/appImages/logout.png')} />
+                    <SignOut color='#ffffff' size={48}/>
                 </Logout>
                 <Container>
-                    <UserImage
-                        source={require('../../../assets/appImages/user.png')}
-                    />
+                    <UserImage>
+                        <User color='#ffffff' size={64} />
+                    </UserImage>
                     <NameUser>José da Silva Pereira</NameUser>
-                    <EmailUser>{email}</EmailUser>
+                    <EmailUser>silvajose@gmail.com</EmailUser>
+                    {/* <View>
+                        <Moon></Moon>
+                        <View>
+                            <View>
+
+                            </View>
+                        </View>
+                        <Sun></Sun>
+                    </View> */}
+                    <ViewSwitch>
+                       <CustomToggleSwitch/>
+                    </ViewSwitch>
                     <ButtonChangeEmail onPress={() => setEmailModalVisible(true)}>
                         <ButtonText>Alterar E-mail</ButtonText>
                     </ButtonChangeEmail>
@@ -57,9 +71,9 @@ export default function Configs() {
                     <ButtonDeleteAccount onPress={() => setDeleteAccountModalVisible(true)}>
                         <ButtonText>Deletar Conta</ButtonText>
                     </ButtonDeleteAccount>
-                    <ModalConfigs type='email' modalVisible={isEmailModalVisible} closeModal={() => setEmailModalVisible(false)} onEmailChange={handleEmailChange}></ModalConfigs>
-                    <ModalConfigs type='senha' modalVisible={isPasswordModalVisible} closeModal={() => setPasswordModalVisible(false)} onEmailChange={handleEmailChange}></ModalConfigs>
-                    <ModalConfigs type='' modalVisible={isDeleteAccountModalVisible} closeModal={() => setDeleteAccountModalVisible(false)} onEmailChange={handleEmailChange}></ModalConfigs>
+                    <ModalConfigs type='email' modalVisible={isEmailModalVisible} closeModal={() => setEmailModalVisible(false)}></ModalConfigs>
+                    <ModalConfigs type='senha' modalVisible={isPasswordModalVisible} closeModal={() => setPasswordModalVisible(false)}></ModalConfigs>
+                    <ModalConfigs type='' modalVisible={isDeleteAccountModalVisible} closeModal={() => setDeleteAccountModalVisible(false)}></ModalConfigs>
                 </Container>
             </Background>
         </ThemeProvider>    
@@ -70,5 +84,4 @@ export default function Configs() {
 
 
 /* 
-   4- arrumar o botão deletar do modal de deletar conta, levar para tela de login
    5- fazer o display de dark mode e light mode*/

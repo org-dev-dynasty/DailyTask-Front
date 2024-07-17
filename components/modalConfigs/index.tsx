@@ -29,7 +29,6 @@ export const ModalConfigs = (props: ModalProps) => {
         if (!validateEmail(email)) {
             setErroEmail('Por favor, insira um e-mail válido.');
         } else {
-            props.onEmailChange(email);
             setEmail('');
             Keyboard.dismiss();
             props.closeModal(); 
