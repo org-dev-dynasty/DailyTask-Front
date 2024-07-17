@@ -11,14 +11,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function SignUp() {
-    const [nome, setNome] = useState('');
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [senha, setSenha] = useState('');
-    const [confirmarSenha, setConfirmarSenha] = useState('');
-    const [erroSenha, setErroSenha] = useState('');
-    const [erroEmail, setErroEmail] = useState('');
-    const [erroNome, setErroNome] = useState('');
-    const [erroConfirmarSenha, setErroConfirmarSenha] = useState('');
+    const [password, setPassword] = useState('');
+    const [confPassword, setConfPassword] = useState('');
+    const [errorPassword, setErrorPassword] = useState('');
+    const [errorEmail, setErrorEmail] = useState('');
+    const [errorName, setErrorName] = useState('');
+    const [errorConfPassword, setErrorConfPassword] = useState('');
     const [user, setUser] = useState({} as User);
     const { create } = useContext(UserContext);
 
@@ -29,29 +29,29 @@ export default function SignUp() {
 
 
     async function handleButtonPress() {
-        if (nome == "") {
-            setErroNome('Preencha o campo de nome.')
+        if (name == "") {
+            setErrorName('Preencha o campo de nome.')
         } else if (!validateEmail(email)) {
-            setErroEmail('Por favor, insira um e-mail válido.');
-        } else if (senha.length < 8) {
-            setErroSenha('A senha deve ter no mínimo 8 caracteres.');
-        } else if (!/[A-Z]/.test(senha)) {
-            setErroSenha('A senha deve ter pelo menos uma letra maiúscula.');
-        } else if (!/[a-z]/.test(senha)) {
-            setErroSenha('A senha deve ter pelo menos uma letra minúscula.');
-        } else if (!/\d/.test(senha)) {
-            setErroSenha('A senha deve ter pelo menos um número.');
-        } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(senha)) {
-            setErroSenha('A senha deve ter pelo menos um caractere especial.');
-        } else if (senha !== confirmarSenha) {
-            setErroConfirmarSenha('As senhas não coincidem. Por favor, verifique.');
+            setErrorEmail('Por favor, insira um e-mail válido.');
+        } else if (password.length < 8) {
+            setErrorPassword('A senha deve ter no mínimo 8 caracteres.');
+        } else if (!/[A-Z]/.test(password)) {
+            setErrorPassword('A senha deve ter pelo menos uma letra maiúscula.');
+        } else if (!/[a-z]/.test(password)) {
+            setErrorPassword('A senha deve ter pelo menos uma letra minúscula.');
+        } else if (!/\d/.test(password)) {
+            setErrorPassword('A senha deve ter pelo menos um número.');
+        } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+            setErrorPassword('A senha deve ter pelo menos um caractere especial.');
+        } else if (password !== confPassword) {
+            setErrorConfPassword('As senha não coincidem. Por favor, verifique.');
         } else {
-            setNome('');
+            setName('');
             setEmail('');
-            setSenha('');
-            setConfirmarSenha('');
+            setPassword('');
+            setConfPassword('');
         }
-        // const user = { nome, email, senha }
+        // const user = { name, email, password }
         // // const result = await create(user);
         // if(result) { 
         //     await AsyncStorage.setItem('email', email);
@@ -62,19 +62,19 @@ export default function SignUp() {
     };
 
     useEffect(() => {
-        if (nome !== '') {
-            setErroNome('');
+        if (name !== '') {
+            setErrorName('');
         }
         if (email !== '') {
-            setErroEmail('');
+            setErrorEmail('');
         }
-        if (senha !== '') {
-            setErroSenha('');
+        if (password !== '') {
+            setErrorPassword('');
         }
-        if (confirmarSenha !== '') {
-            setErroConfirmarSenha('');
+        if (confPassword !== '') {
+            setErrorConfPassword('');
         }
-    }, [email, senha, nome, confirmarSenha]);
+    }, [email, password, name, confPassword]);
 
     return (
         <Background>
@@ -84,16 +84,16 @@ export default function SignUp() {
             <Container>
                 <Titulo>Crie sua Conta</Titulo>
                 <View>
-                    <Input label="Nome" value={nome} onChangeText={(text: SetStateAction<string>) => setNome(text)} error={erroNome} />
+                    <Input label="Nome" value={name} onChangeText={(text: SetStateAction<string>) => setName(text)} error={errorName} />
                 </View>
                 <View>
-                    <Input label="Email" value={email} onChangeText={(text: SetStateAction<string>) => setEmail(text)} error={erroEmail}/>
+                    <Input label="Email" value={email} onChangeText={(text: SetStateAction<string>) => setEmail(text)} error={errorEmail}/>
                 </View>
                 <View>
-                    <Input label="Senha" value={senha} onChangeText={(text: SetStateAction<string>) => setSenha(text)} error={erroSenha} hide/>
+                    <Input label="Senha" value={password} onChangeText={(text: SetStateAction<string>) => setPassword(text)} error={errorPassword} hide/>
                 </View>
                 <View>
-                    <Input label="Confirmar Senha" value={confirmarSenha} onChangeText={(text: SetStateAction<string>) => setConfirmarSenha(text)} error={erroConfirmarSenha} hide/>
+                    <Input label="Confirmar senha" value={confPassword} onChangeText={(text: SetStateAction<string>) => setConfPassword(text)} error={errorConfPassword} hide/>
                 </View>
                 <TouchableOpacityConta onPress={handleButtonPress}>
                     <ButtonText>Criar Conta</ButtonText>
