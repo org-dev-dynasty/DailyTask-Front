@@ -2,7 +2,7 @@ import {Background} from "@/components/background";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React from "react";
 import {Container, Line, MiddleContainer, TextMiddle, Title} from "@/app/(tabs)/home/styles";
-import {Microphone, Keyboard} from "@phosphor-icons/react"
+import {Microphone, Keyboard} from "phosphor-react-native"
 
 // Ícones
 import { Feather } from "@expo/vector-icons";

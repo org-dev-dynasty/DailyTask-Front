@@ -35,7 +35,7 @@ export const Input = (props: InputProps) => {
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
               secureTextEntry={showPassword}
-              right={props.hide ? <TextInput.Icon icon={showPassword ? "eye-off" : "eye"} color={theme.COLORS.WHITE} onPress={togglePasswordVisibility} /> : null}
+              // right={props.hide ? <TextInput.Icon icon={showPassword ? "eye-off" : "eye"} color={theme.COLORS.WHITE} onPress={togglePasswordVisibility} /> : null}
             />
             <Text style={{color: theme.COLORS.NEGATIVE}}>{props.error}</Text>
         </View>

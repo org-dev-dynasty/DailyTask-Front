@@ -6,7 +6,6 @@ export const Titulo = styled.Text`
     color: ${theme.COLORS.WHITE};
     font-family: ${theme.FONT_FAMILY.MEDIUM};
     padding-top: 65px;
-    
 `;
 
 export const Container = styled.View`
@@ -18,7 +17,6 @@ export const Container = styled.View`
 export const TouchableOpacityConta = styled.TouchableOpacity`
     color: ${theme.COLORS.WHITE};
     background-color: ${theme.COLORS.MAIN};
-    margin-top: 21px;
     width: 162px;
     height: 30px;
     font-family: ${theme.FONT_FAMILY.MEDIUM}; 
@@ -27,13 +25,33 @@ export const TouchableOpacityConta = styled.TouchableOpacity`
     align-items: center;  
     justify-content: center; 
     align-items: center; 
+    margin-bottom: 20px;
 `;
 
-export const Text = styled.Text`
+export const ContainerLogin = styled.TouchableOpacity`
     font-family: ${theme.FONT_FAMILY.MEDIUM}; 
     font-size: ${theme.FONT_SIZE.MD};
     color: ${theme.COLORS.WHITE};
-    margin-top: 21px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+`;
+
+export const TextContainerLogin = styled.Text`
+    font-family: ${theme.FONT_FAMILY.MEDIUM};
+    font-size: ${theme.FONT_SIZE.MD};
+    color: ${theme.COLORS.WHITE};
+    text-align: center;
+`;
+
+export const Details = styled.Text`
+    color: ${theme.COLORS.MAIN};
+`;
+
+export const ButtonText = styled.Text`
+    font-family: ${theme.FONT_FAMILY.MEDIUM}; 
+    font-size: ${theme.FONT_SIZE.MD};
+    color: ${theme.COLORS.WHITE};
 `;
 
 export const TextLink = styled.Text`
@@ -44,7 +62,6 @@ export const TextFooter = styled.Text`
     font-family: ${theme.FONT_FAMILY.REGULAR};
     font-size: ${theme.FONT_SIZE.MD};    
     color: ${theme.COLORS.WHITE};
-    margin-top: 65px;
     padding-bottom: 14px;
 `;
 
@@ -60,7 +77,12 @@ export const ErrorMessage = styled.Text`
 `;
 
 export const View = styled.View`
-    margin-bottom: 15px;
     width: 240px;
 `;
 
+export const Footer = styled.View`
+    flex: 1;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 40px;
+`;
