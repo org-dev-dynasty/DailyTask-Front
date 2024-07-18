@@ -32,8 +32,6 @@ export const TasksContainer = styled.View`
     padding: 20px;
     flex-direction: column;
     margin-top: 20px;
-
-    background-color: red;
 `;
 
 export const TaskLabel = styled.View`

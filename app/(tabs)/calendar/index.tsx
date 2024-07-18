@@ -132,7 +132,7 @@ export default function CalendarTasks() {
             <TextLabel>Hoje - Manhã</TextLabel>
             <CaretDown size={24} color={theme.COLORS.WHITE} weight="bold"/>
           </TaskLabel>
-          <TaskCard title='Médico' description='Ir ao consultório x as 17:20, pq se não a ernia vai ficar pior, e eu vou morrer, e etc, socorrooooo' date='10/11/2024' time='17:20' status='open' color='#2F9CD8' color2='#9CD4F4' ></TaskCard>
+          <TaskCard title='Médico' description='Ir ao consultório x as 17:20' date='10/11/2024' time='17:20' status='open' color='#2F9CD8' color2='#9CD4F4' ></TaskCard>
         </View>
       </TasksContainer>
     </Background>
