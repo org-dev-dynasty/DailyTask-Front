@@ -17,7 +17,7 @@ export const CalendarComponent = styled(Calendar)`
   background-color: transparent;
 `;
 
-export const Bar = styled.View`
+export const Bar = styled.TouchableOpacity`
     width: 45%;
     height: 10px;
     background-color: ${theme.COLORS.WHITE};

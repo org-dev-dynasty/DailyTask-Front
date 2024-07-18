@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { Background } from "@/components/background";
 import { Calendar } from 'react-native-calendars';
-import { Dimensions } from 'react-native';
+import { Animated, Dimensions } from 'react-native';
 import { Bar, CalendarComponent, CalendarContainer, TaskLabel, TasksContainer, TextLabel } from './styles';
 import { View, Text } from 'react-native';
 import { LocaleConfig } from 'react-native-calendars';
@@ -9,7 +9,7 @@ import theme from '@/themes/theme';
 import { CaretDown, CaretUp } from "phosphor-react-native"
 import { TaskCard }  from '@/components/taskCard';
 
-// Configurando a localização para português
+// Config the calendar to pt-br
 LocaleConfig.locales['pt-br'] = {
   monthNames: [
     'Janeiro',
@@ -56,19 +56,24 @@ LocaleConfig.defaultLocale = 'pt-br';
 
 export default function CalendarTasks() {
   const { width, height } = Dimensions.get('window');
+  const [expanded, setExpanded] = useState(true);
+
+  function toggleCalendar() {
+    setExpanded(!expanded);
+  }
 
   // Confg of the dots 
-  const vacation = {key: 'vacation', color: 'red', selectedDotColor: 'blue'};
-  const massage = {key: 'massage', color: 'blue', selectedDotColor: 'blue'};
+  const vacation = {key: 'vacation', color: 'red'};
+  const massage = {key: 'massage', color: 'blue'};
   const workout = {key: 'workout', color: 'green'};
 
   // tasks
 
   return (
     <Background>
-      <CalendarContainer>
+      <CalendarContainer style={{paddingTop: expanded ? 20 : '10%'}}>
         <CalendarComponent
-          style={{ width: width/100*90, }}
+          style={{ width: width/100*90, display: expanded ? 'flex' : 'none' }}
           theme={{
             calendarBackground: '#310842',
             textSectionTitleColor: theme.COLORS.WHITE,
@@ -123,13 +128,13 @@ export default function CalendarTasks() {
             '2024-07-19': {disabled: true, disableTouchEvent: true}
           }}
         />
-        <Bar/>
+        <Bar onPress={toggleCalendar}/>
       </CalendarContainer>
-      <TasksContainer>
+      <TasksContainer style={{top: expanded ? '50%' : '10%'}}>
         {/* Map the tasks */}
         <View>
           <TaskLabel>
-            <TextLabel>Hoje - Manhã</TextLabel>
+            <TextLabel>Hoje</TextLabel>
             <CaretDown size={24} color={theme.COLORS.WHITE} weight="bold"/>
           </TaskLabel>
           <TaskCard title='Médico' description='Ir ao consultório x as 17:20' date='10/11/2024' time='17:20' status='open' color='#2F9CD8' color2='#9CD4F4' ></TaskCard>
