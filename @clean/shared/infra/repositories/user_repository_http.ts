@@ -10,7 +10,7 @@ export class UserRepositoryHttp implements IUserRepository {
 
     async create(user: User): Promise<User> {
         try {
-            const response = await this.httpUser.post(`${process.env.API_URL}/users`, user);
+            const response = await this.httpUser.post(`${process.env.API_URL}/create-user`, user);
             if (response?.status == 201) {
                 console.log(user)
                 router.replace('/login');
