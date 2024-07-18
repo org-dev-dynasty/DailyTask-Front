@@ -36,7 +36,7 @@ export default function Configs() {
         if (senhaNova !== '') {
             setErroSenhaNova('');
         }
-    }, [email, senhaAtual, senhaNova]); 
+    }, [email, senhaAtual, senhaNova]);
 
     return (
         <ThemeProvider theme={theme}>
@@ -50,15 +50,6 @@ export default function Configs() {
                     </UserImage>
                     <NameUser>José da Silva Pereira</NameUser>
                     <EmailUser>silvajose@gmail.com</EmailUser>
-                    {/* <View>
-                        <Moon></Moon>
-                        <View>
-                            <View>
-
-                            </View>
-                        </View>
-                        <Sun></Sun>
-                    </View> */}
                     <ViewSwitch>
                        <CustomToggleSwitch/>
                     </ViewSwitch>
