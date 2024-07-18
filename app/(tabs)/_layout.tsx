@@ -12,10 +12,12 @@ import { View, Text } from 'react-native';
 // Tema
 import theme from '../../themes/theme';
 import {Microphone, Gear, Calendar} from "phosphor-react-native";
+import { TaskContextProvider } from '@/context/task_context';
 // -----------------------
 
 export default function TabLayout() {
   return (
+    <TaskContextProvider>
     <Tabs
       initialRouteName='home/index'
       screenOptions={{
@@ -87,5 +89,6 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+    </TaskContextProvider>
   );
 }
