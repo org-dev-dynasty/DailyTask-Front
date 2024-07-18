@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Background } from "@/components/background";
 import { Calendar } from 'react-native-calendars';
 import { Animated, Dimensions } from 'react-native';
@@ -8,6 +8,7 @@ import { LocaleConfig } from 'react-native-calendars';
 import theme from '@/themes/theme';
 import { CaretDown, CaretUp } from "phosphor-react-native"
 import { TaskCard }  from '@/components/taskCard';
+import { TaskContext } from '@/context/task_context';
 
 // Config the calendar to pt-br
 LocaleConfig.locales['pt-br'] = {
@@ -57,6 +58,8 @@ LocaleConfig.defaultLocale = 'pt-br';
 export default function CalendarTasks() {
   const { width, height } = Dimensions.get('window');
   const [expanded, setExpanded] = useState(true);
+  const [tasks, setTasks] = useState([]);
+  const {getAll} = useContext(TaskContext);
 
   function toggleCalendar() {
     setExpanded(!expanded);
@@ -68,6 +71,14 @@ export default function CalendarTasks() {
   const workout = {key: 'workout', color: 'green'};
 
   // tasks
+  async function getTasks() {
+    const result = await getAll();
+    // console.log(result);
+  }
+
+  useEffect(() => {
+    getTasks();
+  }, []);
 
   return (
     <Background>
