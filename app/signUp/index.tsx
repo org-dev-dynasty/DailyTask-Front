@@ -59,8 +59,10 @@ export default function SignUp() {
             const result = await create(user);
             if(result) { 
                 await AsyncStorage.setItem('email', email);
+                alert('Usuário criado com sucesso');
                 console.log('Usuário criado com sucesso')
             } else {
+                alert('Erro ao criar usuário');
                 console.log('Erro ao criar usuário')
             }
         }
