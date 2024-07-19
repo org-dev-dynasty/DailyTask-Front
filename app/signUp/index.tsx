@@ -3,7 +3,7 @@ import { Background } from "@/components/background";
 import { Container, Titulo, TouchableOpacityConta, TextFooter, Logo, View, ButtonText, ContainerLogin, Details, Footer, CheckBoxContainer, CheckBoxText, CheckBoxTextTerms, ModalContainer, ModalView, ModalText, CheckBoxTextTermsTouchable} from "./styles";
 import { Image, ScrollView, TouchableOpacity } from "react-native"; 
 import { Input } from "@/components/input/input";
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { X } from 'phosphor-react-native';
 import { Checkbox } from 'react-native-paper';
 import { UserContext } from '../../context/user_context';
@@ -61,6 +61,7 @@ export default function SignUp() {
                 await AsyncStorage.setItem('email', email);
                 alert('Usuário criado com sucesso');
                 console.log('Usuário criado com sucesso')
+                // router.replace('/email-confirmation');
             } else {
                 alert('Erro ao criar usuário');
                 console.log('Erro ao criar usuário')
