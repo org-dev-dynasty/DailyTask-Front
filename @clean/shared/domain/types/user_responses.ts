@@ -9,3 +9,7 @@ export type CreateUserResponse = {
     user: User;
     message: string;
 }
+
+export type ComfirmEmailResponse = {
+    message: string;
+}; 
