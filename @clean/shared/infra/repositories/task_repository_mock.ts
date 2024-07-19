@@ -12,10 +12,16 @@ export class TaskRepositoryMock implements ITaskRepository {
     getAll(): Promise<GetAllTasksResponse> {
         throw new Error("Method not implemented.");
     }
-    update(task: Task): Promise<Task> {
+    update(task_id: string, task: Task): Promise<Task> {
         throw new Error("Method not implemented.");
     }
     delete(task_id: string): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+    updateStatus(task_id: string, status: string): Promise<Task> {
+        throw new Error("Method not implemented.");
+    }
+    taskByDay(day: string): Promise<Task> {
         throw new Error("Method not implemented.");
     }
 }
