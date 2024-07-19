@@ -10,7 +10,7 @@ export class UserRepositoryHttp implements IUserRepository {
 
     async create(user: User): Promise<CreateUserResponse> {
         try {
-            const response = await this.httpUser.post(`${process.env.API_URL}/create-user`, {
+            const response = await this.httpUser.post(`${process.env.EXPO_PUBLIC_API_URL}/create-user`, {
                 name: user.name,
                 email: user.email,
                 password: user.password,
@@ -29,12 +29,12 @@ export class UserRepositoryHttp implements IUserRepository {
     }
 
     async get(user_id: string): Promise<User | null> {
-        return await this.httpUser.get(`${process.env.API_URL}/get-user?user_id=${user_id}`);
+        return await this.httpUser.get(`${process.env.EXPO_PUBLIC_API_URL}/get-user?user_id=${user_id}`);
     }
 
     async login(email: string, password: string): Promise<LoginResponse> {
         try{
-            const response = await this.httpUser.post(`${process.env.API_URL}/login`, { email, password });
+            const response = await this.httpUser.post(`${process.env.EXPO_PUBLIC_API_URL}/login`, { email, password });
             if (response.data.token) {
                 await AsyncStorage.setItem('token', response.data.token);
                 router.replace('/home');
@@ -48,7 +48,7 @@ export class UserRepositoryHttp implements IUserRepository {
 
      async comfirmEmail(email: string, verificationCode: string): Promise<ComfirmEmailResponse> {
         try {
-            const response = await this.httpUser.post<ComfirmEmailResponse>(`${process.env.API_URL}/confirm-user-email`, { email, verificationCode });
+            const response = await this.httpUser.post<ComfirmEmailResponse>(`${process.env.EXPO_PUBLIC_API_URL}/confirm-user-email`, { email, verificationCode });
             if (response.data) {
                 router.replace('/home');
             }
