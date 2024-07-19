@@ -20,11 +20,11 @@ const LogoDevDynasty = require('../../assets/appImages/logo-dev-dynasty.png');
 const LogoGoogle = require('../../assets/appImages/logo-google.png');
 const LogoGitHub = require('../../assets/appImages/logo-gitHub.png');
 
-GoogleSignin.configure({
-  scopes: ['email', 'profile'],
-  webClientId: '477785692735-olm3sejb8innr21hts1affdfrso98m8o.apps.googleusercontent.com',
-  iosClientId: '477785692735-m38lmcvn3lp2u4q2r0m7hi4nquim8gjq.apps.googleusercontent.com',
-})
+// GoogleSignin.configure({
+//   scopes: ['email', 'profile'],
+//   webClientId: '477785692735-olm3sejb8innr21hts1affdfrso98m8o.apps.googleusercontent.com',
+//   iosClientId: '477785692735-m38lmcvn3lp2u4q2r0m7hi4nquim8gjq.apps.googleusercontent.com',
+// })
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -32,17 +32,17 @@ export default function Login() {
   const [erroPassword, setErroPassword] = useState('');
   const [erroEmail, setErroEmail] = useState('');
 
-  const [isAuthenticating, setIsAuthenticating] = useState(false)
+  // const [isAuthenticating, setIsAuthenticating] = useState(false)
 
-  async function googleSignIn() {
-    try {
-      const resp = await GoogleSignin.signIn()
-      console.log(resp)
-    } catch(e: any) {
-      console.log(e)
-      Alert.alert("Entrar", "Não foi possível conectar com sua conta google")
-    }
-  }
+  // async function googleSignIn() {
+  //   try {
+  //     const resp = await GoogleSignin.signIn()
+  //     console.log(resp)
+  //   } catch(e: any) {
+  //     console.log(e)
+  //     Alert.alert("Entrar", "Não foi possível conectar com sua conta google")
+  //   }
+  // }
 
   const { login } = useContext(UserContext);
 
@@ -112,7 +112,7 @@ export default function Login() {
           <SeparatorLine />
         </SeparatorContainer>
         <SocialIcons>
-          <TouchableOpacity onPress={googleSignIn}  >
+          <TouchableOpacity onPress={()=>{}}  >
             <Image source={LogoGoogle} />
           </TouchableOpacity>
           <Image source={LogoGitHub} />
