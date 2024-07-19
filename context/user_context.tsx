@@ -1,5 +1,5 @@
 import { User } from "@/@clean/shared/domain/entities/user";
-import { LoginResponse } from "@/@clean/shared/domain/types/user_responses";
+import { ComfirmEmailResponse, CreateUserResponse, LoginResponse } from "@/@clean/shared/domain/types/user_responses";
 import { httpUser } from "@/@clean/shared/infra/http";
 import { UserRepositoryHttp } from "@/@clean/shared/infra/repositories/user_repository_http";
 import { createContext } from "react";
@@ -7,8 +7,9 @@ import { createContext } from "react";
 
 type UserContextType = { 
     login: (email: string, password: string) => Promise<LoginResponse>;
-    create: (user: User) => Promise<User>;
+    create: (user: User) => Promise<CreateUserResponse>;
     get: (user_id: string) => Promise<User | null>;
+    comfirmEmail: (email: string, verificationCode: string) => Promise<ComfirmEmailResponse>;
 }
 
 const defaultUserContext: UserContextType = { 
@@ -16,10 +17,13 @@ const defaultUserContext: UserContextType = {
         return { token: '', message: '' };
     },
     create: async (user: User) => { 
-        return user;
+        return { user: user, message: '' };
     },
     get: async (user_id: string) => { 
         return null;
+    },
+    comfirmEmail: async (email: string, verificationCode: string) => { 
+        return { message: '' };
     }
 };
 
@@ -39,11 +43,11 @@ export function UserContextProvider({ children }: { children: React.ReactNode })
         }
     }
 
-    async function create(user: User): Promise<User> { 
+    async function create(user: User): Promise<CreateUserResponse> { 
         try {
             const result = await userRepository.create(user);
             console.log("CONTEXTO DE USUÁRIO CREATE" + result)
-            return result;
+            return result as CreateUserResponse;
         } catch (error: any) {
             throw new Error(error);
         }
@@ -53,8 +57,18 @@ export function UserContextProvider({ children }: { children: React.ReactNode })
         return await userRepository.get(user_id);
     }
 
+    async function comfirmEmail(email: string, verificationCode: string): Promise<ComfirmEmailResponse> { 
+        try {
+            const result = await userRepository.comfirmEmail(email, verificationCode);
+            console.log("CONTEXTO DE USUÁRIO CONFIRM EMAIL" + result)
+            return result;
+        } catch (error: any) {
+            throw new Error(error);
+        }
+    }
+
     return (
-        <UserContext.Provider value={{login, create, get}}>
+        <UserContext.Provider value={{login, create, get, comfirmEmail}}>
             {children}
         </UserContext.Provider>
     );
