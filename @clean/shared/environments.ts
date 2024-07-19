@@ -10,14 +10,14 @@ import { ITaskRepository } from '../modules/interfaces/task_repo_interface';
 export class Environments {
     stage: STAGE = STAGE.TEST;
     configureLocal() {
-        process.env.STAGE = process.env.STAGE || "TEST";
+        process.env.EXPO_PUBLIC_STAGE = process.env.EXPO_PUBLIC_STAGE || "TEST";
     }
 
     loadEnvs() {
-        if (!process.env.STAGE) {
+        if (!process.env.EXPO_PUBLIC_STAGE) {
             this.configureLocal();
         }
-        this.stage = process.env.STAGE as STAGE;
+        this.stage = process.env.EXPO_PUBLIC_STAGE as STAGE;
     }
 
     static getUserRepo(): IUserRepository {
