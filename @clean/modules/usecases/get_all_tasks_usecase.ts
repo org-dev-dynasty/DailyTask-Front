@@ -1,5 +1,4 @@
 import { GetAllTasksResponse } from "@/@clean/shared/domain/types/task_responses";
-import { Task } from "../../shared/domain/entities/task";
 import { ITaskRepository } from "../interfaces/task_repo_interface";
 
 export class GetAllTasksUseCase {
