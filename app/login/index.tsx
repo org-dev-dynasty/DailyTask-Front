@@ -32,7 +32,6 @@ export default function Login() {
     async function loginVerify() {
       const response = await AsyncStorage.getItem('token');
       if (response) {
-        // console.log('Login efetuado com sucesso');
         router.replace('/home');
       }
     }
@@ -40,10 +39,7 @@ export default function Login() {
   }, [])
 
   async function handleLogin() {
-    const result = await login(email, password);
-    if (result) {
-      console.log('Login efetuado com sucesso');
-    }
+    // Validation of email and password
     if (email === '' && password === '') {
       console.log('Email vazio');
       console.log('Senha vazia');
@@ -60,6 +56,11 @@ export default function Login() {
       console.log('Senha vazia');
       setErroPassword('Preencha o campo senha');
       return;
+    }
+    // Reuquest to login
+    const result = await login(email, password);
+    if (result) {
+      console.log('Login efetuado com sucesso');
     }
   }
 
