@@ -36,7 +36,7 @@ export default function RootLayout() {
   return (
     <UserContextProvider>
       <Stack
-        initialRouteName='login'
+        // initialRouteName='index'
       >
         <Stack.Screen name='index' />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
