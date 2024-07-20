@@ -1,4 +1,4 @@
-import React, { useState, SetStateAction, useEffect } from 'react';
+import React, { useState, SetStateAction, useEffect, useCallback } from 'react';
 import { Background } from "@/components/background";
 import { UserImage, Container, NameUser, EmailUser, ButtonChangeEmail, ButtonText, ButtonChangePassword, ButtonDeleteAccount, Logout, ViewSwitch } from "./styles";
 import theme from "@/themes/theme";
@@ -7,6 +7,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ModalConfigs } from '@/components/modalConfigs';
 import { SignOut, User } from 'phosphor-react-native';
 import CustomToggleSwitch from '@/components/switch';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function Configs() {
     const [isEmailModalVisible, setEmailModalVisible] = useState(false);
@@ -18,6 +20,7 @@ export default function Configs() {
     const [erroSenhaAtual, setErroSenhaAtual] = useState('');
     const [senhaNova, setsenhaNova] = useState('');
     const [erroSenhaNova, setErroSenhaNova] = useState('');
+    const [themeModeS, setThemeModeS] = useState('dark'); // dark or light theme const
     
     useEffect(() => {
         if (email !== '') {
@@ -31,20 +34,36 @@ export default function Configs() {
         }
     }, [email, senhaAtual, senhaNova]);
 
+    // UseEffect to get the theme mode from the AsyncStorage && to get token from the AsyncStorage
+    useFocusEffect(
+        useCallback(() => {
+            console.log('Configs');
+            AsyncStorage.getItem('themeMode').then((value) => {
+                if (value) {
+                    setThemeModeS(value);
+                }
+            });
+        }
+    , []));
+
+    const handleThemeChange = (isDark: boolean) => {
+        setThemeModeS(isDark ? 'dark' : 'light');
+    };
+
     return (
         <ThemeProvider theme={theme}>
-            <Background>
+            <Background themeMode={themeModeS}>
                 <Logout href='/login'>
-                    <SignOut color='#ffffff' size={48}/>
+                    <SignOut color={themeModeS === 'dark' ? '#ffffff' : '#000000'} size={48}/>
                 </Logout>
                 <Container>
                     <UserImage>
-                        <User color='#ffffff' size={64} />
+                        <User color={themeModeS === 'dark' ? '#ffffff' : '#000000'} size={64} />
                     </UserImage>
                     <NameUser>José da Silva Pereira</NameUser>
                     <EmailUser>silvajose@gmail.com</EmailUser>
                     <ViewSwitch>
-                       <CustomToggleSwitch/>
+                        <CustomToggleSwitch themeMode={themeModeS} onValueChange={handleThemeChange}/>
                     </ViewSwitch>
                     <ButtonChangeEmail onPress={() => setEmailModalVisible(true)}>
                         <ButtonText>Alterar E-mail</ButtonText>
