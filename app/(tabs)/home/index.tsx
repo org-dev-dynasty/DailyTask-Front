@@ -1,6 +1,13 @@
 import { Background } from "@/components/background";
-import {useEffect, useRef, useState} from "react";
-import {TouchableOpacity, View, Animated, Text, Easing, Button, Alert, Pressable, PanResponder} from "react-native";
+import React, {useEffect, useRef, useState} from "react";
+import {
+    TouchableOpacity,
+    Animated,
+    Easing,
+    Pressable,
+    PanResponder,
+    StyleSheet, PanResponderGestureState, View
+} from "react-native";
 import {
     Container,
     TopViewText,
@@ -70,7 +77,6 @@ export default function Home() {
     const circleX = useRef(new Animated.Value(0)).current;
     const lockX = useRef(new Animated.Value(0)).current;
     const lockPillLimitY = -(height/2.45 - 100);
-    const lockPillZIndex = useRef(new Animated.Value(0)).current;
     const panMoving = useRef(false);
     const recordingStarted = useRef(false);
     const microphoneMove = useRef(true);
@@ -88,6 +94,12 @@ export default function Home() {
     const iconsOpacity = useRef(new Animated.Value(0)).current;
     const iconsSeparator = useRef(new Animated.Value(width/2)).current;
     const moveIconsX = useRef(new Animated.Value(0)).current;
+    const trashPanX = useRef(new Animated.Value(0)).current;
+    const limitIconsX = -(width/4) ;
+    const gestureReleased = useRef(false);
+
+    const AnimatedTrash = Animated.createAnimatedComponent(TrashSimple);
+    const sizeAnimatedValue = useRef(new Animated.Value(0)).current;
 
     const [isEditable, setIsEditable] = useState(false);
 
@@ -95,6 +107,7 @@ export default function Home() {
         if(canRepeat.current && !microphoneFixed.current) {
             recordingStarted.current = true;
             circleAnimation();
+            gestureReleased.current = false;
             setStart(true);
             setTimeout(() => {
                 handleRecordingStart();
@@ -337,7 +350,7 @@ export default function Home() {
         })
     }
 
-    const panResponder = useRef(
+    const circlePanResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: (event, gestureState) => {
                 if(!recordingStarted.current) return false;
@@ -348,7 +361,27 @@ export default function Home() {
                 return Math.abs(gestureState.dx) > 2 || Math.abs(gestureState.dy) > 2;
             },
             onPanResponderMove: (event, gestureState) => {
+                if(gestureReleased.current) return
                 panMoving.current = true;
+
+                if (gestureState.dx < 0 && gestureState.dy >= 0) {
+                    trashPanX.setValue(gestureState.dx);
+                    sizeAnimatedValue.setValue(-gestureState.dx);
+                    if(gestureState.dx < limitIconsX){
+                        if(!microphoneFixed.current){
+                            gestureReleased.current = true
+                            handleRelease(gestureState);
+                        }else{
+                            gestureReleased.current = true
+                            deleteAudioAnimation()
+                        }
+
+                    }
+                } else {
+                    Animated.spring(trashPanX, {toValue: 0, useNativeDriver: false}).start();
+                    Animated.spring(sizeAnimatedValue, {toValue: 0, useNativeDriver: false}).start();
+                }
+
                 if(!recordingStarted.current) {
                     return
                 }
@@ -370,48 +403,42 @@ export default function Home() {
                     inputY.setValue(0);
                     lockPillSize.setValue(height/2.45);
                     microphoneOpacity.setValue(1);
-                } else {
+                } else if (gestureState.dx >= 0 || (gestureState.dy < 0 && gestureState.dx < 0)) {
                     panY.setValue(gestureState.dy);
                     inputY.setValue(gestureState.dy);
                     lockPillSize.setValue(height/2.45 + gestureState.dy);
                     microphoneOpacity.setValue(1 + gestureState.dy * (5/height));
                     iconsOpacity.setValue(1 + gestureState.dy * (5/height));
                     iconsSeparator.setValue(width/8 + (-gestureState.dy));
-                    if(gestureState.dy < -(height/5)){
-                        lockPillZIndex.setValue(2);
-                    }
-                    else{
-                        lockPillZIndex.setValue(0);
-                    }
+
                 }
             },
             onPanResponderRelease: (event, gestureState) => {
-                if(!recordingStarted.current) {
-                    return
-                }
-                microphoneMove.current = true;
-                recordingStarted.current = false;
-                if (gestureState.dy > lockPillLimitY && !microphoneFixed.current) {
-                    Animated.spring(
-                        panY,
-                        { toValue: 0, useNativeDriver: false }
-                    ).start();
-                    Animated.spring(
-                        inputY,
-                        { toValue: 0, useNativeDriver: false }
-                    ).start();
-                    handlePressOut();
-                    microphoneFixed.current = false;
-                } else {
-                    microphoneMove.current = false;
-                    microphoneFixed.current = true;
-                    lockPillZIndex.setValue(2);
-                    lockedAnimation();
-                }
-                panMoving.current = false;
+                handleRelease(gestureState);
             }
         })
     ).current;
+
+    const handleRelease = (gestureState : PanResponderGestureState) => {
+        if(recordingStarted.current) {
+            microphoneMove.current = true;
+            recordingStarted.current = false;
+            if (gestureState.dy > lockPillLimitY && !microphoneFixed.current) {
+                Animated.spring(panY, {toValue: 0, useNativeDriver: false}).start();
+                Animated.spring(inputY, {toValue: 0, useNativeDriver: false}).start();
+                handlePressOut();
+                microphoneFixed.current = false;
+            } else {
+                microphoneMove.current = false;
+                microphoneFixed.current = true;
+                lockedAnimation();
+            }
+            Animated.spring(trashPanX, {toValue: 0, useNativeDriver: false}).start();
+            Animated.spring(sizeAnimatedValue, {toValue: 0, useNativeDriver: false}).start();
+
+            panMoving.current = false;
+        }
+    };
 
     function confirmRecording() {
         Animated.timing(inputBorderBottomLeftRadius, {
@@ -599,6 +626,126 @@ export default function Home() {
         }, 2000);
     }
 
+    function deleteAudioAnimation() {
+        Animated.timing(lockX, {
+            toValue: -width * 0.7,
+            duration: 500,
+            useNativeDriver: false,
+        }).start()
+        Animated.timing(fadeInput, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: false,
+        }).start()
+        Animated.timing(fadeTimer, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: false,
+        }).start()
+        Animated.timing(moveIconsX, {
+            toValue: -width * 0.75,
+            duration: 500,
+            useNativeDriver: false,
+        }).start()
+        Animated.timing(circleX, {
+            toValue: -width * 0.75,
+            duration: 500,
+            useNativeDriver: false,
+        }).start(() => {
+            circleSize.stopAnimation();
+            circleOpacity.stopAnimation();
+            auxCircleSize.stopAnimation();
+            auxCircleOpacity.stopAnimation();
+            thirdCircleSize.stopAnimation();
+            thirdCircleOpacity.stopAnimation();
+            Animated.timing(circleSize, {
+                toValue: 0,
+                duration: 500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start();
+            Animated.timing(circleOpacity, {
+                toValue: 0,
+                duration: 500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start();
+            Animated.timing(auxCircleSize, {
+                toValue: 0,
+                duration: 500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start();
+            Animated.timing(auxCircleOpacity, {
+                toValue: 0,
+                duration: 500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start();
+            Animated.timing(thirdCircleSize, {
+                toValue: 0,
+                duration: 500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start();
+            Animated.timing(thirdCircleOpacity, {
+                toValue: 0,
+                duration: 500,
+                useNativeDriver: false,
+                easing: Easing.in(Easing.ease)
+            }).start(() => {
+                setStart(false);
+                panY.setValue(0);
+                circleX.setValue(0);
+                fadeLock.setValue(0);
+                lockX.setValue(0);
+                sendButtonX.setValue(-width * 0.7);
+                inputY.setValue(0);
+                moveIconsX.setValue(0);
+                iconsOpacity.setValue(0)
+                trashPanX.setValue(0)
+                sizeAnimatedValue.setValue(0);
+                panMoving.current = false;
+                Animated.timing(fadeTexts, {
+                    toValue: 1,
+                    duration: 500,
+                    useNativeDriver: true,
+                }).start()
+                Animated.timing(microphoneOpacity, {
+                    toValue: 1,
+                    duration: 500,
+                    useNativeDriver: false,
+                }).start(() => {
+                    canRepeat.current = true;
+                    microphoneFixed.current = false;
+
+                    // sendButtonY.setValue(0);
+                    // moveIconsX.setValue(0);
+                });
+            })
+        })
+
+
+
+
+        // panY.setValue(0);
+        // fadeInput.setValue(0);
+        //
+
+        // Animated.timing(microphoneOpacity, {
+        //     toValue: 1,
+        //     duration: 500,
+        //     useNativeDriver: false,
+        // }).start(() => {
+        //     sendButtonX.setValue(-width * 0.7);
+        //     canRepeat.current = true;
+        //     microphoneFixed.current = false;
+        //     lockX.setValue(0);
+        //     sendButtonY.setValue(0);
+        //     moveIconsX.setValue(0);
+        // });
+    }
+
     function cancelAnimation() {
         Animated.timing(inputY, {
             toValue: -height * 0.9,
@@ -632,25 +779,6 @@ export default function Home() {
                 circleX.setValue(0);
             });
         })
-
-
-
-        // Animated.timing(lockX, {
-        //     toValue: 0,
-        //     duration: 500,
-        //     useNativeDriver: false,
-        // }).start()
-        // Animated.timing(sendButtonY, {
-        //     toValue: 0,
-        //     duration: 500,
-        //     useNativeDriver: false,
-        // }).start()
-        // inputButtonsOpacity.setValue(0);
-        // Animated.timing(moveIconsX, {
-        //     toValue: 0,
-        //     duration: 500,
-        //     useNativeDriver: false,
-        // }).start()
     }
 
     function lockedAnimation(){
@@ -768,7 +896,7 @@ export default function Home() {
                     {/* <--Screen--> */}
                     <InitialScreen style={{ display: "flex" }}>
                         {/* Lock View */}
-                        <TopViewLock style={{ opacity: fadeLock, transform: [{translateX: lockX}], zIndex: lockPillZIndex}}>
+                        <TopViewLock style={{ opacity: fadeLock, transform: [{translateX: lockX}]}}>
                             <LockPill style={{height: lockPillSize}}>
                                 <LockIcon>
                                     <LockSimpleOpen size={64} color={theme.COLORS.WHITE} />
@@ -785,7 +913,7 @@ export default function Home() {
                         {/* Center Elements */}
                         <CenterElementsDisplay>
                             {/* Microphone */}
-                            <MicrophoneView {...panResponder.panHandlers}
+                            <MicrophoneView {...circlePanResponder.panHandlers}
                                             style={{ transform: [{ translateY: panY }]}}>
                                 <CircleView style={{transform: [{translateX: circleX}]}}>
                                     <CircleAnimation style={{width: circleSize, height: circleSize, opacity: circleOpacity,
@@ -796,19 +924,31 @@ export default function Home() {
                                         backgroundColor: start ? theme.COLORS.MAIN : ''}}/>
                                 </CircleView>
 
-                                <Animated.View style={{opacity: microphoneOpacity, zIndex: 2}}>
+
+                                <Animated.View
+                                    style={{opacity: microphoneOpacity, zIndex: 2}}>
                                     <Pressable
-                                        {...panResponder.panHandlers}
                                         onPressIn={startRecording}
                                         onPressOut={handlePressOut}>
                                         <Microphone size={64} color={theme.COLORS.WHITE} />
                                     </Pressable>
                                 </Animated.View>
 
-                                <TrashView style={{opacity: iconsOpacity, transform: [{translateX: moveIconsX}]}}>
-                                    <TrashSimple size={48} color={theme.COLORS.RED_300} />
-                                    <Animated.View style={{width: iconsSeparator}} />
-                                    <CaretLeft size={32} color={theme.COLORS.WHITE}/>
+                                <TrashView
+                                    style={{opacity: iconsOpacity, transform: [{translateX: moveIconsX}]}}>
+                                    <Animated.View
+                                        style={[styles.box]}
+                                    >
+                                        <Animated.View style={{ transform: [{ scale: sizeAnimatedValue.interpolate({ inputRange: [0, 100], outputRange: [1, 2] }) }], marginRight: width/8, marginLeft: width/40 }}>
+                                            <TrashSimple size={48} color={theme.COLORS.RED_300} />
+                                        </Animated.View>
+                                        {/*<Animated.View style={{width: iconsSeparator}} />*/}
+                                        <Animated.View
+                                            style={{ transform: [{ translateX: trashPanX }]}}
+                                        >
+                                            <CaretLeft size={32} color={theme.COLORS.WHITE}/>
+                                        </Animated.View>
+                                    </Animated.View>
                                 </TrashView>
 
                             </MicrophoneView>
@@ -872,3 +1012,33 @@ export default function Home() {
         </>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 200,
+        position: "absolute",
+        flexDirection: "row",
+        left: "12%",
+        height: "40%",
+        width: 100,
+        zIndex: -1,
+    },
+    box: {
+        width: 200,
+        height: 100,
+        alignItems: 'center',
+        flexDirection: "row"
+    },
+    pressable: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    pressableContent: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+});

@@ -115,7 +115,7 @@ export const CircleView = styled(Animated.View)`
     top: 25%;
     justify-content: center;
     align-items: center;
-    z-index: -1;
+    z-index: -5;
 `;
 
 export const MicrophoneView = styled(Animated.View)`
@@ -254,12 +254,24 @@ export const InputConfirmButton = styled.TouchableOpacity`
 `;
 
 export const TrashView = styled(Animated.View)`
+    flex: 1;
     position: absolute;
-    flex-direction: row;
-    left: 12%;
     justify-content: center;
     align-items: center;
+    flex-direction: row;
+    left: 12%;
     height: 40%;
-    width: 50px;
+    width: 100px;
     z-index: -1;
 `;
+
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     marginBottom: 200,
+//     position: "absolute",
+//     flexDirection: "row",
+//     left: "12%",
+//     height: "40%",
+//     width: 100,
+//     zIndex: -1,
