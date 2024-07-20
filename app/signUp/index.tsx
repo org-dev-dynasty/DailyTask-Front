@@ -1,86 +1,150 @@
-import React, { useState, SetStateAction, useEffect } from 'react';
+import React, { useState, SetStateAction, useEffect, useContext } from 'react';
 import { Background } from "@/components/background";
-import { Container, Titulo, TouchableOpacityConta, TextFooter, Logo, View, ButtonText, ContainerLogin, Details, Footer} from "./styles";
-import { Image } from "react-native"; 
+import { Container, Titulo, TouchableOpacityConta, TextFooter, Logo, View, ButtonText, ContainerLogin, Details, Footer, CheckBoxContainer, CheckBoxText, CheckBoxTextTerms, ModalContainer, ModalView, ModalText, CheckBoxTextTermsTouchable} from "./styles";
+import { Image, ScrollView, TouchableOpacity } from "react-native"; 
 import { Input } from "@/components/input/input";
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
+import { X } from 'phosphor-react-native';
+import { Checkbox } from 'react-native-paper';
+import { UserContext } from '../../context/user_context';
+import { User } from '@/@clean/shared/domain/entities/user';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import theme from '@/themes/theme';
 
 
 export default function SignUp() {
-    const [nome, setNome] = useState('');
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [senha, setSenha] = useState('');
-    const [confirmarSenha, setConfirmarSenha] = useState('');
-    const [erroSenha, setErroSenha] = useState('');
-    const [erroEmail, setErroEmail] = useState('');
-    const [erroNome, setErroNome] = useState('');
-    const [erroConfirmarSenha, setErroConfirmarSenha] = useState('');
+    const [password, setPassword] = useState('');
+    const [confPassword, setConfPassword] = useState('');
+    const [errorPassword, setErrorPassword] = useState('');
+    const [errorEmail, setErrorEmail] = useState('');
+    const [errorName, setErrorName] = useState('');
+    const [errorConfPassword, setErrorConfPassword] = useState('');
+    const [acceptedTermsModalOpen, setAcceptedTermsModalOpen] = useState(false);
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
+    const [acceptedNotificationsEmail, setAcceptedNotificationsEmail] = useState(false);
 
+    const [user, setUser] = useState({} as User);
+    const { create } = useContext(UserContext);
 
     const validateEmail = (email: string) => {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
     };
 
-    const handleButtonPress = () => {
-        if (nome == "") {
-            setErroNome('Preencha o campo de nome.')
+    async function handleButtonPress() {
+        if (name == "") {
+            setErrorName('Preencha o campo de nome.')
         } else if (!validateEmail(email)) {
-            setErroEmail('Por favor, insira um e-mail válido.');
-        } else if (senha.length < 8) {
-            setErroSenha('A senha deve ter no mínimo 8 caracteres.');
-        } else if (!/[A-Z]/.test(senha)) {
-            setErroSenha('A senha deve ter pelo menos uma letra maiúscula.');
-        } else if (!/[a-z]/.test(senha)) {
-            setErroSenha('A senha deve ter pelo menos uma letra minúscula.');
-        } else if (!/\d/.test(senha)) {
-            setErroSenha('A senha deve ter pelo menos um número.');
-        } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(senha)) {
-            setErroSenha('A senha deve ter pelo menos um caractere especial.');
-        } else if (senha !== confirmarSenha) {
-            setErroConfirmarSenha('As senhas não coincidem. Por favor, verifique.');
+            setErrorEmail('Por favor, insira um e-mail válido.');
+        } else if (password.length < 8) {
+            setErrorPassword('A senha deve ter no mínimo 8 caracteres.');
+        } else if (!/[A-Z]/.test(password)) {
+            setErrorPassword('A senha deve ter pelo menos uma letra maiúscula.');
+        } else if (!/[a-z]/.test(password)) {
+            setErrorPassword('A senha deve ter pelo menos uma letra minúscula.');
+        } else if (!/\d/.test(password)) {
+            setErrorPassword('A senha deve ter pelo menos um número.');
+        } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+            setErrorPassword('A senha deve ter pelo menos um caractere especial.');
+        } else if (password !== confPassword) {
+            setErrorConfPassword('As senha não coincidem. Por favor, verifique.');
+        } else if (!acceptedTerms) {
+            alert('Aceite os termos de uso')
+        } else if (!acceptedNotificationsEmail) {
+            alert('Aceite as notificações por email')
         } else {
-            setNome('');
-            setEmail('');
-            setSenha('');
-            setConfirmarSenha('');
+            const user = new User(null, name, email, password, null, acceptedTerms, acceptedNotificationsEmail);
+            const result = await create(user);
+            if(result) { 
+                await AsyncStorage.setItem('email', email);
+                alert('Usuário criado com sucesso');
+                console.log('Usuário criado com sucesso')
+                // router.replace('/email-confirmation');
+            } else {
+                alert('Erro ao criar usuário');
+                console.log('Erro ao criar usuário')
+            }
         }
     };
 
     useEffect(() => {
-        if (nome !== '') {
-            setErroNome('');
+        if (name !== '') {
+            setErrorName('');
         }
         if (email !== '') {
-            setErroEmail('');
+            setErrorEmail('');
         }
-        if (senha !== '') {
-            setErroSenha('');
+        if (password !== '') {
+            setErrorPassword('');
         }
-        if (confirmarSenha !== '') {
-            setErroConfirmarSenha('');
+        if (confPassword !== '') {
+            setErrorConfPassword('');
         }
-    }, [email, senha, nome, confirmarSenha]);
+    }, [email, password, name, confPassword]);
 
     return (
         <Background>
+            <ModalContainer style={{display: acceptedTermsModalOpen ? 'flex' : 'none'}}>
+                <ModalView>
+                    <TouchableOpacity onPress={() => setAcceptedTermsModalOpen(false)} style={{position: 'absolute', right: 12, top: 12}}>
+                        <X color={theme.COLORS.NEGATIVE}/>
+                    </TouchableOpacity>
+                    <ScrollView>
+                        <ModalText>
+                            Lorem ipsum dolor, sit amet consectetur adipisicing 
+                            elit. Explicabo, repudiandae quae. Inventore, deleniti, natus 
+                            illo fugiat quasi magni fugit, nam ullam rerum sunt minus adipisci 
+                            laudantium? Minima enim odio inventore. Lorem ipsum dolor sit amet 
+                            consectetur adipisicing elit. Ullam nam incidunt est asperiores sequi, 
+                            voluptas sit illo, aliquam repellendus corrupti numquam! Error quas enim rerum ut, 
+                            earum iure facere consequatur. Lorem ipsum dolor sit amet consectetur, adipisicing 
+                            elit. Fugiat ratione, harum qui quis recusandae totam voluptas blanditiis neque sint 
+                            porro! Molestiae sequi aspernatur officiis ipsam? Ipsam ea consequatur repellat molestias! 
+                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fugiat, hic! Atque unde, 
+                            nostrum voluptatibus tempora eius eos perferendis temporibus ex quis. Quidem vel neque 
+                            recusandae suscipit. Voluptas nulla nam magnam.
+                        </ModalText>
+                    </ScrollView>
+                </ModalView>
+            </ModalContainer>
             <Logo
                 source={require('../../assets/appImages/logo-daily-branca.png')}
             />
             <Container>
                 <Titulo>Crie sua Conta</Titulo>
                 <View>
-                    <Input label="Nome" value={nome} onChangeText={(text: SetStateAction<string>) => setNome(text)} error={erroNome} />
+                    <Input label="Nome" value={name} onChangeText={(text: SetStateAction<string>) => setName(text)} error={errorName} />
                 </View>
                 <View>
-                    <Input label="Email" value={email} onChangeText={(text: SetStateAction<string>) => setEmail(text)} error={erroEmail}/>
+                    <Input label="Email" value={email} onChangeText={(text: SetStateAction<string>) => setEmail(text)} error={errorEmail}/>
                 </View>
                 <View>
-                    <Input label="Senha" value={senha} onChangeText={(text: SetStateAction<string>) => setSenha(text)} error={erroSenha} hide/>
+                    <Input label="Senha" value={password} onChangeText={(text: SetStateAction<string>) => setPassword(text)} error={errorPassword} hide/>
                 </View>
                 <View>
-                    <Input label="Confirmar Senha" value={confirmarSenha} onChangeText={(text: SetStateAction<string>) => setConfirmarSenha(text)} error={erroConfirmarSenha} hide/>
+                    <Input label="Confirmar senha" value={confPassword} onChangeText={(text: SetStateAction<string>) => setConfPassword(text)} error={errorConfPassword} hide/>
+                </View>
+                <View style={{marginBottom: 12}}>
+                    <CheckBoxContainer>
+                        <Checkbox
+                          status={acceptedTerms ? 'checked' : 'unchecked'}
+                          onPress={() => {
+                            setAcceptedTerms(!acceptedTerms);
+                          }}
+                        />
+                        <CheckBoxText>Aceito os <CheckBoxTextTerms onPress={() => setAcceptedTermsModalOpen(true)}>termos de uso</CheckBoxTextTerms></CheckBoxText>
+                    </CheckBoxContainer>
+                    <CheckBoxContainer>
+                        <Checkbox
+                          status={acceptedNotificationsEmail ? 'checked' : 'unchecked'}
+                          onPress={() => {
+                            setAcceptedNotificationsEmail(!acceptedNotificationsEmail);
+                          }}
+                        />
+                        <CheckBoxText>Aceito receber notificações via email</CheckBoxText>
+                    </CheckBoxContainer>
                 </View>
                 <TouchableOpacityConta onPress={handleButtonPress}>
                     <ButtonText>Criar Conta</ButtonText>
