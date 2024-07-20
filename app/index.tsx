@@ -1,7 +1,9 @@
 import { Background } from "@/components/background";
 import { Input } from "@/components/input/input";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import { Link } from "expo-router";
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction, useCallback, useEffect, useState } from "react";
 import { TouchableOpacity, View, Text } from "react-native";
 
 export default function Index() {
