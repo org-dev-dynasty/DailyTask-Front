@@ -2,15 +2,25 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Animated, Easing, StyleSheet, TouchableOpacity } from 'react-native';
 import { Sun, Moon } from 'phosphor-react-native';
 import theme from '@/themes/theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SwitchProps } from '@/interfaces/Switch';
 
-const CustomToggleSwitch = () => {
-    const [tema, setTema] = useState(false);
+const CustomToggleSwitch = ({ themeMode, onValueChange }: SwitchProps) => {
+    const [tema, setTema] = useState(themeMode === 'dark');
     const animatedValue = useRef(new Animated.Value(tema ? 1 : 0)).current;
 
+    useEffect(() => {
+        setTema(themeMode === 'dark');
+    }, [themeMode]);
+
     const toggleSwitch = () => {
+        const newTheme = !tema ? 'dark' : 'light';
         setTema(!tema);
+        onValueChange(newTheme === 'dark');
+        StorageTheme(newTheme);
+        
         Animated.timing(animatedValue, {
-            toValue: tema ? 0 : 1,
+            toValue: !tema ? 1 : 0,
             duration: 300,
             easing: Easing.linear,
             useNativeDriver: false,
@@ -30,6 +40,11 @@ const CustomToggleSwitch = () => {
         inputRange: [0, 1],
         outputRange: [-16, 16], 
     });
+
+    function StorageTheme(theme: 'dark' | 'light') {
+        AsyncStorage.setItem('themeMode', theme);
+        console.log(theme);
+    }
 
     return (
         <TouchableOpacity onPress={toggleSwitch} style={[styles.container, { backgroundColor: tema ? '#2F2F2F' : theme.COLORS.MAIN }]}>
