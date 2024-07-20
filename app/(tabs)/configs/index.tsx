@@ -5,8 +5,7 @@ import theme from "@/themes/theme";
 import { ThemeProvider } from 'styled-components/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ModalConfigs } from '@/components/modalConfigs';
-import { SignOut, User, Moon, Sun} from 'phosphor-react-native';
-import ToggleSwitch from 'toggle-switch-react-native';
+import { SignOut, User } from 'phosphor-react-native';
 import CustomToggleSwitch from '@/components/switch';
 
 export default function Configs() {
@@ -19,13 +18,7 @@ export default function Configs() {
     const [erroSenhaAtual, setErroSenhaAtual] = useState('');
     const [senhaNova, setsenhaNova] = useState('');
     const [erroSenhaNova, setErroSenhaNova] = useState('');
-    const [isEnabled, setIsEnabled] = useState(false);
-    const [isOn, setIsOn] = useState(false);
     
-    const alternateSwitch = () => {
-        setIsEnabled(previousState => !previousState);
-    }
-   
     useEffect(() => {
         if (email !== '') {
             setErroEmail('');
@@ -70,9 +63,3 @@ export default function Configs() {
         </ThemeProvider>    
     );
 }
-
-
-
-
-/* 
-   5- fazer o display de dark mode e light mode*/
