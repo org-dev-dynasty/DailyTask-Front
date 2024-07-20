@@ -50,7 +50,6 @@
     "react-native-svg": "^15.3.0",
     "react-native-web": "~0.19.10",
     "styled-components": "^6.1.11",
-    "toggle-switch-react-native": "^3.3.0",
     "recyclerlistview": "^4.2.1"
   },
   "devDependencies": {
