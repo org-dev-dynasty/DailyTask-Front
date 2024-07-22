@@ -1,4 +1,5 @@
 import { Background } from "@/components/background";
+import CategoryModal from "@/components/categoryModal";
 import { Input } from "@/components/input/input";
 import { Link } from "expo-router";
 import { SetStateAction, useEffect, useState } from "react";
@@ -9,6 +10,7 @@ export default function Index() {
     const [email, setEmail] = useState('');
     const [erroSenha, setErroSenha] = useState('');
     const [erroEmail, setErroEmail] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
 
     function testeInput() {
         if (email === '') {
@@ -32,6 +34,11 @@ export default function Index() {
         }
     }, [email, senha]);
 
+    const handleConfirm = (name: any, color: any) => {
+        console.log('Categoria criada:', name, color);
+        setModalVisible(false);
+    };
+
     return (
         <>
         <Background>
@@ -42,8 +49,14 @@ export default function Index() {
                 <Input label="Email" value={email} onChangeText={(text: SetStateAction<string>) => setEmail(text)} error={erroEmail}/>
                 <Input label="Senha" value={senha} onChangeText={(text: SetStateAction<string>) => setSenha(text)} error={erroSenha} hide/>
                 <TouchableOpacity onPress={testeInput} style={{backgroundColor: "blue", padding: 16, borderRadius: 15}}><Text>Teste</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => setModalVisible(true)} style={{backgroundColor: "green", padding: 16, borderRadius: 15}}><Text>Adicionar Categoria</Text></TouchableOpacity>   
             </View>
         </Background>
+        <CategoryModal
+                visible={modalVisible}
+                onClose={() => setModalVisible(false)}
+                onConfirm={handleConfirm}
+            />
         </>
     );
 }
