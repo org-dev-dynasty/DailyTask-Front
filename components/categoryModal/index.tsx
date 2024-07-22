@@ -41,8 +41,8 @@ export default function CategoryModal({ visible, onClose, onConfirm }: any) {
             <ModalContainer>
                 <ModalContent>
                         <CloseButton onPress={onClose}>
-                            <CloseButtonText>X</CloseButtonText>
-                            {/* <XCircle size={32} color='#F06B41' /> */}
+                            {/* <CloseButtonText>X</CloseButtonText> */}
+                            <XCircle size={32} color='#F06B41' />
                         </CloseButton>
                         <Title>Criar Categoria</Title>
                         <Subtitle>Crie uma nova categoria para as suas tasks</Subtitle>
@@ -68,7 +68,7 @@ export default function CategoryModal({ visible, onClose, onConfirm }: any) {
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <CustomColorText>Ou, escolha a sua cor</CustomColorText>
                             <View style={{ marginLeft: 8 }}>
-                                {/* <Palette size={32} color='#F06B41' /> */}
+                                <Palette size={32} color='#F06B41' />
                             </View>
                         </View>
                         <ConfirmButton onPress={() => onConfirm(categoryName, selectedColor)}>
