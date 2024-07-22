@@ -87,7 +87,11 @@ export default function Login() {
     // Reuquest to login
     const result = await login(email, password);
     if (result) {
-      console.log('Login efetuado com sucesso');
+      alert('Login efetuado com sucesso');
+      await AsyncStorage.setItem('id_token', result.id_token);
+      await AsyncStorage.setItem('token', result.access_token);
+      await AsyncStorage.setItem('refresh_token', result.refresh_token);
+      router.replace('/home');
     }
   }
 

@@ -5,5 +5,5 @@ export interface IUserRepository {
     create(user: User): Promise<CreateUserResponse>;
     get(user_id: string): Promise<User | null>;
     login(email: string, password: string): Promise<LoginResponse>;
-    comfirmEmail(email: string, verificationCode: string): Promise<ComfirmEmailResponse>;
+    comfirmEmail(email: string, verification_code: string): Promise<ComfirmEmailResponse>;
 }
