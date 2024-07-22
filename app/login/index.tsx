@@ -9,22 +9,15 @@ import { Input } from '@/components/input/input';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserContext } from '../../context/user_context';
 
-// import * as WebBrowser from 'expo-web-browser'
-// import * as Google from 'expo-auth-session/providers/google'
-// import * as AuthSession from 'expo-auth-session'
-
-import { GoogleSignin } from "@react-native-google-signin/google-signin"
+import * as WebBrowser from 'expo-web-browser'
+import * as Google from 'expo-auth-session/providers/google'
 
 const Logo = require('../../assets/appImages/logo-daily-branca.png');
 const LogoDevDynasty = require('../../assets/appImages/logo-dev-dynasty.png');
 const LogoGoogle = require('../../assets/appImages/logo-google.png');
 const LogoGitHub = require('../../assets/appImages/logo-gitHub.png');
 
-// GoogleSignin.configure({
-//   scopes: ['email', 'profile'],
-//   webClientId: '477785692735-olm3sejb8innr21hts1affdfrso98m8o.apps.googleusercontent.com',
-//   iosClientId: '477785692735-m38lmcvn3lp2u4q2r0m7hi4nquim8gjq.apps.googleusercontent.com',
-// })
+WebBrowser.maybeCompleteAuthSession()
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -34,17 +27,32 @@ export default function Login() {
 
   // const [isAuthenticating, setIsAuthenticating] = useState(false)
 
-  // async function googleSignIn() {
-  //   try {
-  //     const resp = await GoogleSignin.signIn()
-  //     console.log(resp)
-  //   } catch(e: any) {
-  //     console.log(e)
-  //     Alert.alert("Entrar", "Não foi possível conectar com sua conta google")
-  //   }
-  // }
+  const [request, responseGoogle, promptAsyncGoogle] = Google.useIdTokenAuthRequest({
+    clientId: '477785692735-olm3sejb8innr21hts1affdfrso98m8o.apps.googleusercontent.com',
+    scopes: ['email', 'profile'],
+    iosClientId: '477785692735-m38lmcvn3lp2u4q2r0m7hi4nquim8gjq.apps.googleusercontent.com',
+    androidClientId: '477785692735-u29cmvh39var7vmd8kgtd5mjlu72f12u.apps.googleusercontent.com'
+  })
+
+  async function getUserInfoFromOAuth(accessToken: string) {
+    const response = await fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    })
+    const userInfo = await response.json()
+    console.log(userInfo)
+  }
 
   const { login } = useContext(UserContext);
+
+  useEffect(() => {
+    if (responseGoogle?.type === 'success') {
+      console.log(responseGoogle);
+      const { authentication } = responseGoogle;
+      console.log(authentication);
+      const accessToken = authentication?.accessToken
+      accessToken && getUserInfoFromOAuth(accessToken);
+    }
+  }, [responseGoogle])
 
   useEffect(() => {
     if (email !== '') {
@@ -116,7 +124,9 @@ export default function Login() {
           <SeparatorLine />
         </SeparatorContainer>
         <SocialIcons>
-          <TouchableOpacity onPress={()=>{}}  >
+          <TouchableOpacity onPress={() => {
+            promptAsyncGoogle()
+            }}  >
             <Image source={LogoGoogle} />
           </TouchableOpacity>
           <Image source={LogoGitHub} />

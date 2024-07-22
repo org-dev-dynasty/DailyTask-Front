@@ -14,7 +14,7 @@ type UserContextType = {
 
 const defaultUserContext: UserContextType = { 
     login: async (email: string, password: string) => { 
-        return { id_token: '', access_token: '', refresh_token: '' };
+        return { access_token: '', refresh_token: '', id_token: '', message: '' };
     },
     create: async (user: User) => { 
         return { user: user, message: '' };
@@ -22,7 +22,7 @@ const defaultUserContext: UserContextType = {
     get: async (user_id: string) => { 
         return null;
     },
-    comfirmEmail: async (email: string, verification_code: string) => { 
+    comfirmEmail: async (email: string, verificationCode: string) => { 
         return { message: '' };
     }
 };
@@ -36,9 +36,8 @@ export function UserContextProvider({ children }: { children: React.ReactNode })
     async function login(email: string, password: string): Promise<LoginResponse> { 
         try {
             const result = await userRepository.login(email, password);
-            console.log("CONTEXTO DE USUÁRIO LOGIN")
-            console.log(result)
-            return result as LoginResponse;
+            console.log("CONTEXTO DE USUÁRIO LOGIN" + result)
+            return result;
         } catch (error: any) {  
             throw new Error(error);
         }
@@ -47,7 +46,7 @@ export function UserContextProvider({ children }: { children: React.ReactNode })
     async function create(user: User): Promise<CreateUserResponse> { 
         try {
             const result = await userRepository.create(user);
-            console.log(result)
+            console.log("CONTEXTO DE USUÁRIO CREATE" + result)
             return result as CreateUserResponse;
         } catch (error: any) {
             throw new Error(error);
@@ -58,11 +57,11 @@ export function UserContextProvider({ children }: { children: React.ReactNode })
         return await userRepository.get(user_id);
     }
 
-    async function comfirmEmail(email: string, verification_code: string): Promise<ComfirmEmailResponse> { 
+    async function comfirmEmail(email: string, verificationCode: string): Promise<ComfirmEmailResponse> { 
         try {
-            const result = await userRepository.comfirmEmail(email, verification_code);
-            console.log(result)
-            return result as ComfirmEmailResponse;
+            const result = await userRepository.comfirmEmail(email, verificationCode);
+            console.log("CONTEXTO DE USUÁRIO CONFIRM EMAIL" + result)
+            return result;
         } catch (error: any) {
             throw new Error(error);
         }
