@@ -37,7 +37,6 @@ export default function Configs() {
     // UseEffect to get the theme mode from the AsyncStorage && to get token from the AsyncStorage
     useFocusEffect(
         useCallback(() => {
-            console.log('Configs');
             AsyncStorage.getItem('themeMode').then((value) => {
                 if (value) {
                     setThemeModeS(value);
