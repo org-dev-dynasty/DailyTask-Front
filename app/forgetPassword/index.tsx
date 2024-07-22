@@ -19,7 +19,7 @@ export default function ForgetPassword() {
         } else if (!validateEmail(email)) {
             setErroEmail('Por favor, insira um e-mail válido.');
         } else {
-            router.replace('/newPassword')
+            router.replace('/emailConfirm');
         }
     }
 
