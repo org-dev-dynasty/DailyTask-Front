@@ -3,25 +3,32 @@ import theme from '@/themes/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
 
 export function Background(props: BackProps) {
   const [themeModeS, setThemeModeS] = useState('dark'); // dark or light theme const
+
+  const loadTheme = useCallback(async () => {
+    const value = await AsyncStorage.getItem('themeMode');
+    if (value) {
+      setThemeModeS(value);
+      console.log('themeMode', value);
+      console.log('props.themeMode', props.themeMode);
+    }
+  }, [props.themeMode]);
+
   useFocusEffect(
     useCallback(() => {
-        AsyncStorage.getItem('themeMode').then((value) => {
-            if (value) {
-                setThemeModeS(value);
-                // if (props.themeMode !== value) {
-                //   setThemeModeS(props.themeMode || value);
-                // }
-                console.log('themeMode', value);
-                console.log('props.themeMode', props.themeMode);
-            }
-        });
+      loadTheme();
+    }, [loadTheme])
+  );
+
+  useEffect(() => {
+    if (props.themeMode) {
+      setThemeModeS(props.themeMode);
     }
-, []));
+  }, [props.themeMode]);
 
   return (
     <>

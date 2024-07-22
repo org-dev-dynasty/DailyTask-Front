@@ -1,11 +1,12 @@
 import { ModalProps } from "@/interfaces/modalConfigs";
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction, useCallback, useEffect, useState } from "react";
 import { Image, Modal, View, Keyboard } from "react-native";
 import { Title, ButtonOut, Subtitle, ButtonModal, ButtonTextModal, ModalContainer, ModalContent, ButtonDelete } from "./styles"
 import { Background } from "../background";
 import { Input } from "../input/input";
 import { LinearGradient } from "expo-linear-gradient";
-import { Link, router } from "expo-router";
+import { Link, router, useFocusEffect } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const ModalConfigs = (props: ModalProps) => {
     const [email, setEmail] = useState('');
@@ -14,6 +15,7 @@ export const ModalConfigs = (props: ModalProps) => {
     const [erroSenhaAtual, setErroSenhaAtual] = useState('');
     const [senhaNova, setsenhaNova] = useState('');
     const [erroSenhaNova, setErroSenhaNova] = useState('');
+    const [themeModeS, setThemeModeS] = useState('dark');
 
     const validateEmail = (email: string) => {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -68,6 +70,18 @@ export const ModalConfigs = (props: ModalProps) => {
         }
     }, [email, senhaAtual, senhaNova]); 
 
+    useFocusEffect(
+        useCallback(() => {
+            console.log('Configs');
+            AsyncStorage.getItem('themeMode').then((value) => {
+                if (value) {
+                    setThemeModeS(value);
+                }
+            });
+        }
+    , []));
+
+
     return(
         <Modal
             visible={props.modalVisible}
@@ -76,20 +90,22 @@ export const ModalConfigs = (props: ModalProps) => {
             <ModalContainer>
                 <ModalContent>
                     <LinearGradient
-                        colors={['#3C0B50', '#2E083D', '#0F0413']}
-                        locations={[0, 0.28, 1]}
+                        colors={themeModeS === 'dark' ? ['#3C0B50', '#2E083D', '#0F0413'] : ['#ffffff', '#ffffff', '#ffffff']}
+                        locations={themeModeS === 'dark' ? [0, 0.28, 1] : [1, 1, 1]}
                         style={{
                             flex: 1,
                             width: "100%",
                             borderRadius: 15,
-                        }}
+                            borderColor: themeModeS === 'dark' ? '#ffffff' : '#000000',
+                            borderWidth: 2
+                        }} 
                     >
                         <ButtonOut onPress={props.closeModal}>
                             <Image
                                 source={require('../../assets/appImages/button-out.png')}
                             />
                         </ButtonOut>
-                        <Title>
+                        <Title style={{color: themeModeS === 'dark' ? '#ffffff' : '#000000' }}>
                             {props.type == 'email' ? 
                                 'Novo Email'
                             :
@@ -99,7 +115,7 @@ export const ModalConfigs = (props: ModalProps) => {
                                 'Deletar Conta'
                             }
                         </Title>
-                        <Subtitle>
+                        <Subtitle style={{color: themeModeS === 'dark' ? '#ffffff' : '#000000' }}>
                             {props.type == 'email' ?
                                 'Insira um novo email para a sua conta'
                             :
@@ -123,7 +139,7 @@ export const ModalConfigs = (props: ModalProps) => {
                             props.type == 'senha' ?
                             <>
                                 <View style={{ width: '100%', paddingLeft: '8%', paddingRight: '8%' }}>
-                                    <Input label="Digite a senha atual..." value={senhaAtual} onChangeText={(text: SetStateAction<string>) => setsenhaAtual(text)} error={erroSenhaAtual} />
+                                    <Input label="Digite a senha atual..." value={senhaAtual} onChangeText={(text: SetStateAction<string>) => setsenhaAtual(text)} error={erroSenhaAtual}  />
                                     <Input label="Digite a nova senha..." value={senhaNova} onChangeText={(text: SetStateAction<string>) => setsenhaNova(text)} error={erroSenhaNova} />
                                 </View>
                                 <ButtonModal onPress={handleButtonPressPassword}>

@@ -12,7 +12,6 @@ export const UserImage = styled.View`
 `;
 
 export const NameUser = styled.Text`
-    color: ${theme.COLORS.WHITE};
     font-family: ${theme.FONT_FAMILY.LIGHT};
     font-size: ${theme.FONT_SIZE.LG};
     padding-top: 27px;
@@ -128,7 +127,7 @@ export const ViewButtons = styled.View`
     width: 100%;
 `;
 
-export const Logout = styled(Link)`
+export const Logout = styled.TouchableOpacity`
     position: absolute;
     top: 55px;
     right: 20px;
