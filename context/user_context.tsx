@@ -60,7 +60,7 @@ export function UserContextProvider({ children }: { children: React.ReactNode })
     async function comfirmEmail(email: string, verificationCode: string): Promise<ComfirmEmailResponse> { 
         try {
             const result = await userRepository.comfirmEmail(email, verificationCode);
-            console.log("CONTEXTO DE USUÁRIO CONFIRM EMAIL" + result)
+            console.log(result)
             return result;
         } catch (error: any) {
             throw new Error(error);
