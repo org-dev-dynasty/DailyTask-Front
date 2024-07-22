@@ -19,7 +19,6 @@ export const Input = (props: InputProps) => {
 
     useFocusEffect(
       useCallback(() => {
-          console.log('Configs');
           AsyncStorage.getItem('themeMode').then((value) => {
               if (value) {
                   setThemeModeS(value);

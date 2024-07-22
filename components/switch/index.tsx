@@ -43,7 +43,6 @@ const CustomToggleSwitch = ({ themeMode, onValueChange }: SwitchProps) => {
 
     function StorageTheme(theme: 'dark' | 'light') {
         AsyncStorage.setItem('themeMode', theme);
-        console.log(theme);
     }
 
     return (

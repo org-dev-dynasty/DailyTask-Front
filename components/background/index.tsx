@@ -13,8 +13,6 @@ export function Background(props: BackProps) {
     const value = await AsyncStorage.getItem('themeMode');
     if (value) {
       setThemeModeS(value);
-      console.log('themeMode', value);
-      console.log('props.themeMode', props.themeMode);
     }
   }, [props.themeMode]);
 

@@ -72,7 +72,6 @@ export const ModalConfigs = (props: ModalProps) => {
 
     useFocusEffect(
         useCallback(() => {
-            console.log('Configs');
             AsyncStorage.getItem('themeMode').then((value) => {
                 if (value) {
                     setThemeModeS(value);
