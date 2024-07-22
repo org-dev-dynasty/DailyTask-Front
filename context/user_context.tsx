@@ -22,7 +22,7 @@ const defaultUserContext: UserContextType = {
     get: async (user_id: string) => { 
         return null;
     },
-    comfirmEmail: async (email: string, verificationCode: string) => { 
+    comfirmEmail: async (email: string, verification_code: string) => { 
         return { message: '' };
     }
 };
@@ -47,7 +47,7 @@ export function UserContextProvider({ children }: { children: React.ReactNode })
     async function create(user: User): Promise<CreateUserResponse> { 
         try {
             const result = await userRepository.create(user);
-            console.log("CONTEXTO DE USUÁRIO CREATE" + result)
+            console.log(result)
             return result as CreateUserResponse;
         } catch (error: any) {
             throw new Error(error);
@@ -58,11 +58,11 @@ export function UserContextProvider({ children }: { children: React.ReactNode })
         return await userRepository.get(user_id);
     }
 
-    async function comfirmEmail(email: string, verificationCode: string): Promise<ComfirmEmailResponse> { 
+    async function comfirmEmail(email: string, verification_code: string): Promise<ComfirmEmailResponse> { 
         try {
-            const result = await userRepository.comfirmEmail(email, verificationCode);
+            const result = await userRepository.comfirmEmail(email, verification_code);
             console.log(result)
-            return result;
+            return result as ComfirmEmailResponse;
         } catch (error: any) {
             throw new Error(error);
         }

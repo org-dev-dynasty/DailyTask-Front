@@ -4,6 +4,7 @@ import { View, Image, TextInput, NativeSyntheticEvent, TextInputKeyPressEventDat
 import { useEffect, useRef, useState, MutableRefObject, useContext } from "react";
 import { UserContext } from "@/context/user_context";
 import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function EmailConfirm() {
     const [email, setEmail] = useState('');
@@ -29,14 +30,18 @@ export default function EmailConfirm() {
         } else {
             const code = char1 + char2 + char3 + char4 + char5 + char6;
             const result = await comfirmEmail(email, code);
-            if (result.message === 'User email has been confirmed!') {
-                alert('Email confirmado com sucesso!');
-                router.replace('/newPassord');
-            } else {
-                alert('Código inválido. Por favor, tente novamente.');
-            }
         }
     }
+
+    function getBack() {
+        router.replace('/signUp');
+    }
+
+    useEffect(() => {
+        AsyncStorage.getItem('email').then((value) => {
+            setEmail(value || '');
+        });
+    }, []);
 
     useEffect(() => {
         verifyCode();
@@ -82,6 +87,7 @@ export default function EmailConfirm() {
                         value={char1}
                         onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleInputChange(setChar1, e.nativeEvent.text, char2Ref)}
                         onKeyPress={(e: NativeSyntheticEvent<TextInputKeyPressEventData>) => handleKeyPress(setChar1, char1, null, e)}
+                        keyboardType="numeric"
                     />
                     <CharInput
                         ref={char2Ref}
@@ -89,6 +95,7 @@ export default function EmailConfirm() {
                         value={char2}
                         onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleInputChange(setChar2, e.nativeEvent.text, char3Ref)}
                         onKeyPress={(e: NativeSyntheticEvent<TextInputKeyPressEventData>) => handleKeyPress(setChar2, char2, char1Ref, e)}
+                        keyboardType="numeric"
                     />
                     <CharInput
                         ref={char3Ref}
@@ -96,6 +103,7 @@ export default function EmailConfirm() {
                         value={char3}
                         onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleInputChange(setChar3, e.nativeEvent.text, char4Ref)}
                         onKeyPress={(e: NativeSyntheticEvent<TextInputKeyPressEventData>) => handleKeyPress(setChar3, char3, char2Ref, e)}
+                        keyboardType="numeric"
                     />
                     <CharInput
                         ref={char4Ref}
@@ -103,6 +111,7 @@ export default function EmailConfirm() {
                         value={char4}
                         onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleInputChange(setChar4, e.nativeEvent.text, char5Ref)}
                         onKeyPress={(e: NativeSyntheticEvent<TextInputKeyPressEventData>) => handleKeyPress(setChar4, char4, char3Ref, e)}
+                        keyboardType="numeric"
                     />
                     <CharInput
                         ref={char5Ref}
@@ -110,6 +119,7 @@ export default function EmailConfirm() {
                         value={char5}
                         onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleInputChange(setChar5, e.nativeEvent.text, char6Ref)}
                         onKeyPress={(e: NativeSyntheticEvent<TextInputKeyPressEventData>) => handleKeyPress(setChar5, char5, char4Ref, e)}
+                        keyboardType="numeric"
                     />
                     <CharInput
                         ref={char6Ref}
@@ -117,11 +127,12 @@ export default function EmailConfirm() {
                         value={char6}
                         onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) => handleInputChange(setChar6, e.nativeEvent.text, null)}
                         onKeyPress={(e: NativeSyntheticEvent<TextInputKeyPressEventData>) => handleKeyPress(setChar6, char6, char5Ref, e)}
+                        keyboardType="numeric"
                     />
                 </InputsContainer>
                 <ButtonContainer>
                     <SendButton><ButtonText>Enviar Código</ButtonText></SendButton>
-                    <BackButton><ButtonText>Voltar</ButtonText></BackButton>
+                    <BackButton onPress={getBack}><ButtonText>Voltar</ButtonText></BackButton>
                 </ButtonContainer>
                 <ViewFooter>
                     <TextFooter>Desenvolvido por DevDynasty</TextFooter>

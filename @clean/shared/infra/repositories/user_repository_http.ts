@@ -18,12 +18,16 @@ export class UserRepositoryHttp implements IUserRepository {
                 accepted_notifications_email: user.accepted_notifications_email
             });
             if (response?.status == 201) {
-                console.log(user)
-                router.replace('/login');
+                console.log(user);
+            }
+            if (response?.status == 409) {
+                alert('Usuário já cadastrado');
             }
             console.log("RESPOSTA DA REQ CREATE" + response.data);
             return response.data as CreateUserResponse;
         } catch (error: any) {
+            alert(error.response.data);
+            console.log(error.response.data);
             throw new Error(error);
         }
     }
@@ -47,15 +51,21 @@ export class UserRepositoryHttp implements IUserRepository {
         }
      }
 
-     async comfirmEmail(email: string, verificationCode: string): Promise<ComfirmEmailResponse> {
+     async comfirmEmail(email: string, verification_code: string): Promise<ComfirmEmailResponse> {
         try {
-            const response = await this.httpUser.post<ComfirmEmailResponse>(`${process.env.EXPO_PUBLIC_API_URL}/confirm-user-email`, { email, verificationCode });
+            const response = await this.httpUser.post<ComfirmEmailResponse>(`${process.env.EXPO_PUBLIC_API_URL}/confirm-user-email`, { 
+                email: email, 
+                verification_code: verification_code 
+            });
+            console.log("RESPOSTA DA REQ CONFIRM EMAIL");
+            console.log(response.data);
             if (response.data) {
+                alert('Email confirmado com sucesso!');
                 router.replace('/home');
             }
-            console.log("RESPOSTA DA REQ CONFIRM EMAIL" + response.data);
             return response.data;
         } catch (error: any) {
+            // console.log(error.response.data);
             throw new Error(error);
         }
     }
