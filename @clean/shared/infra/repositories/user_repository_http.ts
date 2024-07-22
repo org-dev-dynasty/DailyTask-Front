@@ -61,7 +61,7 @@ export class UserRepositoryHttp implements IUserRepository {
             console.log(response.data);
             if (response.data) {
                 alert('Email confirmado com sucesso!');
-                router.replace('/home');
+                router.replace('/login');
             }
             return response.data;
         } catch (error: any) {
