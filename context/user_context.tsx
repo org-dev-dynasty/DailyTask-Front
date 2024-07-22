@@ -14,7 +14,7 @@ type UserContextType = {
 
 const defaultUserContext: UserContextType = { 
     login: async (email: string, password: string) => { 
-        return { token: '', message: '' };
+        return { access_token: '', refresh_token: '' };
     },
     create: async (user: User) => { 
         return { user: user, message: '' };
@@ -36,8 +36,9 @@ export function UserContextProvider({ children }: { children: React.ReactNode })
     async function login(email: string, password: string): Promise<LoginResponse> { 
         try {
             const result = await userRepository.login(email, password);
-            console.log("CONTEXTO DE USUÁRIO LOGIN" + result)
-            return result;
+            console.log("CONTEXTO DE USUÁRIO LOGIN")
+            console.log(result)
+            return result as LoginResponse;
         } catch (error: any) {  
             throw new Error(error);
         }

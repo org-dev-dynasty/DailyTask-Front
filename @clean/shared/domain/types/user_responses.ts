@@ -1,8 +1,8 @@
 import { User } from "../entities/user";
 
 export type LoginResponse = {
-    token: string;
-    message: string;
+    access_token: string;
+    refresh_token: string;
 }
 
 export type CreateUserResponse = {

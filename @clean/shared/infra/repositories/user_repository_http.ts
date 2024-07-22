@@ -39,7 +39,8 @@ export class UserRepositoryHttp implements IUserRepository {
                 await AsyncStorage.setItem('token', response.data.token);
                 router.replace('/home');
             }
-            console.log("RESPOSTA DA REQ LOGIN" + response.data);
+            console.log("RESPOSTA DA REQ LOGIN");
+            console.log(response.data);
             return response.data as LoginResponse;
         } catch (error: any) {
             throw new Error(error);
