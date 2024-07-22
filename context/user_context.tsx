@@ -14,7 +14,7 @@ type UserContextType = {
 
 const defaultUserContext: UserContextType = { 
     login: async (email: string, password: string) => { 
-        return { access_token: '', refresh_token: '' };
+        return { id_token: '', access_token: '', refresh_token: '' };
     },
     create: async (user: User) => { 
         return { user: user, message: '' };

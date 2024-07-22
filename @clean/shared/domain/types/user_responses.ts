@@ -1,6 +1,7 @@
 import { User } from "../entities/user";
 
 export type LoginResponse = {
+    id_token: string;
     access_token: string;
     refresh_token: string;
 }
