@@ -52,21 +52,6 @@ export const TaskInput = (props: TaskInputProps) => {
                     small={props.time || props.date}
                     big={props.description}
 
-                    // render={(inputProps) => (
-                    //     <NativeTextInput
-                    //         {...inputProps}
-                    //         style={[
-                    //             inputProps.style,
-                    //             {
-                    //                 paddingTop: 8,
-                    //                 paddingBottom: 8,
-                    //                 height: 36,
-                    //             }
-                    //
-                    //         ]}
-                    //     />
-                    // )}
-
                     right={props.time ? <Clock size={32} color={theme.COLORS.MAIN} /> :
                         props.category ?
                             <View style={{borderLeftWidth: 1, borderLeftColor: borderColor, flex: 1, justifyContent: 'center', alignContent: 'center', paddingLeft: 5, paddingBottom: 2.5}}>
