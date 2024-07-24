@@ -2,11 +2,12 @@ export default {
     COLORS: {
         WHITE: "#FFFFFF",
         BLACK: "#000000",
+        GRAY: "#2F2F2F",
 
         // Button Colors
         MAIN: "#F06B41",
         NEGATIVE: "#DE4343",
-        NEGATIVE_ALT: "#22092C",
+        NEGATIVE_ALT: "#360F45",
 
         // Card Colors
         BLUE_100: "#9CD4F4",
