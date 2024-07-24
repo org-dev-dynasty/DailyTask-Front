@@ -4,6 +4,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import { UserContextProvider } from '../context/user_context';
 
 
 
@@ -33,15 +34,19 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack
-      initialRouteName='login'
-    >
-      <Stack.Screen name='index' />
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      {/* Aqui para baixo chama-se as rotas */}
-      <Stack.Screen name='login/index' options={{ headerShown: false }} />
-      <Stack.Screen name='signUp/index' options={{ headerShown: false }} />
-      <Stack.Screen name='forgetPassword/index' options={{ headerShown: false }} />
-    </Stack>
+    <UserContextProvider>
+      <Stack
+        // initialRouteName='index'
+      >
+        <Stack.Screen name='index' />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        {/* Aqui para baixo chama-se as rotas */}
+        <Stack.Screen name='login/index' options={{ headerShown: false }} />
+        <Stack.Screen name='signUp/index' options={{ headerShown: false }} />
+        <Stack.Screen name='forgetPassword/index' options={{ headerShown: false }} />
+        <Stack.Screen name='newPassword/index' options={{ headerShown: false }} />
+        <Stack.Screen name='emailConfirm/index' options={{ headerShown: false }} />
+      </Stack>
+    </UserContextProvider>
   );
 }

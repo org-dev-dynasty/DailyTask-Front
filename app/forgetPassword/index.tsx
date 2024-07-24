@@ -3,7 +3,8 @@ import { Logo, Titulo, Container, Text, View, TouchableOpacityEnviar, ButtonText
 import { Input } from "@/components/input/input";
 import { SetStateAction, useEffect, useState } from "react";
 import { Image } from "react-native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ForgetPassword() {
     const [email, setEmail] = useState('');
@@ -13,13 +14,14 @@ export default function ForgetPassword() {
         return re.test(email);
     };
 
-    const handleButtonPress = () => {
+    async function handleButtonPress() {
         if ( email == '') {
             setErroEmail('Preencha o campo abaixo.')
         } else if (!validateEmail(email)) {
             setErroEmail('Por favor, insira um e-mail válido.');
         } else {
-            setEmail('');
+            await AsyncStorage.setItem('email', email);
+            router.replace('/emailConfirm');
         }
     }
 

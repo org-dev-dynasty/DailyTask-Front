@@ -1,11 +1,10 @@
 {
   "expo": {
-    "name": "DailyTask",
-    "slug": "DailyTask",
+    "name": "daily-tasks",
+    "slug": "daily-tasks",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -13,9 +12,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.devdynasty.dailytasks"
     },
     "android": {
+      "package": "com.devdynasty.dailytasks",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -32,6 +33,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "374ba638-2022-4d80-aba4-5c3e88da320d"
+      }
+    },
+    "owner": "dev-dynasty"
   }
 }
