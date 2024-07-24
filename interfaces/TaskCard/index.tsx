@@ -1,4 +1,5 @@
 export interface TaskCardProps {
+    task_id: string;
     title: string;
     description: string;
     date: string;
