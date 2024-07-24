@@ -37,6 +37,7 @@ export const Input = (props: InputProps) => {
               onChangeText={props.onChangeText}
               style={{ backgroundColor: "transparent", color: theme.COLORS.WHITE}}
               outlineStyle={{ borderColor: props.error ? theme.COLORS.NEGATIVE : isFocused ? theme.COLORS.MAIN : themeModeS === 'dark' ? '#ffffff' : '#000000' }}
+              cursorColor={theme.COLORS.MAIN}
               theme={{
                 colors: {
                   background: theme.COLORS.NEGATIVE_ALT,
