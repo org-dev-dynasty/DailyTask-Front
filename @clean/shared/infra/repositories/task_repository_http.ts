@@ -6,7 +6,7 @@ import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export class TaskRepositoryHttp implements ITaskRepository {
-    constructor(private readonly httpTask: AxiosInstance) {}
+    constructor(private readonly httpTask: AxiosInstance) { }
 
     async create(task: Task): Promise<Task> {
         try {
@@ -47,7 +47,10 @@ export class TaskRepositoryHttp implements ITaskRepository {
 
     async delete(task_id: string): Promise<boolean> {
         try {
-            const response = await this.httpTask.delete(`${process.env.EXPO_PUBLIC_API_URL}/delete-task?task_id=${task_id}`);
+            const response = await this.httpTask.delete(`${process.env.EXPO_PUBLIC_API_URL}/delete-task?task_id=${task_id}`,
+                {
+                    headers: { Authorization: `Bearer ${await AsyncStorage.getItem('token')}` }
+                });
             if (response?.status == 200) {
                 router.replace('/home');
             }
@@ -65,7 +68,7 @@ export class TaskRepositoryHttp implements ITaskRepository {
 
     async updateStatus(task_id: string, status: string): Promise<Task> {
         try {
-            const response = await this.httpTask.put(`${process.env.EXPO_PUBLIC_API_URL}/update-task-status?task-id=${task_id}`, { 'task-status': status });
+            const response = await this.httpTask.put(`${process.env.EXPO_PUBLIC_API_URL}/update-task-status?task-id=${task_id}`, { 'task-status': status }, { headers: { Authorization: `Bearer ${await AsyncStorage.getItem('token')}` } });
             if (response?.status == 200) {
                 console.log(task_id)
             }
