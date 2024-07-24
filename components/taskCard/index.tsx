@@ -2,12 +2,20 @@ import { TaskCardProps } from "@/interfaces/TaskCard";
 import theme from "@/themes/theme";
 import { View, Text, ScrollView, Pressable, Animated, Dimensions } from "react-native";
 import { CheckFat, Pencil } from "phosphor-react-native";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
+import { TaskContext } from "@/context/task_context";
+import { Task } from "@/@clean/shared/domain/entities/task";
 
 export const TaskCard = (props: TaskCardProps) => {
     const { width, height } = Dimensions.get('window');
     const [selected, setSelected] = useState(false);
     const slideAnim = useRef(new Animated.Value(-50)).current; // Valor inicial fora da tela
+    const { get } = useContext(TaskContext);
+
+    async function getTaskId(task_id: string) {
+        const response = await get(task_id);
+        console.log(response);
+    }
 
     useEffect(() => {
         Animated.timing(slideAnim, {
@@ -16,6 +24,10 @@ export const TaskCard = (props: TaskCardProps) => {
             useNativeDriver: true,
         }).start();
     }, [selected]);
+
+    useEffect(() => { 
+        getTaskId(props.task_id);
+    }, []);
 
     return (
         <View style={{flexDirection: "row", justifyContent: 'center'}}>
