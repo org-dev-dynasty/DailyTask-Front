@@ -6,7 +6,7 @@ export interface ITaskRepository {
     get(task_id: string): Promise<Task | null>;
     getAll(): Promise<GetAllTasksResponse>;
     update(task_id: string, task: Task): Promise<Task>;
-    delete(task_id: string): Promise<Task>;
+    delete(task_id: string): Promise<boolean>;
     taskByDay(day: string): Promise<Task>;
     updateStatus(task_id: string, status: string): Promise<Task>;
 }
