@@ -6,7 +6,7 @@ import {
     Easing,
     Pressable,
     PanResponder,
-    StyleSheet, PanResponderGestureState, View
+    PanResponderGestureState, Alert
 } from "react-native";
 import {
     Container,
@@ -30,32 +30,31 @@ import {
     TimerView,
     CircleView,
     LockPill,
-    InputModalView,
-    TextModalView,
-    ModalText,
-    ModalView,
     SendButton,
     SendButtonText,
-    ConfirmationView,
     InputCancelButton,
-    InputButtonsView, InputConfirmButton, InputEditButton, TrashView
+    InputButtonsView,
+    InputConfirmButton,
+    InputEditButton,
+    TrashView,
 } from "@/app/(tabs)/home/styles";
 import { Dimensions } from 'react-native';
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
-import {LinearGradient} from "expo-linear-gradient";
-import {Input} from "@/components/input/input";
 
 // Theme
 import theme from "@/themes/theme";
 
 // Icons
 import {Microphone, Keyboard, LockSimpleOpen, TrashSimple, CaretLeft} from "phosphor-react-native";
-import {AnimatedView} from "react-native-reanimated/lib/typescript/reanimated2/component/View";
+import TaskModal from "@/components/taskModal";
 
 export default function Home() {
     const [start, setStart] = useState(false);
     const [recording, setRecording] = useState<Audio.Recording | null>(null);
     const [recordingFileUri, setRecordingFileUri] = useState<string | null>(null);
+    const [isEditable, setIsEditable] = useState(false);
+    const [openTask, setOpenTask] = useState(false);
+
 
     const fadeLock = useRef(new Animated.Value(0)).current;
     const fadeTexts = useRef(new Animated.Value(1)).current;
@@ -98,15 +97,13 @@ export default function Home() {
     const limitIconsX = -(width/4) ;
     const gestureReleased = useRef(false);
 
-    const AnimatedTrash = Animated.createAnimatedComponent(TrashSimple);
     const sizeAnimatedValue = useRef(new Animated.Value(0)).current;
 
-    const [isEditable, setIsEditable] = useState(false);
 
     function startRecording() {
         if(canRepeat.current && !microphoneFixed.current) {
             recordingStarted.current = true;
-            circleAnimation();
+            holdingAnimation();
             gestureReleased.current = false;
             setStart(true);
             setTimeout(() => {
@@ -115,7 +112,7 @@ export default function Home() {
         }
     }
 
-    function circleAnimation() {
+    function holdingAnimation() {
         Animated.timing(fadeTexts, {
             toValue: 0,
             duration: 1000,
@@ -489,48 +486,13 @@ export default function Home() {
             thirdCircleSize.stopAnimation();
             thirdCircleOpacity.stopAnimation();
             fadeTimer.setValue(0);
-            Animated.timing(circleSize, {
-                toValue: 0,
-                duration: 500,
-                useNativeDriver: false,
-                easing: Easing.in(Easing.ease)
-            }).start();
-            Animated.timing(circleOpacity, {
-                toValue: 0,
-                duration: 500,
-                useNativeDriver: false,
-                easing: Easing.in(Easing.ease)
-            }).start();
-            Animated.timing(auxCircleSize, {
-                toValue: 0,
-                duration: 500,
-                useNativeDriver: false,
-                easing: Easing.in(Easing.ease)
-            }).start();
-            Animated.timing(auxCircleOpacity, {
-                toValue: 0,
-                duration: 500,
-                useNativeDriver: false,
-                easing: Easing.in(Easing.ease)
-            }).start();
-            Animated.timing(thirdCircleSize, {
-                toValue: 0,
-                duration: 500,
-                useNativeDriver: false,
-                easing: Easing.in(Easing.ease)
-            }).start();
-            Animated.timing(thirdCircleOpacity, {
-                toValue: 0,
-                duration: 500,
-                useNativeDriver: false,
-                easing: Easing.in(Easing.ease)
-            }).start()
+            stopCircleAnimation()
             iconsOpacity.setValue(0);
             fadeLock.setValue(0);
         })
     }
 
-    function stopCircleAnimation() {
+    function stopHoldingAnimation() {
         canRepeat.current = false;
         microphoneFixed.current = false;
         // Colocar if para checar o tempo da animação, para adaptar a animação conforme o tempo
@@ -549,46 +511,11 @@ export default function Home() {
             duration: 500,
             useNativeDriver: false,
         }).start();
+        stopCircleAnimation();
         Animated.timing(microphoneOpacity, {
             toValue: 1,
             duration: 500,
             useNativeDriver: false,
-        }).start();
-        Animated.timing(circleSize, {
-            toValue: 0,
-            duration: 500,
-            useNativeDriver: false,
-            easing: Easing.in(Easing.ease)
-        }).start();
-        Animated.timing(circleOpacity, {
-            toValue: 0,
-            duration: 500,
-            useNativeDriver: false,
-            easing: Easing.in(Easing.ease)
-        }).start();
-        Animated.timing(auxCircleSize, {
-            toValue: 0,
-            duration: 500,
-            useNativeDriver: false,
-            easing: Easing.in(Easing.ease)
-        }).start();
-        Animated.timing(auxCircleOpacity, {
-            toValue: 0,
-            duration: 500,
-            useNativeDriver: false,
-            easing: Easing.in(Easing.ease)
-        }).start();
-        Animated.timing(thirdCircleSize, {
-            toValue: 0,
-            duration: 500,
-            useNativeDriver: false,
-            easing: Easing.in(Easing.ease)
-        }).start();
-        Animated.timing(thirdCircleOpacity, {
-            toValue: 0,
-            duration: 500,
-            useNativeDriver: false,
-            easing: Easing.in(Easing.ease)
         }).start(() => {
             Animated.timing(fadeInput, {
                 toValue: 0,
@@ -624,6 +551,45 @@ export default function Home() {
             canRepeat.current = true;
             microphoneFixed.current = false;
         }, 2000);
+    }
+
+    function stopCircleAnimation(){
+        Animated.timing(circleSize, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: false,
+            easing: Easing.in(Easing.ease)
+        }).start();
+        Animated.timing(circleOpacity, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: false,
+            easing: Easing.in(Easing.ease)
+        }).start();
+        Animated.timing(auxCircleSize, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: false,
+            easing: Easing.in(Easing.ease)
+        }).start();
+        Animated.timing(auxCircleOpacity, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: false,
+            easing: Easing.in(Easing.ease)
+        }).start();
+        Animated.timing(thirdCircleSize, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: false,
+            easing: Easing.in(Easing.ease)
+        }).start();
+        Animated.timing(thirdCircleOpacity, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: false,
+            easing: Easing.in(Easing.ease)
+        }).start()
     }
 
     function deleteAudioAnimation() {
@@ -718,32 +684,9 @@ export default function Home() {
                 }).start(() => {
                     canRepeat.current = true;
                     microphoneFixed.current = false;
-
-                    // sendButtonY.setValue(0);
-                    // moveIconsX.setValue(0);
                 });
             })
         })
-
-
-
-
-        // panY.setValue(0);
-        // fadeInput.setValue(0);
-        //
-
-        // Animated.timing(microphoneOpacity, {
-        //     toValue: 1,
-        //     duration: 500,
-        //     useNativeDriver: false,
-        // }).start(() => {
-        //     sendButtonX.setValue(-width * 0.7);
-        //     canRepeat.current = true;
-        //     microphoneFixed.current = false;
-        //     lockX.setValue(0);
-        //     sendButtonY.setValue(0);
-        //     moveIconsX.setValue(0);
-        // });
     }
 
     function cancelAnimation() {
@@ -804,7 +747,7 @@ export default function Home() {
                 setRecording( recording );
             } catch (error) {
                 console.log(error);
-                // Alert.alert('Erro ao gravar', 'Ocorreu um erro ao tentar gravar o áudio');
+                Alert.alert('Erro ao gravar', 'Ocorreu um erro ao tentar gravar o áudio');
             }
         }
     }
@@ -813,7 +756,7 @@ export default function Home() {
         setTimeout(() => {
             if(!panMoving.current) {
                 if(microphoneMove.current){
-                    stopCircleAnimation()
+                    stopHoldingAnimation()
                 }
                 handleRecordingStop()
             }
@@ -833,7 +776,7 @@ export default function Home() {
         }
         catch (error) {
             console.log(error);
-            // Alert.alert('Erro ao pausar', 'Ocorreu um erro ao tentar parar a gravação do áudio');
+            Alert.alert('Erro ao pausar', 'Ocorreu um erro ao tentar parar a gravação do áudio');
         }
     }
 
@@ -846,6 +789,10 @@ export default function Home() {
 
         }
     }
+
+    const handleCloseTask = () => {
+        setOpenTask(false);
+    };
 
     useEffect(() => {
         Audio
@@ -868,30 +815,9 @@ export default function Home() {
         <>
             <Background>
                 <Container>
-                    {/* <--Modal--> */}
-                    {/*<ModalView>*/}
-                    {/*    <LinearGradient*/}
-                    {/*        colors={['#3C0B50', '#2E083D', '#0F0413']}*/}
-                    {/*        locations={[0, 0.28, 1]}*/}
-                    {/*        style={{*/}
-                    {/*            height: '100%',*/}
-                    {/*            width: "100%",*/}
-                    {/*            borderRadius: 15,*/}
-                    {/*        }}*/}
-                    {/*    >*/}
-                    {/*        <InputModalView>*/}
-                    {/*            <Input label='Nome da Task*'/>*/}
-                    {/*        </InputModalView>*/}
-
-                    {/*        <TextModalView>*/}
-                    {/*            <ModalText>Data e Horário*</ModalText>*/}
-                    {/*        </TextModalView>*/}
-
-                    {/*        <InputModalView>*/}
-                    {/*            <Input label='Local'/>*/}
-                    {/*        </InputModalView>*/}
-                    {/*    </LinearGradient>*/}
-                    {/*</ModalView>*/}
+                    {openTask && (
+                        <TaskModal onClose={handleCloseTask}/>
+                    )}
 
                     {/* <--Screen--> */}
                     <InitialScreen style={{ display: "flex" }}>
@@ -937,7 +863,7 @@ export default function Home() {
                                 <TrashView
                                     style={{opacity: iconsOpacity, transform: [{translateX: moveIconsX}]}}>
                                     <Animated.View
-                                        style={[styles.box]}
+                                        style={{width: 200, height: 100, alignItems: 'center', flexDirection: "row"}}
                                     >
                                         <Animated.View style={{ transform: [{ scale: sizeAnimatedValue.interpolate({ inputRange: [0, 100], outputRange: [1, 2] }) }], marginRight: width/8, marginLeft: width/40 }}>
                                             <TrashSimple size={48} color={theme.COLORS.RED_300} />
@@ -988,7 +914,7 @@ export default function Home() {
                                             Editar
                                         </SendButtonText>
                                     </InputEditButton>
-                                    <InputConfirmButton>
+                                    <InputConfirmButton onPress={() => setOpenTask(true)}>
                                         <SendButtonText>
                                             Confirmar
                                         </SendButtonText>
@@ -1012,33 +938,3 @@ export default function Home() {
         </>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 200,
-        position: "absolute",
-        flexDirection: "row",
-        left: "12%",
-        height: "40%",
-        width: 100,
-        zIndex: -1,
-    },
-    box: {
-        width: 200,
-        height: 100,
-        alignItems: 'center',
-        flexDirection: "row"
-    },
-    pressable: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    pressableContent: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-});

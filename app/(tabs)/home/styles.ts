@@ -165,36 +165,6 @@ export const RecordingTextInputText = styled.TextInput.attrs({
     max-height: 100px;
 `;
 
-export const ModalView = styled.View`
-    width: 80%;
-    height: 80%;
-    position: absolute;
-    z-index: 3;
-    top: 10%;
-    border: 2px black;
-    border-radius: 15px;
-`;
-
-export const InputModalView = styled.View`
-    top: 10px;
-    width: 90%;
-    justify-content: center;
-    align-self: center;
-    flex-direction: column;
-`;
-
-export const ModalText = styled.Text`
-    color: ${theme.COLORS.WHITE};
-    font-family: ${theme.FONT_FAMILY.REGULAR};
-    font-size: ${theme.FONT_SIZE.MD};
-`;
-
-export const TextModalView = styled.View`
-    width: 90%;
-    align-self: center;
-`;
-
-
 export const SendButton = styled.TouchableOpacity`
     background-color: ${theme.COLORS.MAIN};
     border-radius: 10px;
@@ -207,18 +177,6 @@ export const SendButtonText = styled.Text`
   color: ${theme.COLORS.WHITE};
   font-size: ${theme.FONT_SIZE.MD};
   font-family: ${theme.FONT_FAMILY.REGULAR};
-`;
-
-export const ConfirmationView = styled.View`
-    height: 20%;
-    justify-content: flex-end;
-`;
-
-export const ConfirmationText = styled.Text`
-    color: ${theme.COLORS.WHITE};
-    font-family: ${theme.FONT_FAMILY.REGULAR};
-    font-size: ${theme.FONT_SIZE.MD};
-    margin: 20px 0;
 `;
 
 export const InputButtonsView = styled(Animated.View)`
@@ -264,14 +222,3 @@ export const TrashView = styled(Animated.View)`
     width: 100px;
     z-index: -1;
 `;
-
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     marginBottom: 200,
-//     position: "absolute",
-//     flexDirection: "row",
-//     left: "12%",
-//     height: "40%",
-//     width: 100,
-//     zIndex: -1,
