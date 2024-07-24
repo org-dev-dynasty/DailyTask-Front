@@ -13,6 +13,7 @@ export default function Index() {
     const [erroSenha, setErroSenha] = useState('');
     const [erroEmail, setErroEmail] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
+    const [colorPickerModalVisible, setColorPickerModalVisible] = useState(false);
 
     function testeInput() {
         if (email === '') {
@@ -56,14 +57,32 @@ export default function Index() {
                 <Input label="Email" value={email} onChangeText={(text: SetStateAction<string>) => setEmail(text)} error={erroEmail}/>
                 <Input label="Senha" value={senha} onChangeText={(text: SetStateAction<string>) => setSenha(text)} error={erroSenha} hide/>
                 <TouchableOpacity onPress={testeInput} style={{backgroundColor: "blue", padding: 16, borderRadius: 15}}><Text>Teste</Text></TouchableOpacity>
-                <TouchableOpacity onPress={() => setModalVisible(true)} style={{backgroundColor: "green", padding: 16, borderRadius: 15}}><Text>Adicionar Categoria</Text></TouchableOpacity>   
+                <TouchableOpacity onPress={() => {
+                    console.log('Adicionar Categoria');
+                    setModalVisible(true)
+                    }} style={{backgroundColor: "green", padding: 16, borderRadius: 15}}><Text>Adicionar Categoria</Text></TouchableOpacity>   
                 <TouchableOpacity onPress={clearSotorage} style={{backgroundColor: "red", padding: 16, borderRadius: 15}}><Text>Limpar Storage</Text></TouchableOpacity>
             </View>
         </Background>
         <CategoryModal
                 visible={modalVisible}
-                onClose={() => setModalVisible(false)}
+                onClose={() => {
+                    setModalVisible(false);
+                }}
                 onConfirm={handleConfirm}
+                openColorPicker={
+                    () => {
+                        setModalVisible(false);
+                        setColorPickerModalVisible(true);
+                    }
+                }
+                colorPickerVisible={colorPickerModalVisible}
+                onCloseColorPicker={
+                    () => {
+                        setColorPickerModalVisible(false);
+                        setModalVisible(true);
+                    }
+                }
             />
         </>
     );
