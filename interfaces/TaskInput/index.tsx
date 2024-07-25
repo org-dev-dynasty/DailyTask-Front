@@ -5,7 +5,7 @@ export interface TaskInputProps {
     error?: string;
     placeholder?: string;
     style?: object;
-    category?: boolean;
+    category?: () => void;
     time?: boolean;
     date?: boolean;
     description?: boolean;

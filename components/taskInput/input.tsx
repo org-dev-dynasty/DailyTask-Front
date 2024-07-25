@@ -51,11 +51,10 @@ export const TaskInput = (props: TaskInputProps) => {
                     big={props.description}
                     maxLength={props.maxLength}
 
-
                     right={props.time ? <Clock size={32} color={theme.COLORS.MAIN} /> :
                         props.category ?
                             <View style={{borderLeftWidth: 1, borderLeftColor: borderColor, flex: 1, justifyContent: 'center', alignContent: 'center', paddingLeft: 5, paddingBottom: 2.5}}>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={props.category}>
                                     <ListPlus size={32} color={theme.COLORS.MAIN}/>
                                 </TouchableOpacity>
                             </View>
