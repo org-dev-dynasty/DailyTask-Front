@@ -6,7 +6,6 @@ export const CalendarContainer = styled.View`
   position: absolute;
   top: 0;
   width: 100%;
-  background-color: #310842;
   border-radius: 20px;
   padding: 20px;
   flex-direction: column;
@@ -20,7 +19,6 @@ export const CalendarComponent = styled(Calendar)`
 export const Bar = styled.TouchableOpacity`
     width: 45%;
     height: 10px;
-    background-color: ${theme.COLORS.WHITE};
     margin-top: 10px;
     border-radius: 360px;
 `;

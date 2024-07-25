@@ -1,54 +1,22 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Background } from "@/components/background";
 import { Calendar } from 'react-native-calendars';
-import { Animated, Dimensions } from 'react-native';
+import { Dimensions, Text, View } from 'react-native';
 import { Bar, CalendarComponent, CalendarContainer, TaskLabel, TasksContainer, TextLabel } from './styles';
-import { View, Text } from 'react-native';
 import { LocaleConfig } from 'react-native-calendars';
 import theme from '@/themes/theme';
-import { CaretDown, CaretUp } from "phosphor-react-native"
-import { TaskCard }  from '@/components/taskCard';
+import { CaretDown } from "phosphor-react-native";
+import { TaskCard } from '@/components/taskCard';
 import { TaskContext } from '@/context/task_context';
+import { useFocusEffect } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Day from 'react-native-calendars/src/calendar/day';
 
 // Config the calendar to pt-br
 LocaleConfig.locales['pt-br'] = {
-  monthNames: [
-    'Janeiro',
-    'Fevereiro',
-    'Março',
-    'Abril',
-    'Maio',
-    'Junho',
-    'Julho',
-    'Agosto',
-    'Setembro',
-    'Outubro',
-    'Novembro',
-    'Dezembro'
-  ],
-  monthNamesShort: [
-    'Jan.',
-    'Fev.',
-    'Mar.',
-    'Abr.',
-    'Mai.',
-    'Jun.',
-    'Jul.',
-    'Ago.',
-    'Set.',
-    'Out.',
-    'Nov.',
-    'Dez.'
-  ],
-  dayNames: [
-    'Domingo',
-    'Segunda-feira',
-    'Terça-feira',
-    'Quarta-feira',
-    'Quinta-feira',
-    'Sexta-feira',
-    'Sábado'
-  ],
+  monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+  monthNamesShort: ['Jan.', 'Fev.', 'Mar.', 'Abr.', 'Mai.', 'Jun.', 'Jul.', 'Ago.', 'Set.', 'Out.', 'Nov.', 'Dez.'],
+  dayNames: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'],
   dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
   today: 'Hoje'
 };
@@ -56,19 +24,20 @@ LocaleConfig.locales['pt-br'] = {
 LocaleConfig.defaultLocale = 'pt-br';
 
 export default function CalendarTasks() {
-  const { width, height } = Dimensions.get('window');
+  const { width } = Dimensions.get('window');
   const [expanded, setExpanded] = useState(true);
   const [tasks, setTasks] = useState([]);
-  const {getAll} = useContext(TaskContext);
+  const { getAll } = useContext(TaskContext);
+  const [themeModeS, setThemeModeS] = useState('dark');
 
   function toggleCalendar() {
     setExpanded(!expanded);
   }
 
-  // Confg of the dots 
-  const vacation = {key: 'vacation', color: 'red'};
-  const massage = {key: 'massage', color: 'blue'};
-  const workout = {key: 'workout', color: 'green'};
+  // Config of the dots 
+  const vacation = { key: 'vacation', color: 'red' };
+  const massage = { key: 'massage', color: 'blue' };
+  const workout = { key: 'workout', color: 'green' };
 
   // tasks
   async function getTasks() {
@@ -80,75 +49,77 @@ export default function CalendarTasks() {
     getTasks();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+        AsyncStorage.getItem('themeMode').then((value) => {
+          console.log(value)
+            if (value) {
+                setThemeModeS(value);
+                console.log(value);
+            }
+        });
+    }
+, []));
+
   return (
     <Background>
-      <CalendarContainer style={{paddingTop: expanded ? 20 : '10%'}}>
+      <CalendarContainer style={{ paddingTop: expanded ? 20 : '10%', backgroundColor: themeModeS === 'dark' ? '#310842' : '#ffffff' }}>
         <CalendarComponent
-          style={{ width: width/100*90, display: expanded ? 'flex' : 'none' }}
+          style={{ width: width / 100 * 90, display: expanded ? 'flex' : 'none',  }}
           theme={{
-            calendarBackground: '#310842',
-            textSectionTitleColor: theme.COLORS.WHITE,
+            calendarBackground: themeModeS === 'dark' ? '#310842' : '#ffffff',
+            textSectionTitleColor: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK,
             selectedDayBackgroundColor: theme.COLORS.MAIN,
             selectedDayTextColor: theme.COLORS.WHITE,
             todayTextColor: theme.COLORS.MAIN,
-            dayTextColor: theme.COLORS.WHITE,
+            dayTextColor: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK,
             textDisabledColor: '#6e6c7e',
-            monthTextColor: theme.COLORS.WHITE,
-            indicatorColor: theme.COLORS.WHITE,
+            monthTextColor: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK,
+            indicatorColor: themeModeS === 'dark' ? theme.COLORS.BLACK : theme.COLORS.NEGATIVE,
             textDayFontFamily: theme.FONT_FAMILY.MEDIUM,
             textMonthFontFamily: theme.FONT_FAMILY.MEDIUM,
             textDayHeaderFontFamily: theme.FONT_FAMILY.MEDIUM,
-            textDayFontWeight: theme.FONT_SIZE.SM,
-            textMonthFontWeight: theme.FONT_SIZE.MD,
-            textDayHeaderFontWeight: theme.FONT_SIZE.SM,
+            textDayFontWeight: 'normal',
+            textMonthFontWeight: 'bold',
+            textDayHeaderFontWeight: 'normal',
             textDayFontSize: 16,
             textMonthFontSize: 20,
-            textDayHeaderFontSize: 14
+            textDayHeaderFontSize: 14,
           }}
-          // Handler which gets executed on day press. Default = undefined
           onDayPress={(day) => {
             console.log('selected day', day);
           }}
-          // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
           monthFormat={'MMMM yyyy'}
-          // Handler which gets executed when visible month changes in calendar. Default = undefined
           onMonthChange={(month) => {
             console.log('month changed', month);
           }}
-          // Hide month navigation arrows. Default = false
           hideArrows={false}
-          // Replace default arrows with custom ones (direction can be 'left' or 'right')
           renderArrow={(direction) => (
-            <Text style={{ color: '#ffffff', fontSize: 24 }}>{direction === 'left' ? '<' : '>'}</Text>
+            <Text style={{ color: themeModeS === 'dark' ? '#ffffff' : '#000000', fontSize: 24 }}>
+              {direction === 'left' ? '<' : '>'}
+            </Text>
           )}
-          // Do not show days of other months in month page. Default = false
           hideExtraDays={true}
-          // If hideArrows=false and hideExtraDays=false do not switch month when tapping on greyed out
-          // day from another month that is visible in calendar page. Default = false
           disableMonthChange={true}
-          // Hide day names. Default = false
           hideDayNames={false}
-          // Show week numbers to the left. Default = false
           showWeekNumbers={false}
-          // Collection of dates that have to be marked. Default = {}
           markingType={'multi-dot'}
           markedDates={{
-            '2024-07-16': {dots: [vacation, massage, workout], selected: true, selectedColor: theme.COLORS.MAIN},
-            '2024-07-17': {marked: true},
-            '2024-07-18': {marked: true, dotColor: 'red', activeOpacity: 0},
-            '2024-07-19': {disabled: true, disableTouchEvent: true}
+            '2024-07-16': { dots: [vacation, massage, workout], selected: true, selectedColor: theme.COLORS.MAIN },
+            '2024-07-17': { marked: true },
+            '2024-07-18': { marked: true, dotColor: 'red', activeOpacity: 0 },
+            '2024-07-19': { disabled: true, disableTouchEvent: true }
           }}
         />
-        <Bar onPress={toggleCalendar}/>
+        <Bar onPress={toggleCalendar} style={{ backgroundColor: themeModeS === 'dark' ? '#ffffff' : '#000000' }} />
       </CalendarContainer>
-      <TasksContainer style={{top: expanded ? '50%' : '10%'}}>
-        {/* Map the tasks */}
+      <TasksContainer style={{ top: expanded ? '50%' : '10%' }}>
         <View>
           <TaskLabel>
-            <TextLabel>Hoje</TextLabel>
-            <CaretDown size={24} color={theme.COLORS.WHITE} weight="bold"/>
+            <TextLabel style={{ color: themeModeS === 'dark' ? '#ffffff' : '#000000' }}>Hoje</TextLabel>
+            <CaretDown size={24} color={themeModeS === 'dark' ? '#ffffff' : '#000000'} weight="bold" />
           </TaskLabel>
-          <TaskCard title='Médico' description='Ir ao consultório x as 17:20' date='10/11/2024' time='17:20' status='open' color='#2F9CD8' color2='#9CD4F4' ></TaskCard>
+          <TaskCard title='Médico' description='Ir ao consultório x as 17:20' date='10/11/2024' time='17:20' status='open' color='#2F9CD8' color2='#9CD4F4' />
         </View>
       </TasksContainer>
     </Background>

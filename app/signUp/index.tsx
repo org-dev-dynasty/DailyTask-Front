@@ -1,9 +1,9 @@
-import React, { useState, SetStateAction, useEffect, useContext } from 'react';
+import React, { useState, SetStateAction, useEffect, useContext, useCallback } from 'react';
 import { Background } from "@/components/background";
 import { Container, Titulo, TouchableOpacityConta, TextFooter, Logo, View, ButtonText, ContainerLogin, Details, Footer, CheckBoxContainer, CheckBoxText, CheckBoxTextTerms, ModalContainer, ModalView, ModalText, CheckBoxTextTermsTouchable} from "./styles";
 import { Image, ScrollView, TouchableOpacity } from "react-native"; 
 import { Input } from "@/components/input/input";
-import { Link, router } from 'expo-router';
+import { Link, router, useFocusEffect } from 'expo-router';
 import { X } from 'phosphor-react-native';
 import { Checkbox } from 'react-native-paper';
 import { UserContext } from '../../context/user_context';
@@ -24,6 +24,7 @@ export default function SignUp() {
     const [acceptedTermsModalOpen, setAcceptedTermsModalOpen] = useState(false);
     const [acceptedTerms, setAcceptedTerms] = useState(false);
     const [acceptedNotificationsEmail, setAcceptedNotificationsEmail] = useState(false);
+    const [themeModeS, setThemeModeS] = useState('dark');
 
     const [user, setUser] = useState({} as User);
     const { create } = useContext(UserContext);
@@ -82,15 +83,27 @@ export default function SignUp() {
         }
     }, [email, password, name, confPassword]);
 
+    useFocusEffect(
+        useCallback(() => {
+          AsyncStorage.getItem('themeMode').then((value) => {
+            console.log(themeModeS)
+            if (value) {
+              console.log('value ' + value)
+              setThemeModeS(value);
+            }
+          });
+        }, [themeModeS])
+      );
+
     return (
         <Background>
             <ModalContainer style={{display: acceptedTermsModalOpen ? 'flex' : 'none'}}>
-                <ModalView>
+                <ModalView style={{backgroundColor: themeModeS === 'dark' ? theme.COLORS.NEGATIVE_ALT : theme.COLORS.WHITE}}>
                     <TouchableOpacity onPress={() => setAcceptedTermsModalOpen(false)} style={{position: 'absolute', right: 12, top: 12}}>
                         <X color={theme.COLORS.NEGATIVE}/>
                     </TouchableOpacity>
                     <ScrollView>
-                        <ModalText>
+                        <ModalText style={{color: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK, borderColor: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK }}>
                             Lorem ipsum dolor, sit amet consectetur adipisicing 
                             elit. Explicabo, repudiandae quae. Inventore, deleniti, natus 
                             illo fugiat quasi magni fugit, nam ullam rerum sunt minus adipisci 
@@ -108,10 +121,12 @@ export default function SignUp() {
                 </ModalView>
             </ModalContainer>
             <Logo
-                source={require('../../assets/appImages/logo-daily-branca.png')}
+                source={themeModeS === 'dark' 
+                    ? require('../../assets/appImages/logo-daily-branca.png') 
+                    : require('../../assets/appImages/logo-daily-preta.png')}
             />
             <Container>
-                <Titulo>Crie sua Conta</Titulo>
+                <Titulo style={{color: themeModeS === 'dark' ? '#ffffff' : '#000000'}}>Crie sua Conta</Titulo>
                 <View>
                     <Input label="Nome" value={name} onChangeText={(text: SetStateAction<string>) => setName(text)} error={errorName} />
                 </View>
@@ -132,7 +147,7 @@ export default function SignUp() {
                             setAcceptedTerms(!acceptedTerms);
                           }}
                         />
-                        <CheckBoxText>Aceito os <CheckBoxTextTerms onPress={() => setAcceptedTermsModalOpen(true)}>termos de uso</CheckBoxTextTerms></CheckBoxText>
+                        <CheckBoxText style={{color: themeModeS === 'dark' ? '#ffffff' : '#000000'}}>Aceito os <CheckBoxTextTerms onPress={() => setAcceptedTermsModalOpen(true)}>termos de uso</CheckBoxTextTerms></CheckBoxText>
                     </CheckBoxContainer>
                     <CheckBoxContainer>
                         <Checkbox
@@ -141,7 +156,7 @@ export default function SignUp() {
                             setAcceptedNotificationsEmail(!acceptedNotificationsEmail);
                           }}
                         />
-                        <CheckBoxText>Aceito receber notificações via email</CheckBoxText>
+                        <CheckBoxText style={{color: themeModeS === 'dark' ? '#ffffff' : '#000000'}}>Aceito receber notificações via email</CheckBoxText>
                     </CheckBoxContainer>
                 </View>
                 <TouchableOpacityConta onPress={handleButtonPress}>
@@ -149,11 +164,11 @@ export default function SignUp() {
                 </TouchableOpacityConta>
                 <ContainerLogin>
                     <TextFooter>
-                        <Link href='/login'>Já tem uma conta? <Details>Faça seu login</Details></Link>
+                        <Link href='/login' style={{color: themeModeS === 'dark' ? '#ffffff' : '#000000'}}>Já tem uma conta? <Details>Faça seu login</Details></Link>
                     </TextFooter>
                 </ContainerLogin>
                 <Footer>
-                    <TextFooter>Desenvolvido por DevDynasty</TextFooter>
+                    <TextFooter style={{color: themeModeS === 'dark' ? '#ffffff' : '#000000'}}>Desenvolvido por DevDynasty</TextFooter>
                     <Image
                         source={require('../../assets/appImages/logo-dev-dynasty.png')}
                     />
