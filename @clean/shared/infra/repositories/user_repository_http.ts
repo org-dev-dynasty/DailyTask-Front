@@ -23,7 +23,8 @@ export class UserRepositoryHttp implements IUserRepository {
             if (response?.status == 409) {
                 alert('Usuário já cadastrado');
             }
-            console.log("RESPOSTA DA REQ CREATE" + response.data);
+            // console.log("RESPOSTA DA REQ CREATE");
+            // console.log(response.data);
             return response.data as CreateUserResponse;
         } catch (error: any) {
             alert(error.response.data);

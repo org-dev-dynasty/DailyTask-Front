@@ -6,6 +6,7 @@ export class Task {
         task_hour: string, // format: '00:00:00'
         task_description: string | null,
         task_local: string | null,
-        task_status: string
+        task_status: string,
+        task_color: string | null,
     ) {}
 }
