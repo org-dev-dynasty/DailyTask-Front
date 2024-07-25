@@ -1,8 +1,8 @@
 import {LinearGradient} from "expo-linear-gradient";
 
 import {TaskInput} from "@/components/taskInput/input";
-import {Animated, Dimensions, Easing, TextInput, TouchableOpacity, View} from "react-native";
-import React, {useEffect, useRef, useState} from "react";
+import {Animated, Dimensions, Easing, View} from "react-native";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {
     ButtonsView,
     ButtonTxt,
@@ -17,10 +17,11 @@ import {
 } from "@/components/taskModal/styles";
 import {TaskModalProps} from "@/interfaces/TaskModal";
 import theme from "@/themes/theme";
-import {transparent} from "react-native-paper/lib/typescript/styles/themes/v2/colors";
+import {TaskContext} from "@/context/task_context";
+import {Task} from "@/@clean/shared/domain/entities/task";
 
 export default function TaskModal(props: TaskModalProps){
-    const { width, height } = Dimensions.get('window');
+    const { width } = Dimensions.get('window');
 
     const [isSwitchOn, setIsSwitchOn] = useState(false);
     const position = useRef(new Animated.Value(2)).current;
@@ -41,9 +42,134 @@ export default function TaskModal(props: TaskModalProps){
     const [errorTaskName, setErrorTaskName] = useState('');
     const [errorTaskTime, setErrorTaskTime] = useState('');
     const [errorTaskDate, setErrorTaskDate] = useState('');
-    const [errorTaskDescription, setErrorTaskDescription] = useState('');
-    const [errorTaskLocation, setErrorTaskLocation] = useState('');
     const [errorTaskCategory, setErrorTaskCategory] = useState('');
+
+    const {create, update} = useContext(TaskContext);
+
+    const formatTime = (inputTime: string): string => {
+        let formattedInput = inputTime.replace(/\D/g, "");
+
+        switch (formattedInput.length) {
+            case 1:
+                formattedInput = /^([0-2])$/.test(formattedInput)
+                    ? `${formattedInput}`
+                    : "";
+                break;
+
+            case 2:
+                formattedInput = /^([01][1-9]|2[0-4])$/.test(formattedInput)
+                    ? `${formattedInput}`
+                    : formattedInput.slice(0, 1);
+                break;
+
+            case 3:
+                formattedInput = /^([0-5])/.test(formattedInput.slice(2, 3))
+                    ? `${formattedInput.slice(0, 2)}:${formattedInput.slice(2)}`
+                    : `${formattedInput.slice(0, 2)}`;
+                break;
+
+            case 4:
+                formattedInput = /^([0-5][0-9])/.test(formattedInput.slice(2, 4))
+                    ? `${formattedInput.slice(0, 2)}:${formattedInput.slice(2)}`
+                    : `${formattedInput.slice(0, 2)}:${formattedInput.slice(2, 3)}`;
+                break;
+        }
+        return formattedInput;
+    }
+
+    const handleTime = (inputTime: string) => {
+        setTaskTime(formatTime(inputTime));
+    }
+
+    const formatDate = (inputDate: string): string => {
+        let formattedInput = inputDate.replace(/\D/g, "");
+
+        switch (formattedInput.length) {
+            case 1:
+                formattedInput = /^([0-3])$/.test(formattedInput)
+                    ? `${formattedInput}`
+                    : "";
+                break;
+
+            case 2:
+                formattedInput = /^(0[1-9]|[12][0-9]|3[01])$/.test(formattedInput)
+                    ? `${formattedInput}`
+                    : formattedInput.slice(0, 1);
+                break;
+
+            case 3:
+                formattedInput = /^([01])/.test(formattedInput.slice(2, 3))
+                    ? `${formattedInput.slice(0, 2)}/${formattedInput.slice(2)}`
+                    : `${formattedInput.slice(0, 2)}`;
+                break;
+
+            case 4:
+                const day = formattedInput.slice(0, 2);
+                const month = formattedInput.slice(2, 4);
+
+                if (
+                    /^(0[1-9]|[12][0-9]|3[01])$/.test(day) &&
+                    ((month !== '00' && month !== "02" &&
+                            month !== "04" &&
+                            month !== "06" &&
+                            month !== "09" &&
+                            month !== "11") ||
+                        (month === "02" && day <= "29") ||
+                        ((month === "04" ||
+                                month === "06" ||
+                                month === "09" ||
+                                month === "11") &&
+                            day <= "30"))
+                ) {
+                    formattedInput = `${formattedInput.slice(0, 2)}/${formattedInput.slice(2)}`;
+                } else {
+                    formattedInput = `${formattedInput.slice(0, 2)}/${formattedInput.slice(2, 3)}`;
+                }
+                break;
+            case 5:
+                formattedInput = /^(2)/.test(formattedInput.slice(4, 5))
+                    ? `${formattedInput.slice(0, 2)}/${formattedInput.slice(2, 4)}/${formattedInput.slice(4)}`
+                    : `${formattedInput.slice(0, 2)}/${formattedInput.slice(2, 4)}`;
+                break;
+
+            case 6:
+                formattedInput = /^(2[01])/.test(formattedInput.slice(4, 6))
+                    ? `${formattedInput.slice(0, 2)}/${formattedInput.slice(2, 4)}/${formattedInput.slice(4)}`
+                    : `${formattedInput.slice(0, 2)}/${formattedInput.slice(2, 4)}/${formattedInput.slice(4, 5)}`;
+                break;
+
+            case 7:
+                formattedInput = /^(20[2-9]|21[0-9])/.test(
+                    formattedInput.slice(4, 7)
+                )
+                    ? `${formattedInput.slice(0, 2)}/${formattedInput.slice(2, 4)}/${formattedInput.slice(4)}`
+                    : `${formattedInput.slice(0, 2)}/${formattedInput.slice(2, 4)}/${formattedInput.slice(4, 6)}`;
+                break;
+
+            case 8:
+                const yearEnd = parseInt(formattedInput.slice(6, 8));
+                if (
+                    /^(20[2-9][4-9]|21[0-9][0-9])/.test(
+                        formattedInput.slice(4, 8)
+                    ) &&
+                    (formattedInput.slice(0, 2) !== "29" || yearEnd % 4 === 0)
+                ) {
+                    formattedInput = `${formattedInput.slice(0, 2)}/${formattedInput.slice(2, 4)}/${formattedInput.slice(4)}`;
+                } else {
+                    formattedInput = `${formattedInput.slice(0, 2)}/${formattedInput.slice(2, 4)}/${formattedInput.slice(4, 7)}`;
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        return formattedInput;
+    };
+
+    const handleDate = (inputDate: string) => {
+        setTaskDate(formatDate(inputDate));
+    };
 
 
     useEffect(() => {
@@ -74,7 +200,21 @@ export default function TaskModal(props: TaskModalProps){
             useNativeDriver: true,
             easing: Easing.out(Easing.ease),
         }).start();
-    }, [isSwitchOn]);
+
+        if(taskName !== '') {
+            setErrorTaskName('');
+        }
+        if(taskTime !== '') {
+            setErrorTaskTime('');
+        }
+        if(taskDate !== '') {
+            setErrorTaskDate('');
+        }
+        if(taskCategory !== '') {
+            setErrorTaskCategory('');
+        }
+
+    }, [isSwitchOn, taskName, taskTime, taskDate, taskCategory]);
 
     const toggleSwitch = () => {
         setIsSwitchOn(!isSwitchOn);
@@ -93,37 +233,74 @@ export default function TaskModal(props: TaskModalProps){
         );
     };
 
-    const handleConfirm = () => {
-        // Validation of email and password
-        // if (email === '' && password === '') {
-        //     console.log('Email vazio');
-        //     console.log('Senha vazia');
-        //     setErroEmail('Preencha todos os campos');
-        //     setErroPassword('Preencha todos os campos');
-        //     return;
-        // }
-        // if (email === '') {
-        //     console.log('Email vazio');
-        //     setErroEmail('Preencha o campo email');
-        //     return;
-        // }
-        // if (password === '') {
-        //     console.log('Senha vazia');
-        //     setErroPassword('Preencha o campo senha');
-        //     return;
-        // }
-        // Reuquest to login
-        // const result = await login(email, password);
-        // if (result) {
-        //     alert('Login efetuado com sucesso');
-        //     await AsyncStorage.setItem('id_token', result.id_token);
-        //     await AsyncStorage.setItem('token', result.access_token);
-        //     await AsyncStorage.setItem('refresh_token', result.refresh_token);
-        //     router.replace('/home');
-        // }
-        if (weekDays.length > 0 && isSwitchOn){
-            console.log(weekDays)
+    const handleConfirm = async () => {
+        // Confirm validation
+        if(taskName === '' || taskTime === '' || taskDate === '' || taskCategory === '') {
+            if (taskName === '') {
+                setErrorTaskName('Nome da task é obrigatório');
+            }
+            if (taskTime.length < 5) {
+                setErrorTaskTime('Horário é obrigatório');
+            }
+            if (!(taskDate.length === 10 &&
+                /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(20[2-9][4-9]|21[0-9][0-9])$/.test(
+                    taskDate
+                ))){
+                setErrorTaskDate('Data é obrigatória');
+            }
+            if (taskCategory === '') {
+                setErrorTaskCategory('Categoria é obrigatória');
+            }
+            return
         }
+
+        // Request
+        //  MISSING CATEGORY AND WEEKDAYS
+
+        const formatedDate = taskDate.split("/").reverse().join("-")
+        console.log(formatedDate)
+        const formatedTime = taskTime + ":00"
+        let response;
+
+        if(props.confirm){
+            if (weekDays.length > 0 && isSwitchOn){
+                // const task = new Task(null, taskName, formatedDate, taskTime, weekDays,taskDescription, taskLocation, taskCategory, "ACTIVE")
+                // const response = await create(task);
+            }
+            else{
+                const task = new Task(
+                    null,
+                    taskName,
+                    formatedDate,
+                    formatedTime,
+                    taskDescription === '' ? null : taskDescription,
+                    taskLocation === '' ? null : taskLocation,
+                    "3b447493b2a4203a35284517dbd5e95",
+                    "ACTIVE"
+                )
+
+                response = await create(task);
+            }
+        }
+        else{
+            if(props.taskId === undefined){
+                return
+            }
+            if (weekDays.length > 0 && isSwitchOn){
+                // const task = new Task(props.taskId, taskName, formatedDate, taskTime, weekDays,taskDescription, taskLocation, taskCategory, "ACTIVE")
+                // const response = await create(task);
+            }
+            else{
+                const task = new Task(props.taskId, taskName, formatedDate, taskTime, taskDescription, taskLocation, "3b447493b2a4203a35284517dbd5e95","ACTIVE")
+                response = await update(props.taskId, task);
+            }
+        }
+
+        if(response){
+            console.log(response);
+            props.onClose();
+        }
+
     }
 
     return (
@@ -140,7 +317,7 @@ export default function TaskModal(props: TaskModalProps){
                         }}
                     >
                         <TopInputModalView>
-                            <TaskInput label='Nome da Task*' value={taskName} onChangeText={setTaskName} error={errorTaskName}/>
+                            <TaskInput label='Nome da Task*' value={taskName} onChangeText={setTaskName} error={errorTaskName} maxLength={30}/>
                         </TopInputModalView>
 
                         <TextModalView>
@@ -149,7 +326,7 @@ export default function TaskModal(props: TaskModalProps){
 
                         <TimeRepetitionView>
                             <SmallInputModalView>
-                                <TaskInput label='Horário' placeholder={"00:00"} time={true} value={taskTime} onChangeText={setTaskName} error={errorTaskTime}/>
+                                <TaskInput label='Horário*' placeholder={"00:00"} time={true} value={taskTime} onChangeText={handleTime} error={errorTaskTime} maxLength={5}/>
                             </SmallInputModalView>
 
                             <RepetitionTxt>Repetição</RepetitionTxt>
@@ -180,22 +357,22 @@ export default function TaskModal(props: TaskModalProps){
                         </Animated.View>
 
                         <TimeRepetitionView style={{ transform: [{ translateX: dateTranslateX }] }}>
-                            <SmallInputModalView>
-                                <TaskInput label='Data' placeholder={"__/__/__"} date={true}/>
+                            <SmallInputModalView style={{width: '55%'}}>
+                                <TaskInput label='Data*' placeholder={"__/__/____"} date={true} value={taskDate} onChangeText={handleDate} error={errorTaskDate} maxLength={10}/>
                             </SmallInputModalView>
                         </TimeRepetitionView>
 
                         <InputModalView>
-                            <TaskInput label='Descrição' description={true}/>
+                            <TaskInput label='Descrição' description={true} value={taskDescription} onChangeText={setTaskDescription} maxLength={100}/>
                         </InputModalView>
 
                         <InputModalView>
-                            <TaskInput label='Local'/>
+                            <TaskInput label='Local' value={taskLocation} onChangeText={setTaskLocation} maxLength={30}/>
                         </InputModalView>
 
                         <InputModalView style={{flexDirection: 'row', marginTop: 10}}>
                             <View style={{width: "100%"}}>
-                                <TaskInput label='Categoria' category={true}/>
+                                <TaskInput label='Categoria*' category={true} value={taskCategory} onChangeText={setTaskCategory} maxLength={30} error={errorTaskCategory}/>
                             </View>
                         </InputModalView>
 

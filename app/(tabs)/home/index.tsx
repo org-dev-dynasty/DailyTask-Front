@@ -816,7 +816,7 @@ export default function Home() {
             <Background>
                 <Container>
                     {openTask && (
-                        <TaskModal onClose={handleCloseTask}/>
+                        <TaskModal onClose={handleCloseTask} confirm/>
                     )}
 
                     {/* <--Screen--> */}
