@@ -84,14 +84,14 @@ export default function CategoryModal({ visible, onClose, onConfirm }: any) {
                     </ModalContent>
                 </ModalContainer>
             </Modal >
-            <Modal visible={showColorPickerModal} animationType='slide'>
+            <Modal transparent visible={showColorPickerModal} animationType='slide'>
                 <ColorPicker style={{ width: '70%' }} value='red' onComplete={onSelectColor}>
                     <Preview />
                     <Panel3 />
                     <OpacitySlider />
                 </ColorPicker>
 
-                <TouchableOpacity onPress={() => setShowColorPickerModal(false)}>OK</TouchableOpacity>
+                <TouchableOpacity onPress={() => setShowColorPickerModal(false)}><Text>OK</Text></TouchableOpacity>
             </Modal>
         </>
     );
