@@ -19,6 +19,7 @@ import {TaskModalProps} from "@/interfaces/TaskModal";
 import theme from "@/themes/theme";
 import {TaskContext} from "@/context/task_context";
 import {Task} from "@/@clean/shared/domain/entities/task";
+import CategoryModal from "@/components/categoryModal";
 
 export default function TaskModal(props: TaskModalProps){
     const { width } = Dimensions.get('window');
@@ -33,7 +34,7 @@ export default function TaskModal(props: TaskModalProps){
     const [taskName, setTaskName] = useState('');
     const [taskTime, setTaskTime] = useState('');
     const [taskDate, setTaskDate] = useState('');
-    const [taskDescription, setTaskDescription] = useState('');
+    const [taskDescription, setTaskDescription] = useState<string>('');
     const [taskLocation, setTaskLocation] = useState('');
     const [taskCategory, setTaskCategory] = useState('');
     const [weekDays, setWeekDays] = useState<number[]>([]);
@@ -44,7 +45,9 @@ export default function TaskModal(props: TaskModalProps){
     const [errorTaskDate, setErrorTaskDate] = useState('');
     const [errorTaskCategory, setErrorTaskCategory] = useState('');
 
-    const {create, update} = useContext(TaskContext);
+    const [openCategory, setOpenCategory] = useState(false);
+
+    const {create, update, get} = useContext(TaskContext);
 
     const formatTime = (inputTime: string): string => {
         let formattedInput = inputTime.replace(/\D/g, "");
@@ -57,7 +60,7 @@ export default function TaskModal(props: TaskModalProps){
                 break;
 
             case 2:
-                formattedInput = /^([01][1-9]|2[0-4])$/.test(formattedInput)
+                formattedInput = /^(0[1-9]|1[0-9]|2[0-4])$/.test(formattedInput)
                     ? `${formattedInput}`
                     : formattedInput.slice(0, 1);
                 break;
@@ -171,6 +174,26 @@ export default function TaskModal(props: TaskModalProps){
         setTaskDate(formatDate(inputDate));
     };
 
+    const getTask = async (task_id: string) => {
+        try {
+            const task: Task | null = await get(task_id);
+            if(task){
+                console.log(task);
+                setTaskName(task.task_name);
+                setTaskTime(task.task_hour);
+                setTaskDate(task.task_date);
+                setTaskDescription(task.task_description == null ? '' : task.task_description);
+                setTaskLocation(task.task_local == null ? '' : task.task_local);
+                // GET ALL CATEGORY (task.category_id);
+            }
+            else {
+                console.log('Task not found');
+            }
+        }
+        catch (error: any) {
+            console.log(error);
+        }
+    }
 
     useEffect(() => {
         Animated.timing(position, {
@@ -212,6 +235,10 @@ export default function TaskModal(props: TaskModalProps){
         }
         if(taskCategory !== '') {
             setErrorTaskCategory('');
+        }
+
+        if(props.taskId !== undefined){
+            getTask(props.taskId);
         }
 
     }, [isSwitchOn, taskName, taskTime, taskDate, taskCategory]);
@@ -268,6 +295,7 @@ export default function TaskModal(props: TaskModalProps){
                 // const response = await create(task);
             }
             else{
+                // CATEGORY ID CHUMBADO
                 const task = new Task(
                     null,
                     taskName,
@@ -291,7 +319,7 @@ export default function TaskModal(props: TaskModalProps){
                 // const response = await create(task);
             }
             else{
-                const task = new Task(props.taskId, taskName, formatedDate, taskTime, taskDescription, taskLocation, "3b447493b2a4203a35284517dbd5e95","ACTIVE")
+                const task = new Task(null, taskName, formatedDate, taskTime, taskDescription, taskLocation, "3b447493b2a4203a35284517dbd5e95","ACTIVE")
                 response = await update(props.taskId, task);
             }
         }
@@ -303,9 +331,25 @@ export default function TaskModal(props: TaskModalProps){
 
     }
 
+    const handleCategoryConfirm = (name: any, color: any) => {
+        if(name === ''){
+            return 'Categoria é obrigatória';
+        }
+        if(color === ''){
+            return 'Cor é obrigatória';
+        }
+        console.log('Categoria criada:', name, color);
+        setOpenCategory(false)
+    };
+
     return (
         <ModalView>
             <ShadeView>
+                <CategoryModal
+                    visible={openCategory}
+                    onClose={() => setOpenCategory(false)}
+                    onConfirm={handleCategoryConfirm}
+                />
                 <Container>
                     <LinearGradient
                         colors={['#3C0B50', '#2E083D', '#0F0413']}
@@ -372,7 +416,7 @@ export default function TaskModal(props: TaskModalProps){
 
                         <InputModalView style={{flexDirection: 'row', marginTop: 10}}>
                             <View style={{width: "100%"}}>
-                                <TaskInput label='Categoria*' category={true} value={taskCategory} onChangeText={setTaskCategory} maxLength={30} error={errorTaskCategory}/>
+                                <TaskInput label='Categoria*' category={() => setOpenCategory(true)} value={taskCategory} onChangeText={setTaskCategory} maxLength={30} error={errorTaskCategory}/>
                             </View>
                         </InputModalView>
 
