@@ -63,18 +63,19 @@ export default function CalendarTasks() {
 
   return (
     <Background>
-      <CalendarContainer style={{ paddingTop: expanded ? 20 : '10%', backgroundColor: themeModeS === 'dark' ? '#310842' : '#ffffff' }}>
+      <CalendarContainer style={{ paddingTop: expanded ? 20 : '10%', backgroundColor: themeModeS === 'dark' ? '#310842' : '#ffffff', 
+                          borderColor: themeModeS === 'dark' ? '#310842' : '#000000', borderWidth: 2}}>
         <CalendarComponent
           style={{ width: width / 100 * 90, display: expanded ? 'flex' : 'none',  }}
           theme={{
-            calendarBackground: themeModeS === 'dark' ? '#310842' : '#ffffff',
-            textSectionTitleColor: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK,
+            calendarBackground: themeModeS === 'dark' ? '#ffffff' : '#310842',
+            textSectionTitleColor: themeModeS === 'dark' ? theme.COLORS.BLACK : theme.COLORS.WHITE,
             selectedDayBackgroundColor: theme.COLORS.MAIN,
             selectedDayTextColor: theme.COLORS.WHITE,
             todayTextColor: theme.COLORS.MAIN,
-            dayTextColor: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK,
+            dayTextColor: themeModeS === 'dark' ? theme.COLORS.BLACK : theme.COLORS.WHITE,
             textDisabledColor: '#6e6c7e',
-            monthTextColor: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK,
+            monthTextColor: themeModeS === 'dark' ? theme.COLORS.BLACK : theme.COLORS.WHITE,
             indicatorColor: themeModeS === 'dark' ? theme.COLORS.BLACK : theme.COLORS.NEGATIVE,
             textDayFontFamily: theme.FONT_FAMILY.MEDIUM,
             textMonthFontFamily: theme.FONT_FAMILY.MEDIUM,
