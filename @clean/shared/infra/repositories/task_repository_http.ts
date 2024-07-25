@@ -10,7 +10,13 @@ export class TaskRepositoryHttp implements ITaskRepository {
 
     async create(task: Task): Promise<Task> {
         try {
-            const response = await this.httpTask.post(`${process.env.EXPO_PUBLIC_API_URL}/create-task`, task);
+            const token = await AsyncStorage.getItem("id_token");
+            const response = await this.httpTask.post(`${process.env.EXPO_PUBLIC_API_URL}/create-task`, task, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            });
             if (response?.status == 201) {
                 console.log(task)
                 router.replace('/home');
@@ -18,6 +24,7 @@ export class TaskRepositoryHttp implements ITaskRepository {
             console.log("RESPOSTA DA REQ CREATE" + response.data);
             return response.data as Task;
         } catch (error: any) {
+            console.log(error.response.data)
             throw new Error(error);
         }
     }
@@ -33,7 +40,13 @@ export class TaskRepositoryHttp implements ITaskRepository {
 
     async update(task_id: string, task: Task): Promise<Task> {
         try {
-            const response = await this.httpTask.put(`${process.env.EXPO_PUBLIC_API_URL}/update-task`, task);
+            const token = await AsyncStorage.getItem("id_token");
+            const response = await this.httpTask.put(`${process.env.EXPO_PUBLIC_API_URL}/update-task`, task,{
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            });
             if (response?.status == 200) {
                 console.log(task)
                 router.replace('/home');
