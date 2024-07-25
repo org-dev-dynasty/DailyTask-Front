@@ -894,7 +894,7 @@ export default function Home() {
                             </TimerView>
                             {/* Keyboard */}
                             <KeyboardInitialView style={{ opacity: fadeTexts, display: start ? 'none' : 'flex'}}>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={() => setOpenTask(true)}>
                                     <Keyboard size={64} color={theme.COLORS.WHITE} />
                                 </TouchableOpacity>
                             </KeyboardInitialView>
