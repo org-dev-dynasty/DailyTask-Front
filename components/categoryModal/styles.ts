@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import theme from "@/themes/theme";
+import {LinearGradient} from "expo-linear-gradient";
 
 interface ColorCircleProps {
     color: string;
@@ -14,26 +15,28 @@ export const ModalContainer = styled.View`
   padding: 5%;
 `;
 
-export const ModalContent = styled.View`
-  width: 100%;
-  align-items: center;
-  border-radius: 30px;
-  background-color: ${theme.COLORS.NEGATIVE_ALT};
-  padding: 3%;
-`;
+export const ModalContent = styled(LinearGradient)`
+    width: 100%;
+    align-items: center;
+    border-radius: 30px;
+    background-color: ${theme.COLORS.NEGATIVE_ALT};
+    border: 1px solid ${theme.COLORS.WHITE};
+    padding: 15px 3%;
+`
 
 export const Title = styled.Text`
-  font-size: 24px;
-  color: white;
-  font-weight: bold;
+    color: ${theme.COLORS.WHITE};
+    font-size: 24px;
+    font-family: ${theme.FONT_FAMILY.MEDIUM};
 `;
 
 export const Subtitle = styled.Text`
-  font-size: 14px;
-  color: white;
-  margin: 10px 0;
-  width: 60%;
-  text-align: center;
+    color: ${theme.COLORS.WHITE};
+    font-size: ${theme.FONT_SIZE.SM};
+    font-family: ${theme.FONT_FAMILY.REGULAR};
+    margin: 10px 0;
+    width: 60%;
+    text-align: center;
 `;
 
 export const TextInputStyled = styled.TextInput`
@@ -49,8 +52,8 @@ export const TextInputStyled = styled.TextInput`
 `;
 
 export const ColorTitle = styled.Text`
-    font-size: 16px;
-    color: white;
+    color: ${theme.COLORS.WHITE};
+    font-size: ${theme.FONT_SIZE.MD};
     font-family: ${theme.FONT_FAMILY.REGULAR};
     margin-left: 15px;
 `; 
@@ -74,24 +77,24 @@ export const ColorCircle = styled.TouchableOpacity<ColorCircleProps>`
 `;
 
 export const CustomColorText = styled.Text`
-  font-size: 14px;
-  color: white;
-  margin-top: 10px;
+    color: ${theme.COLORS.WHITE};
+    font-size: ${theme.FONT_SIZE.SM};
+    font-family: ${theme.FONT_FAMILY.MEDIUM};
 `;
 
 export const ConfirmButton = styled.TouchableOpacity`
-  background-color: ${theme.COLORS.MAIN};
-  width: 40%;
-  border-radius: 10px;
-  padding: 10px 20px;
-  margin-top: 20px;
+    background-color: ${theme.COLORS.MAIN};
+    width: 40%;
+    border-radius: 10px;
+    padding: 10px 20px;
+    margin-top: 5px;
 `;
 
 export const ConfirmButtonText = styled.Text`
-  font-size: 16px;
-  color: white;
-  font-weight: bold;
-  align-self: center;
+    color: ${theme.COLORS.WHITE};
+    font-size: ${theme.FONT_SIZE.MD};
+    font-family: ${theme.FONT_FAMILY.REGULAR};
+    align-self: center;
 `;
 
 export const CloseButton = styled.TouchableOpacity`

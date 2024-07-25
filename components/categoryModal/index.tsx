@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Modal, View, TextInput, TouchableOpacity, Text, ScrollView } from 'react-native';
 import {
     ModalContainer,
@@ -16,8 +16,8 @@ import {
     CloseButtonText,
     ColorTitle
 } from './styles';
-import { Background } from '../background';
 import { Palette, XCircle } from 'phosphor-react-native';
+import {Input} from "@/components/input/input";
 
 const categoriesColors = [
     '#FF9494', '#F4966E', '#FFE7A0', '#A4F4C7', '#9CD4F3',
@@ -30,6 +30,32 @@ const categoriesColors = [
 export default function CategoryModal({ visible, onClose, onConfirm }: any) {
     const [selectedColor, setSelectedColor] = useState<string | null>(null);
     const [categoryName, setCategoryName] = useState('');
+    const [errorCategoryName, setErrorCategoryName] = useState('');
+    const [errorColor, setErrorColor] = useState(false);
+
+    useEffect(() => {
+        if (categoryName !== '') {
+            setErrorCategoryName('');
+        }
+        if(selectedColor !== null){
+            setErrorColor(false)
+        }
+    }, [categoryName, selectedColor]);
+
+    const confirm = () => {
+        if(categoryName === ''){
+            setErrorCategoryName('Categoria é obrigatória')
+        }
+        if(selectedColor === null){
+            setErrorColor(true)
+        }
+        if(categoryName === '' || selectedColor === ''){
+            return
+        }
+        setErrorCategoryName(onConfirm(categoryName, selectedColor))
+        setCategoryName('')
+        setSelectedColor(null)
+    }
 
     return (
         <Modal
@@ -39,41 +65,48 @@ export default function CategoryModal({ visible, onClose, onConfirm }: any) {
             onRequestClose={onClose}
         >
             <ModalContainer>
-                <ModalContent>
-                        <CloseButton onPress={onClose}>
-                            {/* <CloseButtonText>X</CloseButtonText> */}
-                            <XCircle size={32} color='#F06B41' />
-                        </CloseButton>
-                        <Title>Criar Categoria</Title>
-                        <Subtitle>Crie uma nova categoria para as suas tasks</Subtitle>
-                        <TextInputStyled
+                <ModalContent
+                    colors={['#3C0B50', '#2E083D', '#0F0413']}
+                    locations={[0, 0.28, 1]}
+                >
+                    <CloseButton onPress={onClose}>
+                        <XCircle size={32} color='#F06B41' />
+                    </CloseButton>
+                    <Title>Criar Categoria</Title>
+                    <Subtitle>Crie uma nova categoria para as suas tasks</Subtitle>
+
+                    <View style={{width: '90%'}}>
+                        <Input
                             placeholder="Nome da Categoria"
-                            placeholderTextColor="#fff"
+                            label={'Nome da categoria'}
                             value={categoryName}
                             onChangeText={setCategoryName}
+                            error={errorCategoryName}
                         />
-                        <ScrollView>
-                            <ColorTitle>Selecione uma cor</ColorTitle>
-                            <ColorsContainer>
-                                {categoriesColors.map(color => (
-                                    <ColorCircle
-                                        key={color}
-                                        color={color}
-                                        selected={selectedColor === color}
-                                        onPress={() => setSelectedColor(color)}
-                                    />
-                                ))}
-                            </ColorsContainer>
-                        </ScrollView>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <CustomColorText>Ou, escolha a sua cor</CustomColorText>
-                            <View style={{ marginLeft: 8 }}>
-                                <Palette size={32} color='#F06B41' />
-                            </View>
+                    </View>
+
+                    <ScrollView style={{borderWidth: 2, borderColor: errorColor ? "#DE4343" : 'transparent', borderRadius: 5, marginTop: 5}}>
+                        <ColorTitle>Selecione uma cor</ColorTitle>
+                        <ColorsContainer>
+                            {categoriesColors.map(color => (
+                                <ColorCircle
+                                    key={color}
+                                    color={color}
+                                    selected={selectedColor === color}
+                                    onPress={() => setSelectedColor(color)}
+                                />
+                            ))}
+                        </ColorsContainer>
+                    </ScrollView>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 5}}>
+                        <CustomColorText>Ou, escolha a sua cor</CustomColorText>
+                        <View style={{ marginLeft: 8 }}>
+                            <Palette size={32} color='#F06B41' />
                         </View>
-                        <ConfirmButton onPress={() => onConfirm(categoryName, selectedColor)}>
-                            <ConfirmButtonText>Confirmar</ConfirmButtonText>
-                        </ConfirmButton>
+                    </View>
+                    <ConfirmButton onPress={confirm}>
+                        <ConfirmButtonText>Confirmar</ConfirmButtonText>
+                    </ConfirmButton>
                 </ModalContent>
             </ModalContainer>
         </Modal >
