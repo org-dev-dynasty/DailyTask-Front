@@ -1,7 +1,7 @@
 import { AxiosInstance } from "axios";
 import { ITaskRepository } from "../../../modules/interfaces/task_repo_interface";
 import { Task } from "../../domain/entities/task";
-import { GetAllTasksResponse } from "../../domain/types/task_responses";
+import {GetAllTasksResponse, GetTaskByIdResponse} from "../../domain/types/task_responses";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -30,7 +30,20 @@ export class TaskRepositoryHttp implements ITaskRepository {
     }
 
     async get(task_id: string): Promise<Task | null> {
-        return await this.httpTask.get(`${process.env.EXPO_PUBLIC_API_URL}/get-task?task_id=${task_id}`);
+        try{
+            const token = await AsyncStorage.getItem("id_token");
+            const response = await this.httpTask.get<GetTaskByIdResponse>(`${process.env.EXPO_PUBLIC_API_URL}/get-task-by-id?task_id=${task_id}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            return response.data.task;
+        }
+        catch (error: any) {
+            console.log(error.response.data)
+            throw new Error(error);
+        }
     }
 
     async getAll(): Promise<GetAllTasksResponse> {

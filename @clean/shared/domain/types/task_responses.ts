@@ -21,3 +21,8 @@ export type GetAllTasksResponse = {
     dots: DotsGroup;
     CurrentDay: string;
 };
+
+export type GetTaskByIdResponse = {
+    message: string;
+    task: Task;
+};
