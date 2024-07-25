@@ -4,8 +4,6 @@ import {Text, TouchableOpacity, View} from "react-native";
 import { TaskInputProps } from '@/interfaces/TaskInput';
 import {Clock, CalendarBlank, ListPlus} from "phosphor-react-native";
 import {CustomInput} from "@/components/customInput/customInput";
-import { TextInput as NativeTextInput } from 'react-native';
-
 
 export const TaskInput = (props: TaskInputProps) => {
     const [isFocused, setIsFocused] = useState(false);
@@ -51,6 +49,8 @@ export const TaskInput = (props: TaskInputProps) => {
                     onBlur={() => setIsFocused(false)}
                     small={props.time || props.date}
                     big={props.description}
+                    maxLength={props.maxLength}
+
 
                     right={props.time ? <Clock size={32} color={theme.COLORS.MAIN} /> :
                         props.category ?
