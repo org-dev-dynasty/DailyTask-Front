@@ -2,8 +2,6 @@ import styled from 'styled-components/native'
 import React from "react";
 import {TextInput} from "react-native-paper";
 import { TextInput as NativeTextInput } from 'react-native';
-import TaskModal from "@/components/taskModal";
-
 
 const InputContainer = styled.View`
   flex-direction: row;
@@ -25,6 +23,7 @@ export const CustomInput = ({right, small, big = false, ...props }) => (
                 render={ (inputProps) => (
                     <InputContainer>
                         <NativeTextInput
+                            inputMode={'numeric'}
                             {...inputProps}
                             style={[
                                 inputProps.style,
