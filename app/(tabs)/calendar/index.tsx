@@ -1,14 +1,15 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Background } from "@/components/background";
 import { Calendar } from 'react-native-calendars';
-import { Animated, Dimensions } from 'react-native';
+import { Animated, Dimensions, SafeAreaView } from 'react-native';
 import { Bar, CalendarComponent, CalendarContainer, TaskLabel, TasksContainer, TextLabel } from './styles';
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { LocaleConfig } from 'react-native-calendars';
 import theme from '@/themes/theme';
 import { CaretDown, CaretUp } from "phosphor-react-native"
 import { TaskCard }  from '@/components/taskCard';
 import { TaskContext } from '@/context/task_context';
+import { Task } from '@/@clean/shared/domain/entities/task';
 
 // Config the calendar to pt-br
 LocaleConfig.locales['pt-br'] = {
@@ -58,7 +59,9 @@ LocaleConfig.defaultLocale = 'pt-br';
 export default function CalendarTasks() {
   const { width, height } = Dimensions.get('window');
   const [expanded, setExpanded] = useState(true);
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState<Record<string, Task[]>>();
+  const [dots, setDots] = useState<Record<string, {dots: {key: string, color: string}[]}>>()
+  const [currentDay, setCurrentDay] = useState('');
   const {getAll} = useContext(TaskContext);
 
   function toggleCalendar() {
@@ -73,7 +76,18 @@ export default function CalendarTasks() {
   // tasks
   async function getTasks() {
     const result = await getAll();
-    // console.log(result);
+    console.log(result);
+    
+    console.log("Tasks");
+    console.log(result.tasks);
+    console.log("Dots");
+    console.log(result.dots);
+    console.log("CurrentDay");
+    console.log(result.CurrentDay);
+
+    setCurrentDay(result.CurrentDay);
+    setTasks(result.tasks as Record<string, Task[]>);
+    setDots(result.dots as Record<string, {dots: {key: string, color: string}[]}>);
   }
 
   useEffect(() => {
@@ -142,14 +156,23 @@ export default function CalendarTasks() {
         <Bar onPress={toggleCalendar}/>
       </CalendarContainer>
       <TasksContainer style={{top: expanded ? '50%' : '10%'}}>
-        {/* Map the tasks */}
-        <View>
-          <TaskLabel>
-            <TextLabel>Hoje</TextLabel>
-            <CaretDown size={24} color={theme.COLORS.WHITE} weight="bold"/>
-          </TaskLabel>
-          <TaskCard title='Médico' description='Ir ao consultório x as 17:20' date='10/11/2024' time='17:20' status='open' color='#2F9CD8' color2='#9CD4F4' ></TaskCard>
-        </View>
+            {tasks && Object.keys(tasks).map((key, index) => {
+              return (
+                <View key={index} style={{gap: 8, marginBottom:16}}>
+                  <TaskLabel>
+                    <TextLabel>{key}</TextLabel>
+                    {expanded ? <CaretUp size={24} color={theme.COLORS.WHITE} weight="bold"/> : <CaretDown size={24} color={theme.COLORS.WHITE} weight="bold"/>}
+                  </TaskLabel>
+                  {tasks[key].map((task, index) => {
+                    return (
+                      <TaskCard key={index} title={task.task_name} description={task.task_description} date={task.task_date} time={task.task_time} status={task.task_status} color={"#2F9CD8"} color2={"#9CD4F4"}></TaskCard>
+                    );
+                  })}
+                </View>
+              );
+            }
+            )}
+
       </TasksContainer>
     </Background>
   );
