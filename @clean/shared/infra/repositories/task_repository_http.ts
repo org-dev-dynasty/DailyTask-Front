@@ -47,8 +47,20 @@ export class TaskRepositoryHttp implements ITaskRepository {
     }
 
     async getAll(): Promise<GetAllTasksResponse> {
-        const response = await this.httpTask.get(`${process.env.EXPO_PUBLIC_API_URL}/get-all-tasks`);
-        return response.data as GetAllTasksResponse;
+        try {
+            const token = await AsyncStorage.getItem('id_token');
+            console.log(token);
+            const response = await this.httpTask.get<GetAllTasksResponse>(`${process.env.EXPO_PUBLIC_API_URL}/get-all-tasks`, {
+                headers: {Authorization: `Bearer ${token}`}
+            });
+            // console.log("RESPOSTA DA REQ GET ALL");
+            // console.log(response.data);
+            return response.data;
+        } catch (error: any) {
+            console.log(error.response.data);
+            console.log(error.response.status);
+            throw new Error(error);
+        }
     }
 
     async update(task_id: string, task: Task): Promise<Task> {

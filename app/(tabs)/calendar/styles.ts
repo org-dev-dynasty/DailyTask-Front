@@ -1,8 +1,9 @@
 import styled from "styled-components/native";
 import theme from "@/themes/theme";
 import { Calendar } from 'react-native-calendars';
+import { Animated } from "react-native";
 
-export const CalendarContainer = styled.View`
+export const CalendarContainer = styled(Animated.View)`
   position: absolute;
   top: 0;
   width: 100%;

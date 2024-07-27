@@ -13,4 +13,13 @@ export type CreateUserResponse = {
 
 export type ComfirmEmailResponse = {
     message: string;
-}; 
+};
+
+export type RefreshTokenResponse = {
+    tokens: {
+        access_token: string;
+        id_token: string;
+        refresh_token: string;
+    },
+    message: string;
+}
