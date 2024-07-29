@@ -49,3 +49,26 @@ export const TextLabel = styled.Text`
     font-weight: ${theme.FONT_FAMILY.MEDIUM};
     margin-right: 10px;
 `;
+
+export const OnlyDisabledView = styled.Text`
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-top: 10%;
+    flex: 1;
+`;
+
+export const OnlyDisabledTextsView= styled.Text`
+    width: 80%;
+`;
+
+export const OnlyDisabledTitle = styled.Text`
+    color: ${theme.COLORS.WHITE};
+    font-size: ${theme.FONT_SIZE.LG};
+    font-weight: ${theme.FONT_FAMILY.MEDIUM};
+`;
+
+export const OnlyDisabledText = styled.Text`
+    color: ${theme.COLORS.WHITE};
+    font-size: ${theme.FONT_SIZE.SM};
+    font-weight: ${theme.FONT_FAMILY.REGULAR};
+`;

@@ -1,7 +1,7 @@
 import { TaskCardProps } from "@/interfaces/TaskCard";
 import theme from "@/themes/theme";
-import { View, Text, ScrollView, Pressable, Animated, Dimensions, StyleSheet } from "react-native";
-import { CheckFat, Pencil } from "phosphor-react-native";
+import { View, Text, ScrollView, Pressable, Animated, Dimensions, StyleSheet, TouchableOpacity } from "react-native";
+import { CheckFat, Pencil, TrashSimple } from "phosphor-react-native";
 import { useState, useEffect, useRef } from "react";
 
 export const TaskCard = (props: TaskCardProps) => {
@@ -21,7 +21,14 @@ export const TaskCard = (props: TaskCardProps) => {
 
     return (
         <View style={{ flexDirection: "row", justifyContent: 'center', position: 'relative' }}>
-            <View style={{ width: '8%', height: height / 100 * 8, backgroundColor: props.color, borderTopLeftRadius: 12, borderBottomLeftRadius: 12, zIndex: 1 }}></View>
+            <View style={{ width: '8%', height: height / 100 * 8, backgroundColor: props.color, borderTopLeftRadius: 12, borderBottomLeftRadius: 12, zIndex: 1, display: "flex", justifyContent: "center"}}>
+                {selected ?
+                <TouchableOpacity>
+                    <TrashSimple size={24} color={theme.COLORS.BLACK} style={{ marginTop: 1 }} />
+                </TouchableOpacity>
+                : <></>
+                }
+            </View>
             <Pressable
                 onPress={() => setSelected(!selected)}
                 style={{
