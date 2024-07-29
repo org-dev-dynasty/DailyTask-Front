@@ -829,6 +829,7 @@ export default function Home() {
     }
 
     async function handlePlayAudio(){
+        console.log('Tocando áudio');
         if(recordingFileUri){
             const {sound} = await Audio.Sound.createAsync({uri: recordingFileUri}, {shouldPlay: true});
 
@@ -840,6 +841,22 @@ export default function Home() {
     const handleCloseTask = () => {
         setOpenTask(false);
     };
+
+    // Request to create task
+    function transcribeAudio() {
+        console.log('Task created');
+        try{
+            console.log(recording);
+            if(recordingFileUri){
+                const formData = new FormData();
+                formData.append('audio_file', recordingFileUri);
+                console.log(formData);
+                console.log(formData.get('audio_file')?.valueOf());
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     useEffect(() => {
         Audio
