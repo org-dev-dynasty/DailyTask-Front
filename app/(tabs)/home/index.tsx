@@ -2,6 +2,7 @@ import { Background } from "@/components/background";
 import React, {useEffect, useRef, useState} from "react";
 import {
     TouchableOpacity,
+    Text,
     Animated,
     Easing,
     Pressable,
@@ -40,6 +41,7 @@ import {
 } from "@/app/(tabs)/home/styles";
 import { Dimensions } from 'react-native';
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
+import * as FileSystem from 'expo-file-system';
 
 // Theme
 import theme from "@/themes/theme";
@@ -47,6 +49,7 @@ import theme from "@/themes/theme";
 // Icons
 import {Microphone, Keyboard, LockSimpleOpen, TrashSimple, CaretLeft} from "phosphor-react-native";
 import TaskModal from "@/components/taskModal";
+import Timer from "@/components/timer";
 
 export default function Home() {
     const [start, setStart] = useState(false);
@@ -54,7 +57,10 @@ export default function Home() {
     const [recordingFileUri, setRecordingFileUri] = useState<string | null>(null);
     const [isEditable, setIsEditable] = useState(false);
     const [openTask, setOpenTask] = useState(false);
+    const [isLocked, setIsLocked] = useState(false);
+    const [firstRecorder, setFirstRecorder] = useState(true);
 
+    const [startTimer, setStartTimer] = useState(false);
 
     const fadeLock = useRef(new Animated.Value(0)).current;
     const fadeTexts = useRef(new Animated.Value(1)).current;
@@ -99,8 +105,20 @@ export default function Home() {
 
     const sizeAnimatedValue = useRef(new Animated.Value(0)).current;
 
-
     function startRecording() {
+        if(!firstRecorder) {
+            console.log('Segunda vez')
+            handleRecordingStop();
+            deleteRecording();
+        }else{
+            console.log('Primeira vez')
+            setFirstRecorder(false);
+        };
+        setStartTimer(false); // Stop the timer first
+        setTimeout(() => {
+          setStartTimer(true); // Restart the timer
+        }, 0); // Ensure state update is processed
+        console.log('chegou no start recording')
         if(canRepeat.current && !microphoneFixed.current) {
             recordingStarted.current = true;
             holdingAnimation();
@@ -357,7 +375,7 @@ export default function Home() {
             onMoveShouldSetPanResponder: (event, gestureState) => {
                 return Math.abs(gestureState.dx) > 2 || Math.abs(gestureState.dy) > 2;
             },
-            onPanResponderMove: (event, gestureState) => {
+            onPanResponderMove: async (event, gestureState) => {
                 if(gestureReleased.current) return
                 panMoving.current = true;
 
@@ -371,6 +389,9 @@ export default function Home() {
                         }else{
                             gestureReleased.current = true
                             deleteAudioAnimation()
+                            await handleRecordingStop();
+                            setIsLocked(false);
+                            console.log('deletou')
                         }
 
                     }
@@ -426,6 +447,8 @@ export default function Home() {
                 handlePressOut();
                 microphoneFixed.current = false;
             } else {
+                setIsLocked(true);
+                console.log('TRAVOU A GRAVAÇÃO');
                 microphoneMove.current = false;
                 microphoneFixed.current = true;
                 lockedAnimation();
@@ -478,7 +501,11 @@ export default function Home() {
             toValue: width * 0.75,
             duration: 500,
             useNativeDriver: false,
-        }).start(() => {
+        }).start(async () => {
+            handleRecordingStop();
+            if (isLocked) {
+                setIsLocked(false);
+            }
             circleSize.stopAnimation();
             circleOpacity.stopAnimation();
             auxCircleSize.stopAnimation();
@@ -744,10 +771,11 @@ export default function Home() {
         if(granted){
             try {
                 const { recording } = await Audio.Recording.createAsync();
+                console.log('TÁ GRAVANDO');
                 setRecording( recording );
             } catch (error) {
                 console.log(error);
-                Alert.alert('Erro ao gravar', 'Ocorreu um erro ao tentar gravar o áudio');
+                Alert.alert('Erro ao gravar', 'Ocorreu um erro ao tentar gravar o áudio. Por favor tente Novamente');
             }
         }
     }
@@ -766,6 +794,7 @@ export default function Home() {
     async function handleRecordingStop(){
         try {
             if(recording){
+                console.log('PAROU DE GRAVAR');
                 await recording.stopAndUnloadAsync();
                 const fileUri = recording.getURI();
                 console.log(fileUri);
@@ -773,10 +802,29 @@ export default function Home() {
                 setRecording(null);
                 // setStart(false);
             }
+            else {
+                console.log('Não está gravando');
+            }
         }
         catch (error) {
             console.log(error);
             Alert.alert('Erro ao pausar', 'Ocorreu um erro ao tentar parar a gravação do áudio');
+        }
+    }
+
+    const deleteRecording = async () => {
+        if (recordingFileUri) {
+          try {
+            // const fileInfo = await FileSystem.getInfoAsync(recordingFileUri);
+            // console.log('File exists before deletion:', fileInfo.exists);
+            await FileSystem.deleteAsync(recordingFileUri);
+            // const fileInfo2 = await FileSystem.getInfoAsync(recordingFileUri);
+            // console.log('File exists before deletion:', fileInfo2.exists);
+            setRecordingFileUri(null);
+            console.log('Recording deleted');
+          } catch (err) {
+            console.error('Failed to delete recording', err);
+          }
         }
     }
 
@@ -786,7 +834,6 @@ export default function Home() {
 
             await sound.setPositionAsync(0);
             await sound.playAsync();
-
         }
     }
 
@@ -854,8 +901,8 @@ export default function Home() {
                                 <Animated.View
                                     style={{opacity: microphoneOpacity, zIndex: 2}}>
                                     <Pressable
-                                        onPressIn={startRecording}
-                                        onPressOut={handlePressOut}>
+                                        onPressIn={isLocked ? null : startRecording}
+                                        onPressOut={isLocked ? null : handlePressOut}>
                                         <Microphone size={64} color={theme.COLORS.WHITE} />
                                     </Pressable>
                                 </Animated.View>
@@ -890,11 +937,13 @@ export default function Home() {
                             </Animated.View>
                             {/* Timer */}
                             <TimerView style={{display: start ? 'flex' : 'none', opacity: fadeTimer, transform: [{ translateY: panY }]}}>
-                                <RecordingTime>0:00</RecordingTime>
+                                {/* <RecordingTime>0:00</RecordingTime> */}
+                                <Timer startTimer={startTimer} />
                             </TimerView>
                             {/* Keyboard */}
                             <KeyboardInitialView style={{ opacity: fadeTexts, display: start ? 'none' : 'flex'}}>
-                                <TouchableOpacity onPress={() => setOpenTask(true)}>
+                                {/* <TouchableOpacity onPress={() => setOpenTask(true)}> */}
+                                <TouchableOpacity onPress={() => handlePlayAudio()}>
                                     <Keyboard size={64} color={theme.COLORS.WHITE} />
                                 </TouchableOpacity>
                             </KeyboardInitialView>

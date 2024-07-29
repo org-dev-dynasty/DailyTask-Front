@@ -7,7 +7,7 @@ import { Octicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 // ------
 // React Native Components
-import { View, Text } from 'react-native';
+import { View, Text, Dimensions } from 'react-native';
 // -----------------------
 // Tema
 import theme from '../../themes/theme';
@@ -16,6 +16,8 @@ import { TaskContextProvider } from '@/context/task_context';
 // -----------------------
 
 export default function TabLayout() {
+  const { width, height } = Dimensions.get('window');
+
   return (
     <TaskContextProvider>
     <Tabs
@@ -24,7 +26,7 @@ export default function TabLayout() {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: '#F06B41',
-          height: 100,
+          height: height/100*10,
           borderTopWidth: 0,
         },
       }}>
@@ -39,11 +41,11 @@ export default function TabLayout() {
               justifyContent: "center",
               backgroundColor: theme.COLORS.MAIN,
               top: focused ? -40 : 0,
-              width: focused ? 120 : 80,
-              height: focused ? 120 : 80,
-              borderRadius: 360,
+              width: focused ? 100 : null,
+              height: focused ? 100 : null,
+              borderRadius: focused ? 360 : 0,
             }}>
-              <Calendar size={72} color={focused ? "white" : "black"} />
+              <Calendar size={60} color={focused ? "white" : "black"} />
             </View>
           ),
         }}
@@ -58,12 +60,12 @@ export default function TabLayout() {
               justifyContent: "center",
               backgroundColor: "#F06B41",
               top: focused ? -40 : 0,
-              width: focused ? 120 : 80,
-              height: focused ? 120 : 80,
-              borderRadius: 360,
+              width: focused ? 100 : null,
+              height: focused ? 100 : null,
+              borderRadius: focused ? 360 : 0,
             }}>
                 <Microphone
-                    size={ 72 }
+                    size={ 60 }
                     color={focused ? "white" : "black"}/>
             </View>
           ),
@@ -79,11 +81,11 @@ export default function TabLayout() {
               justifyContent: "center",
               backgroundColor: "#F06B41",
               top: focused ? -40 : 0,
-              width: focused ? 120 : 80,
-              height: focused ? 120 : 80,
-              borderRadius: 360,
+              width: focused ? 100 : null,
+              height: focused ? 100 : null,
+              borderRadius: focused ? 360 : 0,
             }}>
-              <Gear size={72} color={focused ? "white" : "black"} />
+              <Gear size={60} color={focused ? "white" : "black"} />
             </View>
           ),
         }}
