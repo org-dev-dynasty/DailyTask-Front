@@ -1,26 +1,23 @@
-
 import React, {useEffect, useState} from 'react';
-import { Modal, View, TextInput, TouchableOpacity, Text, ScrollView } from 'react-native';
+import { Modal, View, ScrollView } from 'react-native';
 import {
     ModalContainer,
     ModalContent,
     Title,
     Subtitle,
-    TextInputStyled,
     ColorsContainer,
     ColorCircle,
     CustomColorText,
     ConfirmButton,
     ConfirmButtonText,
     CloseButton,
-    CloseButtonText,
     ColorTitle
 } from './styles';
 import { Palette, XCircle } from 'phosphor-react-native';
 import {Input} from "@/components/input/input";
 
 const categoriesColors = [
-    '#FF9494', '#F4966E', '#FFE7A0', '#A4F4C7', '#9CD4F3',
+    '#ff9494', '#F4966E', '#FFE7A0', '#A4F4C7', '#9CD4F3',
     '#B97CF6', '#F684F2', '#DB6060', '#F98250', '#F2D06A',
     '#52C283', '#5275B7', '#914ED5', '#D55BD0', '#B94646',
     '#D9610A', '#F6C533', '#359860', '#2C357F', '#6420A8', 
@@ -28,7 +25,8 @@ const categoriesColors = [
 ];
 
 export default function CategoryModal({ visible, onClose, onConfirm }: any) {
-    const [selectedColor, setSelectedColor] = useState<string | null>(null);
+    const [secondaryColor, setSecondaryColor] = useState<string | null>(null);
+    const [selectedColor, setSelectedColor] = useState<string>('');
     const [categoryName, setCategoryName] = useState('');
     const [errorCategoryName, setErrorCategoryName] = useState('');
     const [errorColor, setErrorColor] = useState(false);
@@ -37,24 +35,41 @@ export default function CategoryModal({ visible, onClose, onConfirm }: any) {
         if (categoryName !== '') {
             setErrorCategoryName('');
         }
-        if(selectedColor !== null){
+        if(secondaryColor !== null){
             setErrorColor(false)
         }
-    }, [categoryName, selectedColor]);
+    }, [categoryName, secondaryColor]);
 
     const confirm = () => {
         if(categoryName === ''){
             setErrorCategoryName('Categoria é obrigatória')
         }
-        if(selectedColor === null){
+        if(secondaryColor === null){
             setErrorColor(true)
         }
-        if(categoryName === '' || selectedColor === ''){
+        if(categoryName === '' || secondaryColor === ''){
             return
         }
-        setErrorCategoryName(onConfirm(categoryName, selectedColor))
+        setErrorCategoryName(onConfirm(categoryName, selectedColor, secondaryColor))
         setCategoryName('')
-        setSelectedColor(null)
+        setSecondaryColor(null)
+    }
+
+    const darkenColor = (color: string, amount: number): string => {
+        let colorWithoutHash = color.replace(/^#/, '');
+        if (colorWithoutHash.length === 3) {
+            colorWithoutHash = colorWithoutHash.split('').map(char => char + char).join('');
+        }
+        const num = parseInt(colorWithoutHash, 16);
+        let r = (num >> 16) - amount;
+        let g = ((num >> 8) & 0x00FF) - amount;
+        let b = (num & 0x0000FF) - amount;
+
+        r = r < 0 ? 0 : r;
+        g = g < 0 ? 0 : g;
+        b = b < 0 ? 0 : b;
+
+        return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`;
     }
 
     return (
@@ -92,8 +107,11 @@ export default function CategoryModal({ visible, onClose, onConfirm }: any) {
                                 <ColorCircle
                                     key={color}
                                     color={color}
-                                    selected={selectedColor === color}
-                                    onPress={() => setSelectedColor(color)}
+                                    selected={secondaryColor === color}
+                                    onPress={() => {
+                                        setSecondaryColor(color);
+                                        setSelectedColor(darkenColor(color, 30));
+                                    }}
                                 />
                             ))}
                         </ColorsContainer>
