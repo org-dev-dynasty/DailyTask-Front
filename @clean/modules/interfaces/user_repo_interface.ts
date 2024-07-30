@@ -6,4 +6,8 @@ export interface IUserRepository {
     get(user_id: string): Promise<User | null>;
     login(email: string, password: string): Promise<LoginResponse>;
     comfirmEmail(email: string, verification_code: string): Promise<ComfirmEmailResponse>;
+    changePassword(access_token: string, newPassword: string, oldPassword: string): Promise<string>;
+
+    // forgotPassword(email: string): Promise<string>;
+    // deleteAccount(email: string, password: string): Promise<boolean>;
 }

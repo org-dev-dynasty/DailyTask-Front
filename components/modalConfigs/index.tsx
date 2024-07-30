@@ -1,5 +1,5 @@
 import { ModalProps } from "@/interfaces/modalConfigs";
-import { SetStateAction, useCallback, useEffect, useState } from "react";
+import { SetStateAction, useCallback, useContext, useEffect, useState } from "react";
 import { Image, Modal, View, Keyboard } from "react-native";
 import { Title, ButtonOut, Subtitle, ButtonModal, ButtonTextModal, ModalContainer, ModalContent, ButtonDelete } from "./styles"
 import { Background } from "../background";
@@ -7,34 +7,19 @@ import { Input } from "../input/input";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, router, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UserContext } from "@/context/user_context";
 
 export const ModalConfigs = (props: ModalProps) => {
-    const [email, setEmail] = useState('');
-    const [erroEmail, setErroEmail] = useState('');
     const [senhaAtual, setsenhaAtual] = useState('');
     const [erroSenhaAtual, setErroSenhaAtual] = useState('');
     const [senhaNova, setsenhaNova] = useState('');
     const [erroSenhaNova, setErroSenhaNova] = useState('');
     const [themeModeS, setThemeModeS] = useState('dark');
-
-    const validateEmail = (email: string) => {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-    };
+    const { changePassword } = useContext(UserContext);
 
     const handleButtonPressDelete = () => {
         props.closeModal;
         router.replace('/login')
-    }
-
-    const handleButtonPressEmail = () => {
-        if (!validateEmail(email)) {
-            setErroEmail('Por favor, insira um e-mail válido.');
-        } else {
-            setEmail('');
-            Keyboard.dismiss();
-            props.closeModal(); 
-        }
     }
 
     const handleButtonPressPassword = () => {
@@ -50,25 +35,36 @@ export const ModalConfigs = (props: ModalProps) => {
             setErroSenhaNova('A senha deve ter pelo menos um número.');
         } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(senhaNova)) {
             setErroSenhaNova('A senha deve ter pelo menos um caractere especial.');
+        } else if (senhaAtual === '') {
+            setErroSenhaAtual('Por favor, insira a senha atual.');
         } else {
-            setsenhaAtual('');
-            setsenhaNova('');
             Keyboard.dismiss();
-            props.closeModal(); 
+            changePassoword(); 
+        }
+    }
+
+    async function changePassoword() {
+        console.log('entrou');
+        const token = await AsyncStorage.getItem('access_token');
+        if (token) {
+            const result = changePassword(token, senhaNova, senhaAtual);
+            if (await result) {
+                props.closeModal();
+                alert('Senha alterada com sucesso!');
+                setsenhaAtual('');
+                setsenhaNova('');
+            }
         }
     }
 
     useEffect(() => {
-        if (email !== '') {
-            setErroEmail('');
-        }
         if (senhaAtual !== '') {
             setErroSenhaAtual('');
         }
         if (senhaNova !== '') {
             setErroSenhaNova('');
         }
-    }, [email, senhaAtual, senhaNova]); 
+    }, [senhaAtual, senhaNova]); 
 
     useFocusEffect(
         useCallback(() => {
@@ -105,37 +101,21 @@ export const ModalConfigs = (props: ModalProps) => {
                             />
                         </ButtonOut>
                         <Title style={{color: themeModeS === 'dark' ? '#ffffff' : '#000000' }}>
-                            {props.type == 'email' ? 
-                                'Novo Email'
-                            :
-                            props.type == 'senha' ?
+                            {props.type == 'senha' ?
                                 'Nova Senha'
                             :
                                 'Deletar Conta'
                             }
                         </Title>
                         <Subtitle style={{color: themeModeS === 'dark' ? '#ffffff' : '#000000' }}>
-                            {props.type == 'email' ?
-                                'Insira um novo email para a sua conta'
-                            :
-                            props.type == 'senha' ?
+                            {props.type == 'senha' ?
                                 'Crie uma nova senha para a sua conta'
                             :
                                 'Deseja realmente deletar esta conta ?'
                             }
                         </Subtitle>
                         <View>
-                            {props.type == 'email' ?
-                            <>
-                                <View style={{ width: '100%', paddingLeft: '8%', paddingRight: '8%' }}>
-                                    <Input label="Digite o novo email..." value={email} onChangeText={(text: SetStateAction<string>) => setEmail(text)} error={erroEmail} />
-                                </View>
-                                <ButtonModal onPress={handleButtonPressEmail}>
-                                    <ButtonTextModal>Confirmar</ButtonTextModal>
-                                </ButtonModal>
-                            </>    
-                            :
-                            props.type == 'senha' ?
+                            {props.type == 'senha' ?
                             <>
                                 <View style={{ width: '100%', paddingLeft: '8%', paddingRight: '8%' }}>
                                     <Input label="Digite a senha atual..." value={senhaAtual} onChangeText={(text: SetStateAction<string>) => setsenhaAtual(text)} error={erroSenhaAtual}  />

@@ -10,6 +10,7 @@ type UserContextType = {
     create: (user: User) => Promise<CreateUserResponse>;
     get: (user_id: string) => Promise<User | null>;
     comfirmEmail: (email: string, verificationCode: string) => Promise<ComfirmEmailResponse>;
+    changePassword: (access_token: string, newPassword: string, oldPassword: string) => Promise<string>;
 }
 
 const defaultUserContext: UserContextType = { 
@@ -24,6 +25,9 @@ const defaultUserContext: UserContextType = {
     },
     comfirmEmail: async (email: string, verificationCode: string) => { 
         return { message: '' };
+    },
+    changePassword: async (access_token: string, newPassword: string, oldPassword: string) => { 
+        return '';
     }
 };
 
@@ -67,8 +71,19 @@ export function UserContextProvider({ children }: { children: React.ReactNode })
         }
     }
 
+    async function changePassword(access_token: string, newPassword: string, oldPassword: string): Promise<string> { 
+        try {
+            const result = await userRepository.changePassword(access_token, newPassword, oldPassword);
+            console.log("CONTEXTO DE USUÁRIO CHANGE PASSWORD")
+            console.log(result)
+            return result;
+        } catch (error: any) {
+            throw new Error(error);
+        }
+    }
+
     return (
-        <UserContext.Provider value={{login, create, get, comfirmEmail}}>
+        <UserContext.Provider value={{login, create, get, comfirmEmail, changePassword}}>
             {children}
         </UserContext.Provider>
     );

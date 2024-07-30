@@ -68,7 +68,7 @@ export default function Configs() {
                         <ButtonText>Alterar senha</ButtonText>
                     </ButtonChangePassword>
                     <ButtonDeleteAccount onPress={() => setDeleteAccountModalVisible(true)}>
-                        <ButtonText>Deletar Conta</ButtonText>
+                        <ButtonText>Deletar conta</ButtonText>
                     </ButtonDeleteAccount>
                     <ModalConfigs type='senha' modalVisible={isPasswordModalVisible} closeModal={() => setPasswordModalVisible(false)}></ModalConfigs>
                     <ModalConfigs type='' modalVisible={isDeleteAccountModalVisible} closeModal={() => setDeleteAccountModalVisible(false)}></ModalConfigs>

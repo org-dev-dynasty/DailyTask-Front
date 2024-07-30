@@ -41,7 +41,6 @@ export class UserRepositoryHttp implements IUserRepository {
         try{
             const response = await this.httpUser.post(`${process.env.EXPO_PUBLIC_API_URL}/login`, { email, password });
             if (response.data.token) {
-                await AsyncStorage.setItem('token', response.data.token);
                 router.replace('/home');
             }
             console.log("RESPOSTA DA REQ LOGIN");
@@ -52,7 +51,7 @@ export class UserRepositoryHttp implements IUserRepository {
         }
      }
 
-     async comfirmEmail(email: string, verification_code: string): Promise<ComfirmEmailResponse> {
+    async comfirmEmail(email: string, verification_code: string): Promise<ComfirmEmailResponse> {
         try {
             const response = await this.httpUser.post<ComfirmEmailResponse>(`${process.env.EXPO_PUBLIC_API_URL}/confirm-user-email`, { 
                 email: email, 
@@ -67,6 +66,27 @@ export class UserRepositoryHttp implements IUserRepository {
             return response.data;
         } catch (error: any) {
             // console.log(error.response.data);
+            throw new Error(error);
+        }
+    }
+
+    async changePassword(access_token: string, newPassword: string, oldPassword: string): Promise<string> {
+        try {
+            const token = await AsyncStorage.getItem('id_token');
+            const response = await this.httpUser.post(`${process.env.EXPO_PUBLIC_API_URL}/change-password`, {
+                newPassword,
+                oldPassword
+            }, {headers: {Authorization: `Bearer ${token}`, access_token}});
+            console.log("RESPOSTA DA REQ CHANGE PASSWORD");
+            console.log(response.data);
+            if (response.data) {
+                alert('Senha alterada com sucesso!');
+                router.replace('/login');
+            }
+            return response.data;
+        } catch (error: any) {
+            console.log("ERRO NA REQ CHANGE PASSWORD");
+            console.log(error.response.data);
             throw new Error(error);
         }
     }
