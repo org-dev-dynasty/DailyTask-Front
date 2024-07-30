@@ -1,11 +1,9 @@
 import {View, Dimensions, TouchableOpacity} from "react-native";
-import { useState } from "react";
 import {Title} from "@/components/categoryCard/styles";
 import {CategoryCardProps} from "@/interfaces/CategoryCard";
 
 export const CategoryCard = (props: CategoryCardProps) => {
-    const { width, height } = Dimensions.get('window');
-    const [selected, setSelected] = useState(false);
+    const { height } = Dimensions.get('window');
     const hexToRgb = (hex: string) => {
         hex = hex.replace(/^#/, '');
 
@@ -21,7 +19,7 @@ export const CategoryCard = (props: CategoryCardProps) => {
     const textColor = (r * 0.299 + g * 0.587 + b * 0.114 > 186 ? '#000' : '#fff');
 
     return (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={props.close}>
             <View style={{flexDirection: "row", justifyContent: 'center', marginVertical: 6}}>
                 <View style={{width: '8%', height: height/15, backgroundColor: props.color, borderTopLeftRadius: 12, borderBottomLeftRadius: 12}}></View>
                 <View
