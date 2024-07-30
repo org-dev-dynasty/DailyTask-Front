@@ -11,6 +11,7 @@ type UserContextType = {
     get: (user_id: string) => Promise<User | null>;
     comfirmEmail: (email: string, verificationCode: string) => Promise<ComfirmEmailResponse>;
     changePassword: (access_token: string, newPassword: string, oldPassword: string) => Promise<string>;
+    deleteAccount: () => Promise<string>;
 }
 
 const defaultUserContext: UserContextType = { 
@@ -27,6 +28,9 @@ const defaultUserContext: UserContextType = {
         return { message: '' };
     },
     changePassword: async (access_token: string, newPassword: string, oldPassword: string) => { 
+        return '';
+    },
+    deleteAccount: async () => { 
         return '';
     }
 };
@@ -82,8 +86,18 @@ export function UserContextProvider({ children }: { children: React.ReactNode })
         }
     }
 
+    async function deleteAccount(): Promise<string> { 
+        try {
+            const result = await userRepository.deleteAccount();
+            console.log("CONTEXTO DE USUÁRIO DELETE ACCOUNT" + result)
+            return result;
+        } catch (error: any) {
+            throw new Error(error);
+        }
+    }
+
     return (
-        <UserContext.Provider value={{login, create, get, comfirmEmail, changePassword}}>
+        <UserContext.Provider value={{login, create, get, comfirmEmail, changePassword, deleteAccount}}>
             {children}
         </UserContext.Provider>
     );

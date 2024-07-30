@@ -16,10 +16,14 @@ export const ModalConfigs = (props: ModalProps) => {
     const [erroSenhaNova, setErroSenhaNova] = useState('');
     const [themeModeS, setThemeModeS] = useState('dark');
     const { changePassword } = useContext(UserContext);
+    const { deleteAccount } = useContext(UserContext);
 
-    const handleButtonPressDelete = () => {
-        props.closeModal;
-        router.replace('/login')
+    const handleButtonPressDelete = async () => {
+        const result = deleteAccount();
+        if (await result) {
+            props.closeModal();
+            alert('Conta deletada com sucesso!');
+        }
     }
 
     const handleButtonPressPassword = () => {

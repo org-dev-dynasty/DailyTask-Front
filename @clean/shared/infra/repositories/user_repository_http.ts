@@ -90,4 +90,22 @@ export class UserRepositoryHttp implements IUserRepository {
             throw new Error(error);
         }
     }
+
+    async deleteAccount(): Promise<string> {
+        try {
+            const token = await AsyncStorage.getItem('id_token');
+            const response = await this.httpUser.delete(`${process.env.EXPO_PUBLIC_API_URL}/delete-account`, {headers: {Authorization: `Bearer ${token}`}});
+            console.log("RESPOSTA DA REQ DELETE ACCOUNT");
+            console.log(response.data);
+            if (response.data) {
+                alert('Conta deletada com sucesso!');
+                router.replace('/login');
+            }
+            return response.data;
+        } catch (error: any) {
+            console.log("ERRO NA REQ DELETE ACCOUNT");
+            console.log(error.response.data);
+            throw new Error(error);
+        }
+    }
 }

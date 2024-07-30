@@ -18,4 +18,7 @@ export class UserRepositoryMock implements IUserRepository {
     changePassword(access_token: string, newPassword: string, oldPassword: string): Promise<string> {
         throw new Error("Method not implemented.");
     }
+    deleteAccount(): Promise<string> {
+        throw new Error("Method not implemented.");
+    }
 }
