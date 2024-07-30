@@ -20,7 +20,7 @@ export const TaskCard = (props: TaskCardProps) => {
     const isActive = props.status === 'ACTIVE';
 
     return (
-        <View style={{ flexDirection: "row", justifyContent: 'center', position: 'relative' }}>
+        <View style={{ flexDirection: "row", justifyContent: 'center', position: 'relative', width: '90%', marginHorizontal: 'auto' }}>
             <View style={{ width: '8%', height: height / 100 * 8, backgroundColor: props.color, borderTopLeftRadius: 12, borderBottomLeftRadius: 12, zIndex: 1, display: "flex", justifyContent: "center"}}>
                 {selected ?
                 <TouchableOpacity>

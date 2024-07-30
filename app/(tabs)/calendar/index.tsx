@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Background } from "@/components/background";
 import { Calendar } from 'react-native-calendars';
-import { Animated, Dimensions, View, Text, TouchableOpacity } from 'react-native';
+import { Animated, Dimensions, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Bar, CalendarComponent, CalendarContainer, OnlyDisabledText, OnlyDisabledTitle, OnlyDisabledView, TaskLabel, TasksContainer, TextLabel } from './styles';
 import { LocaleConfig } from 'react-native-calendars';
 import theme from '@/themes/theme';
@@ -66,6 +66,8 @@ export default function CalendarTasks() {
   const [expandedDates, setExpandedDates] = useState<Record<string, boolean>>({});
   const [onlyDisabled, setOnlyDisabled] = useState(false);
   const [markedDates, setMarkedDates] = useState({});
+  const [tasksHeightExpanded, setTasksHeightExpanded] = useState(0);
+  const [tasksHeightNotExpanded, setTasksHeightNotExpanded] = useState(0);
   const { getAll } = useContext(TaskContext);
   const { getDisabledTasks } = useContext(TaskContext);
 
@@ -133,18 +135,19 @@ export default function CalendarTasks() {
     setDisabledTasks(result.tasks);
   }
 
+  function getHights() {
+    setTasksHeightExpanded(height/10*4)
+    setTasksHeightNotExpanded(height/10*7.5)
+    setHiddenCalendarHeight(-(height/100*34));
+  }
+
   useEffect(() => {
     getTasks();
     getDisabled();
   }, []);
 
   useEffect(() => {
-    setHiddenCalendarHeight(-(height/100*34));
-    // console.log('Hidden calendar height:');
-    // console.log(height);
-    // console.log((height - 550)*-1);
-    // console.log(-(height/100*34));
-    // console.log('---------------------');
+    getHights();
   }, [height]);
 
   const translateY = animationValue.interpolate({
@@ -200,11 +203,12 @@ export default function CalendarTasks() {
         <Bar onPress={toggleCalendar} />
       </CalendarContainer>
       <TasksContainer style={{ top: expanded ? '50%' : '10%', display: onlyDisabled ? 'none' : 'flex' }}>
+        <ScrollView style={{height: expanded ? tasksHeightExpanded: tasksHeightNotExpanded}}>
         {tasks && Object.keys(tasks).map((key, index) => {
           const isExpanded = expandedDates[key];
           return (
             <View key={index} style={{ gap: 8, marginBottom: 16 }}>
-              <TouchableOpacity onPress={() => toggleDate(key)}>
+              <TouchableOpacity style={{width: '85%', marginHorizontal: 'auto'}} onPress={() => toggleDate(key)}>
                 <TaskLabel>
                   <TextLabel>{key}</TextLabel>
                   {!isExpanded ? <CaretUp size={24} color={theme.COLORS.WHITE} weight="bold" /> : <CaretDown size={24} color={theme.COLORS.WHITE} weight="bold" />}
@@ -226,6 +230,7 @@ export default function CalendarTasks() {
             </View>
           );
         })}
+        </ScrollView>
       </TasksContainer>
       {/* Completed tasks */}
       {/* Completed tasks button */}
@@ -242,6 +247,7 @@ export default function CalendarTasks() {
         <OnlyDisabledText>Essas tasks serão excluídas do sistema após 3 dias, caso não sejam ativadas.</OnlyDisabledText>
       </View>
       <TasksContainer style={{ display: onlyDisabled ? 'flex' : 'none', top: '15%' }}>
+        <ScrollView style={{height: expanded ? tasksHeightExpanded: tasksHeightNotExpanded}}>
         {disabledTasks && disabledTasks.map((task, index) => (
           <TaskCard
             key={index}
@@ -255,6 +261,7 @@ export default function CalendarTasks() {
             color2={task.category.category_secondary_color}
           />
         ))}
+        </ScrollView>
       </TasksContainer>
     </Background>
   );

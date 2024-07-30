@@ -29,7 +29,7 @@ export const Bar = styled.TouchableOpacity`
 export const TasksContainer = styled.View`
     position: absolute;
     top: 50%;
-    width: 90%;
+    width: 100%;
     padding: 20px;
     flex-direction: column;
     margin-top: 20px;
