@@ -1,6 +1,6 @@
 import { ITaskRepository } from "@/@clean/modules/interfaces/task_repo_interface";
 import { Task } from "../../domain/entities/task";
-import { GetAllTasksResponse } from "../../domain/types/task_responses";
+import { GetAllTasksResponse, TaskResponse } from "../../domain/types/task_responses";
 
 export class TaskRepositoryMock implements ITaskRepository {
     create(task: Task): Promise<Task> {
@@ -12,7 +12,7 @@ export class TaskRepositoryMock implements ITaskRepository {
     getAll(): Promise<GetAllTasksResponse> {
         throw new Error("Method not implemented.");
     }
-    update(task_id: string, task: Task): Promise<Task> {
+    update(task_id: string, task: Task): Promise<TaskResponse> {
         throw new Error("Method not implemented.");
     }
     delete(task_id: string): Promise<string> {

@@ -101,11 +101,9 @@ export default function CalendarTasks() {
 
   async function getTasks() {
     const result = await getAll();
-    console.log(result);
     setCurrentDay(result.CurrentDay);
     setTasks(result.tasks as Record<string, Task[]>);
     setDotsT(result.dots as Record<string, {dots: {key: string, color: string}[]}>) ;
-    console.log(result.tasks);
     
     // Tranform the dots object to the markedDates object
     const today = new Date().toISOString().split('T')[0]; // Get the current date
