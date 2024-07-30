@@ -1,7 +1,6 @@
 import {LinearGradient} from "expo-linear-gradient";
-
 import {TaskInput} from "@/components/taskInput/input";
-import {Animated, Dimensions, Easing, FlatList, View} from "react-native";
+import {Animated, Dimensions, Easing, FlatList, LayoutChangeEvent, View} from "react-native";
 import React, {useContext, useEffect, useRef, useState} from "react";
 import {
     ButtonsView,
@@ -22,6 +21,10 @@ import {Task} from "@/@clean/shared/domain/entities/task";
 import CategoryModal from "@/components/categoryModal";
 import {CategoryCard} from "@/components/categoryCard";
 import {XCircle, Plus} from "phosphor-react-native";
+import ConfirmCategoryModal from "@/components/confirmCategoryModal";
+import {CategoryContext} from "@/context/category_context";
+import {Category} from "@/@clean/shared/domain/entities/category";
+
 
 export default function TaskModal(props: TaskModalProps){
     const { width } = Dimensions.get('window');
@@ -48,10 +51,15 @@ export default function TaskModal(props: TaskModalProps){
     const [errorTaskCategory, setErrorTaskCategory] = useState('');
 
     const [openCategory, setOpenCategory] = useState(false);
+    const [categories, setCategories] = useState<Category[]>([]);
     const [fixedHeight, setFixedHeight] = useState(0);
     const [openNewCategory, setOpenNewCategory] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [openConfirmCategory, setOpenConfirmCategory] = useState(false);
 
     const {create, update, get} = useContext(TaskContext);
+
+    const {getAll, createCategory} = useContext(CategoryContext);
 
     const formatTime = (inputTime: string): string => {
         let formattedInput = inputTime.replace(/\D/g, "");
@@ -64,7 +72,7 @@ export default function TaskModal(props: TaskModalProps){
                 break;
 
             case 2:
-                formattedInput = /^(0[1-9]|1[0-9]|2[0-4])$/.test(formattedInput)
+                formattedInput = /^([0-1][0-9]|2[0-4])$/.test(formattedInput)
                     ? `${formattedInput}`
                     : formattedInput.slice(0, 1);
                 break;
@@ -199,6 +207,12 @@ export default function TaskModal(props: TaskModalProps){
         }
     }
 
+    async function getCategories() {
+        const result = await getAll();
+        console.log(result);
+        setCategories(result.categories);
+    }
+
     useEffect(() => {
         Animated.timing(position, {
             toValue: isSwitchOn ? 26 : 2,
@@ -245,6 +259,8 @@ export default function TaskModal(props: TaskModalProps){
             getTask(props.taskId);
         }
 
+        getCategories();
+
     }, [isSwitchOn, taskName, taskTime, taskDate, taskCategory]);
 
     const toggleSwitch = () => {
@@ -289,11 +305,19 @@ export default function TaskModal(props: TaskModalProps){
         //  MISSING CATEGORY AND WEEKDAYS
 
         const formatedDate = taskDate.split("/").reverse().join("-")
-        console.log(formatedDate)
         const formatedTime = taskTime + ":00"
         let response;
 
+
+
         if(props.confirm){
+            if(taskCategory != selectedCategory){
+                //if else getAllCategories compare
+
+                setOpenConfirmCategory(true);
+                return
+            }
+
             if (weekDays.length > 0 && isSwitchOn){
                 // const task = new Task(null, taskName, formatedDate, taskTime, weekDays,taskDescription, taskLocation, taskCategory, "ACTIVE")
                 // const response = await create(task);
@@ -307,7 +331,7 @@ export default function TaskModal(props: TaskModalProps){
                     formatedTime,
                     taskDescription === '' ? null : taskDescription,
                     taskLocation === '' ? null : taskLocation,
-                    "3b447493b2a4203a35284517dbd5e95",
+                    "d3b447493b2a4203a35284517dbd5e95",
                     "ACTIVE"
                 )
 
@@ -335,45 +359,42 @@ export default function TaskModal(props: TaskModalProps){
 
     }
 
-    const handleCategoryConfirm = (name: any, color: any) => {
+    const handleCreateCategory = async (categoryName: string, categoryColor: string, categorySecondaryColor: string) => {
+        const category = new Category(null, categoryName, categoryColor, categorySecondaryColor);
+        const response = await createCategory(category);
+        if(response){
+            console.log(response);
+            props.onClose();
+        }
+    }
+
+    const handleCategoryConfirm = (name: any, color: any, secondColor: any) => {
         if(name === ''){
             return 'Categoria é obrigatória';
         }
         if(color === ''){
             return 'Cor é obrigatória';
         }
-        console.log('Categoria criada:', name, color);
-        setOpenNewCategory(false)
+        if(secondColor === ''){
+            handleCreateCategory(name, color, color);
+            setOpenNewCategory(false)
+        }
+        else{
+            handleCreateCategory(name, color, secondColor);
+            setOpenNewCategory(false)
+        }
     };
 
-    const data = [
-        {
-            title: "Categoria 1",
-            color: "#000000",
-            color2: "#f18383"
-        },
-        {
-            title: "Categoria 2",
-            color: "#000000",
-            color2: "#f18383"
-        },
-        {
-            title: "Categoria 3",
-            color: "#000000",
-            color2: "#f18383"
-        },
-        {
-            title: "Categoria 4",
-            color: "#000000",
-            color2: "#f18383"
-        }
-    ]
-
-
-    const handleLayout = (event) => {
-        const { height, width } = event.nativeEvent.layout;
+    const handleLayout = (event: LayoutChangeEvent) => {
+        const { height } = event.nativeEvent.layout;
         if(!openCategory) setFixedHeight(height)
     };
+
+    const handleCategory = (category: string) => {
+        setTaskCategory(category);
+        setOpenCategory(false);
+        setSelectedCategory(category);
+    }
 
     return (
         <ModalView>
@@ -383,6 +404,8 @@ export default function TaskModal(props: TaskModalProps){
                     onClose={() => setOpenNewCategory(false)}
                     onConfirm={handleCategoryConfirm}
                 />
+                {openConfirmCategory &&
+                <ConfirmCategoryModal onClose={() => setOpenConfirmCategory(false)} onConfirm={() => {setOpenConfirmCategory(false); setOpenCategory(true); setOpenNewCategory(true)}}/>}
                 <Container onLayout={handleLayout}>
                     <LinearGradient
                         colors={['#3C0B50', '#2E083D', '#0F0413']}
@@ -402,11 +425,11 @@ export default function TaskModal(props: TaskModalProps){
                                 <CategoryTitle>Categoria</CategoryTitle>
 
                                 <FlatList
-                                    data={data}
+                                    data={categories}
                                     keyExtractor={(item) =>
-                                        "Pressure FlatList " + item.title
+                                        "Pressure FlatList " + item.category_name
                                     }
-                                    renderItem={({ item }) => <CategoryCard title={item.title} color={item.color} color2={item.color2}/>}
+                                    renderItem={({ item }) => <CategoryCard title={item.category_name != null ? item.category_name : ""} color={item.category_primary_color} color2={item.category_secondary_color} close={() => handleCategory(item.category_name != null ? item.category_name : "")} />}
                                 />
 
                                 <CategoryFooter>
@@ -415,7 +438,6 @@ export default function TaskModal(props: TaskModalProps){
                                     </CategoryButton>
                                 </CategoryFooter>
                             </View>
-
                             :
                             <>
                                 <TopInputModalView>
