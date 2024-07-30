@@ -95,7 +95,6 @@ export const CheckBoxText = styled.Text`
     font-family: ${theme.FONT_FAMILY.LIGHT};
     font-size: ${theme.FONT_SIZE.XS};
     color: ${theme.COLORS.WHITE};
-    margin-left: 10px;
 `;
 
 export const CheckBoxTextTermsTouchable = styled.TouchableOpacity`
@@ -146,4 +145,5 @@ export const ViewCheckBox = styled.View`
     border-color: ${theme.COLORS.WHITE};
     border-radius: 5px;
     margin-top: 5px;
+    transform: { scale: 0.1 };
 `;

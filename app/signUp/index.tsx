@@ -1,7 +1,7 @@
 import React, { useState, SetStateAction, useEffect, useContext, useCallback } from 'react';
 import { Background } from "@/components/background";
-import { Container, Titulo, TouchableOpacityConta, TextFooter, Logo, View, ButtonText, ContainerLogin, Details, Footer, CheckBoxContainer, CheckBoxText, CheckBoxTextTerms, ModalContainer, ModalView, ModalText, CheckBoxTextTermsTouchable, ViewCheckBox} from "./styles";
-import { Image, Platform, ScrollView, TouchableOpacity } from "react-native"; 
+import { Container, Titulo, TouchableOpacityConta, TextFooter, Logo, View, ButtonText, ContainerLogin, Details, Footer, CheckBoxContainer, CheckBoxText, CheckBoxTextTerms, ModalContainer, ModalView, ModalText, ViewCheckBox} from "./styles";
+import { Image, Platform, ScrollView, TouchableOpacity, StyleSheet } from "react-native"; 
 import { Input } from "@/components/input/input";
 import { Link, router, useFocusEffect } from 'expo-router';
 import { X } from 'phosphor-react-native';
@@ -11,6 +11,26 @@ import { User } from '@/@clean/shared/domain/entities/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import theme from '@/themes/theme';
 
+const SmallCheckbox = ({ status, onPress }) => {
+  return (
+    <ViewCheckBox style={styles.checkboxContainer}>
+      <Checkbox
+        status={status}
+        onPress={onPress}
+        color='#F06B41'
+      />
+    </ViewCheckBox>
+  );
+};
+
+const styles = StyleSheet.create({
+  checkboxContainer: {
+    transform: [{ scale: 0.55 }],
+    borderColor: '#706b6b',
+    borderWidth: 3,
+    marginBottom: 2,
+  },
+});
 
 export default function SignUp() {
     const [name, setName] = useState('');
@@ -103,7 +123,7 @@ export default function SignUp() {
                         <X color={theme.COLORS.NEGATIVE}/>
                     </TouchableOpacity>
                     <ScrollView>
-                        <ModalText style={{color: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK, borderColor: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK }}>
+                        <ModalText style={{color: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK, borderColor: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK}}>
                             Lorem ipsum dolor, sit amet consectetur adipisicing 
                             elit. Explicabo, repudiandae quae. Inventore, deleniti, natus 
                             illo fugiat quasi magni fugit, nam ullam rerum sunt minus adipisci 
@@ -141,47 +161,17 @@ export default function SignUp() {
                 </View>
                 <View style={{marginBottom: 12}}>
                     <CheckBoxContainer>
-                        {Platform.OS === 'ios' ? (
-                            <ViewCheckBox>
-                                <Checkbox.IOS
-                                status={acceptedTerms ? 'checked' : 'unchecked'}
-                                onPress={() => {
-                                    setAcceptedTerms(!acceptedTerms);
-                                }}
-                                color='#F06B41'
-                                />
-                            </ViewCheckBox>
-                        ) : (
-                            <Checkbox
+                        <SmallCheckbox
                             status={acceptedTerms ? 'checked' : 'unchecked'}
-                            onPress={() => {
-                                setAcceptedTerms(!acceptedTerms);
-                            }}
-                            color='#F06B41'
-                            />
-                        )}
+                            onPress={() => setAcceptedTerms(!acceptedTerms)}
+                        />
                         <CheckBoxText style={{color: themeModeS === 'dark' ? '#ffffff' : '#000000'}}>Aceito os <CheckBoxTextTerms onPress={() => setAcceptedTermsModalOpen(true)}>termos de uso</CheckBoxTextTerms></CheckBoxText>
                     </CheckBoxContainer>
                     <CheckBoxContainer>
-                        {Platform.OS === 'ios' ? (
-                                <ViewCheckBox>
-                                    <Checkbox.IOS
-                                    status={acceptedNotificationsEmail ? 'checked' : 'unchecked'}
-                                    onPress={() => {
-                                        setAcceptedNotificationsEmail(!acceptedNotificationsEmail);
-                                    }}
-                                    color='#F06B41'
-                                    />
-                                </ViewCheckBox>
-                            ) : (
-                                <Checkbox
-                                status={acceptedNotificationsEmail ? 'checked' : 'unchecked'}
-                                onPress={() => {
-                                    setAcceptedNotificationsEmail(!acceptedNotificationsEmail);
-                                }}
-                                color='#F06B41'
-                                />
-                            )}
+                        <SmallCheckbox
+                            status={acceptedNotificationsEmail ? 'checked' : 'unchecked'}
+                            onPress={() => setAcceptedNotificationsEmail(!acceptedNotificationsEmail)}
+                        />
                         <CheckBoxText style={{color: themeModeS === 'dark' ? '#ffffff' : '#000000'}}>Aceito receber notificações via email</CheckBoxText>
                     </CheckBoxContainer>
                 </View>
