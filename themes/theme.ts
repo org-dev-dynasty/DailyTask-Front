@@ -6,7 +6,7 @@ export default {
         // Button Colors
         MAIN: "#F06B41",
         NEGATIVE: "#DE4343",
-        NEGATIVE_ALT: "#22092C",
+        NEGATIVE_ALT: "",
 
         // Card Colors
         BLUE_100: "#9CD4F4",

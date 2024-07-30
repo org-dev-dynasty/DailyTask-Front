@@ -3,8 +3,8 @@ import { Background } from '@/components/background';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import { Alert, Image, Text, TouchableOpacity, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
-import { Link, router } from 'expo-router';
-import { useContext, useEffect, useState } from 'react';
+import { Link, router, useFocusEffect } from 'expo-router';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { Input } from '@/components/input/input';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserContext } from '../../context/user_context';
@@ -14,6 +14,7 @@ import { UserContext } from '../../context/user_context';
 // import * as AuthSession from 'expo-auth-session'
 
 import { GoogleSignin } from "@react-native-google-signin/google-signin"
+import theme from '@/themes/theme';
 
 const Logo = require('../../assets/appImages/logo-daily-branca.png');
 const LogoDevDynasty = require('../../assets/appImages/logo-dev-dynasty.png');
@@ -31,6 +32,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [erroPassword, setErroPassword] = useState('');
   const [erroEmail, setErroEmail] = useState('');
+  const [themeModeS, setThemeModeS] = useState('dark');
 
   // const [isAuthenticating, setIsAuthenticating] = useState(false)
 
@@ -95,10 +97,24 @@ export default function Login() {
     }
   }
 
+  useFocusEffect(
+    useCallback(() => {
+      AsyncStorage.getItem('themeMode').then((value) => {
+        console.log(themeModeS)
+        if (value) {
+          console.log('value ' + value)
+          setThemeModeS(value);
+        }
+      });
+    }, [])
+  );
+
   return (
     <Background>
       <CenteredView>
-        <LogoImage source={Logo} />
+        <LogoImage source={themeModeS === 'dark' 
+                    ? require('../../assets/appImages/logo-daily-branca.png') 
+                    : require('../../assets/appImages/logo-daily-preta.png')} />
         {/* <Title>Login</Title> */}
         <InputView>
           <Input label='Email' value={email} onChangeText={setEmail} error={erroEmail} />
@@ -111,25 +127,25 @@ export default function Login() {
           <LoginButtonText>Entrar</LoginButtonText>
         </LoginButton>
         <SeparatorContainer>
-          <SeparatorLine />
-          <SeparatorText>ou</SeparatorText>
-          <SeparatorLine />
+          <SeparatorLine style={{borderColor: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK}}/>
+            <SeparatorText style={{color: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK}}>ou</SeparatorText>
+          <SeparatorLine style={{borderColor: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK}}/>
         </SeparatorContainer>
         <SocialIcons>
           <TouchableOpacity onPress={()=>{}}  >
             <Image source={LogoGoogle} />
           </TouchableOpacity>
-          <Image source={LogoGitHub} />
+          {/* <Image source={LogoGitHub} /> */}
         </SocialIcons>
         <SignUpLink>
-          <SignUpLinkText>Ainda não tem cadastro? </SignUpLinkText>
+          <SignUpLinkText style={{color: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK}}>Ainda não tem cadastro? </SignUpLinkText>
           <Link
             href={"/signUp"}
           >
             <Text style={{ color: '#F06B41', fontSize: 16 }}>Faça seu cadastro!</Text>
           </Link>
         </SignUpLink>
-        <DevDynastyText>Desenvolvido por DevDynasty</DevDynastyText>
+        <DevDynastyText style={{color: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK}}>Desenvolvido por DevDynasty</DevDynastyText>
         <Image style={{ marginTop: 20, marginBottom: 47 }} source={LogoDevDynasty} />
       </CenteredView>
     </Background>

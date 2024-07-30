@@ -36,10 +36,12 @@ export const Input = (props: InputProps) => {
               value={props.value}
               onChangeText={props.onChangeText}
               style={{ backgroundColor: "transparent", color: theme.COLORS.WHITE}}
-              outlineStyle={{ borderColor: props.error ? theme.COLORS.NEGATIVE : isFocused ? theme.COLORS.MAIN : themeModeS === 'dark' ? '#ffffff' : '#000000' }}
+              outlineStyle={{ borderColor: props.error ? theme.COLORS.NEGATIVE : 
+                isFocused ? themeModeS === 'dark' ? theme.COLORS.NEGATIVE : theme.COLORS.MAIN : 
+                themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK  }}
               theme={{
                 colors: {
-                  background: theme.COLORS.NEGATIVE_ALT,
+                  background: themeModeS === 'dark' ? theme.COLORS.NEGATIVE_ALT : theme.COLORS.WHITE,
                 },
               }}
               placeholder='Digite aqui...'
@@ -48,7 +50,7 @@ export const Input = (props: InputProps) => {
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
               secureTextEntry={showPassword}
-              // right={props.hide ? <TextInput.Icon icon={showPassword ? "eye-off" : "eye"} color={theme.COLORS.WHITE} onPress={togglePasswordVisibility} /> : null}
+              right={props.hide ? <TextInput.Icon icon={showPassword ? "eye-off" : "eye"} color={themeModeS === 'dark' ? '#ffffff' : '#000000'} onPress={togglePasswordVisibility} /> : null}
             />
             <Text style={{color: theme.COLORS.NEGATIVE}}>{props.error}</Text>
         </View>

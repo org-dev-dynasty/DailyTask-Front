@@ -58,15 +58,12 @@ export const SeparatorLine = styled.View`
   flex: 1;
   height: 1px;
   width: 150px;
-  background-color: white;
   margin: 0 10px;
   max-width: 150px;
-  color: ${theme.COLORS.WHITE};
-  border: 1px solid ${theme.COLORS.WHITE};
+  border: 1px;
 `;
 
 export const SeparatorText = styled.Text`
-  color: ${theme.COLORS.WHITE};
   font-family: ${theme.FONT_FAMILY.REGULAR};
   font-size: ${theme.FONT_SIZE.SM};
 `;
