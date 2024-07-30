@@ -160,3 +160,31 @@ export const WeekButton = styled.TouchableOpacity`
     background-color: ${theme.COLORS.MAIN};
     border-width: 1px
 `;
+
+export const CategoryTitle = styled.Text`
+    color: ${theme.COLORS.WHITE};
+    font-size: 24px;
+    font-family: ${theme.FONT_FAMILY.REGULAR};
+    margin-top: 10px;
+    align-self: center;
+`;
+
+export const CloseButton = styled.TouchableOpacity`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+`;
+
+export const CategoryFooter = styled.View`
+    margin: 10px 0;
+    align-items: center;
+`;
+
+export const CategoryButton = styled.TouchableOpacity`
+    background-color: ${theme.COLORS.MAIN};
+    border-radius: 100px;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+`;

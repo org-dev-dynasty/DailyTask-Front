@@ -18,9 +18,9 @@ export const ModalContainer = styled.View`
 export const ModalContent = styled(LinearGradient)`
     width: 100%;
     align-items: center;
-    border-radius: 30px;
+    border-radius: 15px;
     background-color: ${theme.COLORS.NEGATIVE_ALT};
-    border: 1px solid ${theme.COLORS.WHITE};
+    border: 2px solid ${theme.COLORS.WHITE};
     padding: 15px 3%;
 `
 
@@ -35,7 +35,7 @@ export const Subtitle = styled.Text`
     font-size: ${theme.FONT_SIZE.SM};
     font-family: ${theme.FONT_FAMILY.REGULAR};
     margin: 10px 0;
-    width: 60%;
+    width: 90%;
     text-align: center;
 `;
 

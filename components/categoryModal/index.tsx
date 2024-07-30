@@ -77,7 +77,7 @@ export default function CategoryModal({ visible, onClose, onConfirm }: any) {
 
                     <View style={{width: '90%'}}>
                         <Input
-                            placeholder="Nome da Categoria"
+                            placeholder="Digite aqui..."
                             label={'Nome da categoria'}
                             value={categoryName}
                             onChangeText={setCategoryName}

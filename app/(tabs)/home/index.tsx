@@ -6,7 +6,7 @@ import {
     Easing,
     Pressable,
     PanResponder,
-    PanResponderGestureState, Alert
+    PanResponderGestureState, Alert, TouchableWithoutFeedback, Keyboard
 } from "react-native";
 import {
     Container,
@@ -45,7 +45,7 @@ import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 import theme from "@/themes/theme";
 
 // Icons
-import {Microphone, Keyboard, LockSimpleOpen, TrashSimple, CaretLeft} from "phosphor-react-native";
+import {Microphone, Keyboard as KeyboardIcon, LockSimpleOpen, TrashSimple, CaretLeft} from "phosphor-react-native";
 import TaskModal from "@/components/taskModal";
 
 export default function Home() {
@@ -54,7 +54,6 @@ export default function Home() {
     const [recordingFileUri, setRecordingFileUri] = useState<string | null>(null);
     const [isEditable, setIsEditable] = useState(false);
     const [openTask, setOpenTask] = useState(false);
-
 
     const fadeLock = useRef(new Animated.Value(0)).current;
     const fadeTexts = useRef(new Animated.Value(1)).current;
@@ -812,11 +811,13 @@ export default function Home() {
     }, [])
 
     return (
-        <>
+        <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
             <Background>
                 <Container>
                     {openTask && (
-                        <TaskModal onClose={handleCloseTask} confirm/>
+                        <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
+                            <TaskModal onClose={handleCloseTask} confirm/>
+                        </TouchableWithoutFeedback>
                     )}
 
                     {/* <--Screen--> */}
@@ -895,7 +896,7 @@ export default function Home() {
                             {/* Keyboard */}
                             <KeyboardInitialView style={{ opacity: fadeTexts, display: start ? 'none' : 'flex'}}>
                                 <TouchableOpacity onPress={() => setOpenTask(true)}>
-                                    <Keyboard size={64} color={theme.COLORS.WHITE} />
+                                    <KeyboardIcon size={64} color={theme.COLORS.WHITE} />
                                 </TouchableOpacity>
                             </KeyboardInitialView>
                             {/* Audio Trancription */}
@@ -935,6 +936,6 @@ export default function Home() {
                     {/* <--Screen--> */}
                 </Container>
             </Background>
-        </>
+        </TouchableWithoutFeedback>
     )
 }

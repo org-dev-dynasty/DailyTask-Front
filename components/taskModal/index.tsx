@@ -1,7 +1,7 @@
 import {LinearGradient} from "expo-linear-gradient";
 
 import {TaskInput} from "@/components/taskInput/input";
-import {Animated, Dimensions, Easing, View} from "react-native";
+import {Animated, Dimensions, Easing, FlatList, View} from "react-native";
 import React, {useContext, useEffect, useRef, useState} from "react";
 import {
     ButtonsView,
@@ -13,13 +13,15 @@ import {
     ModalView, RepetitionTxt, ShadeView,
     SmallInputModalView, SwitchTouchable, SwitchKnob, SwitchContainer,
     TextModalView, TimeRepetitionView,
-    TopInputModalView, WeekDaysView, WeekButton
+    TopInputModalView, WeekDaysView, WeekButton, CategoryTitle, CloseButton, CategoryFooter, CategoryButton
 } from "@/components/taskModal/styles";
 import {TaskModalProps} from "@/interfaces/TaskModal";
 import theme from "@/themes/theme";
 import {TaskContext} from "@/context/task_context";
 import {Task} from "@/@clean/shared/domain/entities/task";
 import CategoryModal from "@/components/categoryModal";
+import {CategoryCard} from "@/components/categoryCard";
+import {XCircle, Plus} from "phosphor-react-native";
 
 export default function TaskModal(props: TaskModalProps){
     const { width } = Dimensions.get('window');
@@ -46,6 +48,8 @@ export default function TaskModal(props: TaskModalProps){
     const [errorTaskCategory, setErrorTaskCategory] = useState('');
 
     const [openCategory, setOpenCategory] = useState(false);
+    const [fixedHeight, setFixedHeight] = useState(0);
+    const [openNewCategory, setOpenNewCategory] = useState(false);
 
     const {create, update, get} = useContext(TaskContext);
 
@@ -339,18 +343,47 @@ export default function TaskModal(props: TaskModalProps){
             return 'Cor é obrigatória';
         }
         console.log('Categoria criada:', name, color);
-        setOpenCategory(false)
+        setOpenNewCategory(false)
+    };
+
+    const data = [
+        {
+            title: "Categoria 1",
+            color: "#000000",
+            color2: "#f18383"
+        },
+        {
+            title: "Categoria 2",
+            color: "#000000",
+            color2: "#f18383"
+        },
+        {
+            title: "Categoria 3",
+            color: "#000000",
+            color2: "#f18383"
+        },
+        {
+            title: "Categoria 4",
+            color: "#000000",
+            color2: "#f18383"
+        }
+    ]
+
+
+    const handleLayout = (event) => {
+        const { height, width } = event.nativeEvent.layout;
+        if(!openCategory) setFixedHeight(height)
     };
 
     return (
         <ModalView>
             <ShadeView>
                 <CategoryModal
-                    visible={openCategory}
-                    onClose={() => setOpenCategory(false)}
+                    visible={openNewCategory}
+                    onClose={() => setOpenNewCategory(false)}
                     onConfirm={handleCategoryConfirm}
                 />
-                <Container>
+                <Container onLayout={handleLayout}>
                     <LinearGradient
                         colors={['#3C0B50', '#2E083D', '#0F0413']}
                         locations={[0, 0.28, 1]}
@@ -360,81 +393,105 @@ export default function TaskModal(props: TaskModalProps){
                             borderRadius: 15,
                         }}
                     >
-                        <TopInputModalView>
-                            <TaskInput label='Nome da Task*' value={taskName} onChangeText={setTaskName} error={errorTaskName} maxLength={30}/>
-                        </TopInputModalView>
+                        {openCategory ?
+                            <View style={{height: fixedHeight}}>
+                                <CloseButton onPress={() => setOpenCategory(false)}>
+                                    <XCircle size={32} color='#F06B41' />
+                                </CloseButton>
 
-                        <TextModalView>
-                            <ModalText>Data e Horário*</ModalText>
-                        </TextModalView>
+                                <CategoryTitle>Categoria</CategoryTitle>
 
-                        <TimeRepetitionView>
-                            <SmallInputModalView>
-                                <TaskInput label='Horário*' placeholder={"00:00"} time={true} value={taskTime} onChangeText={handleTime} error={errorTaskTime} maxLength={5}/>
-                            </SmallInputModalView>
+                                <FlatList
+                                    data={data}
+                                    keyExtractor={(item) =>
+                                        "Pressure FlatList " + item.title
+                                    }
+                                    renderItem={({ item }) => <CategoryCard title={item.title} color={item.color} color2={item.color2}/>}
+                                />
 
-                            <RepetitionTxt>Repetição</RepetitionTxt>
-                            <Animated.View>
-                                <SwitchTouchable onPress={toggleSwitch}>
-                                    <SwitchContainer style={{ backgroundColor: interpolatedBackgroundColor }}>
-                                        <SwitchKnob style={{ left: position }} />
-                                    </SwitchContainer>
-                                </SwitchTouchable>
-                            </Animated.View>
-                        </TimeRepetitionView>
-
-                        <Animated.View style={{ transform: [{ translateX: weekdaysTranslateX }] }}>
-                            <WeekDaysView>
-                                {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, index) => (
-                                    <WeekButton
-                                        key={index}
-                                        onPress={() => toggleButton(index)}
-                                        style={{
-                                            backgroundColor: weekDays.includes(index) ? theme.COLORS.MAIN : "transparent",
-                                            borderColor: weekDays.includes(index) ? "transparent" : theme.COLORS.WHITE,
-                                        }}
-                                    >
-                                        <RepetitionTxt>{day}</RepetitionTxt>
-                                    </WeekButton>
-                                ))}
-                            </WeekDaysView>
-                        </Animated.View>
-
-                        <TimeRepetitionView style={{ transform: [{ translateX: dateTranslateX }] }}>
-                            <SmallInputModalView style={{width: '55%'}}>
-                                <TaskInput label='Data*' placeholder={"__/__/____"} date={true} value={taskDate} onChangeText={handleDate} error={errorTaskDate} maxLength={10}/>
-                            </SmallInputModalView>
-                        </TimeRepetitionView>
-
-                        <InputModalView>
-                            <TaskInput label='Descrição' description={true} value={taskDescription} onChangeText={setTaskDescription} maxLength={100}/>
-                        </InputModalView>
-
-                        <InputModalView>
-                            <TaskInput label='Local' value={taskLocation} onChangeText={setTaskLocation} maxLength={30}/>
-                        </InputModalView>
-
-                        <InputModalView style={{flexDirection: 'row', marginTop: 10}}>
-                            <View style={{width: "100%"}}>
-                                <TaskInput label='Categoria*' category={() => setOpenCategory(true)} value={taskCategory} onChangeText={setTaskCategory} maxLength={30} error={errorTaskCategory}/>
+                                <CategoryFooter>
+                                    <CategoryButton onPress={() => setOpenNewCategory(true)}>
+                                        <Plus size={32} color={'white'}></Plus>
+                                    </CategoryButton>
+                                </CategoryFooter>
                             </View>
-                        </InputModalView>
 
-                        <DisclaimerView>
-                            <DisclaimerTxt>Os espaços marcados com “*” são obrigatórios.</DisclaimerTxt>
-                        </DisclaimerView>
+                            :
+                            <>
+                                <TopInputModalView>
+                                    <TaskInput label='Nome da Task*' value={taskName} onChangeText={setTaskName} error={errorTaskName} maxLength={30}/>
+                                </TopInputModalView>
 
-                        <ButtonsView>
-                            <CancelButton onPress={props.onClose}>
-                                <ButtonTxt>Cancelar</ButtonTxt>
-                            </CancelButton>
-                            <ConfirmButton onPress={handleConfirm}>
-                                <ButtonTxt>Confirmar</ButtonTxt>
-                            </ConfirmButton>
+                                <TextModalView>
+                                    <ModalText>Data e Horário*</ModalText>
+                                </TextModalView>
 
-                        </ButtonsView>
+                                <TimeRepetitionView>
+                                    <SmallInputModalView>
+                                        <TaskInput label='Horário*' placeholder={"00:00"} time={true} value={taskTime} onChangeText={handleTime} error={errorTaskTime} maxLength={5}/>
+                                    </SmallInputModalView>
 
+                                    <RepetitionTxt>Repetição</RepetitionTxt>
+                                    <Animated.View>
+                                        <SwitchTouchable onPress={toggleSwitch}>
+                                            <SwitchContainer style={{ backgroundColor: interpolatedBackgroundColor }}>
+                                                <SwitchKnob style={{ left: position }} />
+                                            </SwitchContainer>
+                                        </SwitchTouchable>
+                                    </Animated.View>
+                                </TimeRepetitionView>
 
+                                <Animated.View style={{ transform: [{ translateX: weekdaysTranslateX }] }}>
+                                    <WeekDaysView>
+                                        {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, index) => (
+                                            <WeekButton
+                                                key={index}
+                                                onPress={() => toggleButton(index)}
+                                                style={{
+                                                    backgroundColor: weekDays.includes(index) ? theme.COLORS.MAIN : "transparent",
+                                                    borderColor: weekDays.includes(index) ? "transparent" : theme.COLORS.WHITE,
+                                                }}
+                                            >
+                                                <RepetitionTxt>{day}</RepetitionTxt>
+                                            </WeekButton>
+                                        ))}
+                                    </WeekDaysView>
+                                </Animated.View>
+
+                                <TimeRepetitionView style={{ transform: [{ translateX: dateTranslateX }] }}>
+                                    <SmallInputModalView style={{width: '55%'}}>
+                                        <TaskInput label='Data*' placeholder={"__/__/____"} date={true} value={taskDate} onChangeText={handleDate} error={errorTaskDate} maxLength={10}/>
+                                    </SmallInputModalView>
+                                </TimeRepetitionView>
+
+                                <InputModalView>
+                                    <TaskInput label='Descrição' description={true} value={taskDescription} onChangeText={setTaskDescription} maxLength={100}/>
+                                </InputModalView>
+
+                                <InputModalView>
+                                    <TaskInput label='Local' value={taskLocation} onChangeText={setTaskLocation} maxLength={30}/>
+                                </InputModalView>
+
+                                <InputModalView style={{flexDirection: 'row', marginTop: 10}}>
+                                    <View style={{width: "100%"}}>
+                                        <TaskInput label='Categoria*' category={() => setOpenCategory(true)} value={taskCategory} onChangeText={setTaskCategory} maxLength={30} error={errorTaskCategory}/>
+                                    </View>
+                                </InputModalView>
+
+                                <DisclaimerView>
+                                    <DisclaimerTxt>Os espaços marcados com “*” são obrigatórios.</DisclaimerTxt>
+                                </DisclaimerView>
+
+                                <ButtonsView>
+                                    <CancelButton onPress={props.onClose}>
+                                        <ButtonTxt>Cancelar</ButtonTxt>
+                                    </CancelButton>
+                                    <ConfirmButton onPress={handleConfirm}>
+                                        <ButtonTxt>Confirmar</ButtonTxt>
+                                    </ConfirmButton>
+
+                                </ButtonsView>
+                            </>}
                     </LinearGradient>
                 </Container>
             </ShadeView>
