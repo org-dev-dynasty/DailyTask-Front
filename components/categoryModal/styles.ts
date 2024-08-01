@@ -4,7 +4,7 @@ import {LinearGradient} from "expo-linear-gradient";
 
 interface ColorCircleProps {
     color: string;
-    selected: boolean;
+    selected?: boolean;
 }
 
 export const ModalContainer = styled.View`
@@ -39,24 +39,12 @@ export const Subtitle = styled.Text`
     text-align: center;
 `;
 
-export const TextInputStyled = styled.TextInput`
-  width: 80%;
-  height: 40px;
-  border-radius: 5px;
-  background-color: transparent;
-  border-width: 2px;
-  border-color: white;
-  padding: 10px;
-  margin-bottom: 20px;
-  color: black;
-`;
-
 export const ColorTitle = styled.Text`
     color: ${theme.COLORS.WHITE};
     font-size: ${theme.FONT_SIZE.MD};
     font-family: ${theme.FONT_FAMILY.REGULAR};
     margin-left: 15px;
-`; 
+`;
 
 export const ColorsContainer = styled.View`
   flex-direction: row;
@@ -73,7 +61,6 @@ export const ColorCircle = styled.TouchableOpacity<ColorCircleProps>`
   margin: 5px;
   border-width: ${props => (props.selected ? '3px' : '0')};
   border-color: ${props => (props.selected ? 'white' : 'transparent')};
-
 `;
 
 export const CustomColorText = styled.Text`
@@ -88,13 +75,37 @@ export const ConfirmButton = styled.TouchableOpacity`
     border-radius: 10px;
     padding: 10px 20px;
     margin-top: 5px;
+    align-items: center;
 `;
 
-export const ConfirmButtonText = styled.Text`
+export const ButtonTxt = styled.Text`
     color: ${theme.COLORS.WHITE};
     font-size: ${theme.FONT_SIZE.MD};
     font-family: ${theme.FONT_FAMILY.REGULAR};
+`;
+
+export const ButtonsView = styled.View`
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 10px 0;
+    width: 90%;
     align-self: center;
+`;
+
+export const ConfirmButtonRow = styled.TouchableOpacity`
+    background-color: ${theme.COLORS.MAIN};
+    border-radius: 10px;
+    align-items: center;
+    padding: 5px 0;
+    width: 47%;
+`;
+
+export const CancelButton = styled.TouchableOpacity`
+    background-color: ${theme.COLORS.NEGATIVE_ALT};
+    border-radius: 10px;
+    align-items: center;
+    padding: 5px 0;
+    width: 47%;
 `;
 
 export const CloseButton = styled.TouchableOpacity`
@@ -103,7 +114,12 @@ export const CloseButton = styled.TouchableOpacity`
   right: 10px;
 `;
 
-export const CloseButtonText = styled.Text`
-  font-size: 18px;
-  color: ${theme.COLORS.MAIN};
+export const PickerColorCircle = styled.TouchableOpacity<ColorCircleProps>`
+    width: 32px;
+    height: 32px;
+    border-radius: 20px;
+    background-color: ${props => props.color};
+    margin-inline: 5px;
+    border-width: 3px;
+    border-color: white;
 `;

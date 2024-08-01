@@ -9,7 +9,7 @@ import {
     ButtonsView, ButtonTxt, CancelButton
 } from './styles';
 
-export default function ConfirmCategoryModal({ visible, onClose, onConfirm}: any) {
+export default function ConfirmCategoryModal({ visible, onClose, onConfirm, title, subtitle}: any) {
     return (
         <Modal
             transparent
@@ -22,8 +22,8 @@ export default function ConfirmCategoryModal({ visible, onClose, onConfirm}: any
                     colors={['#3C0B50', '#2E083D', '#0F0413']}
                     locations={[0, 0.28, 1]}
                 >
-                    <Title>Nova Categoria</Title>
-                    <Subtitle>A categoria digitada não foi encontrada, gostaria de criá-la?</Subtitle>
+                    <Title>{title}</Title>
+                    <Subtitle>{subtitle}</Subtitle>
 
                     <ButtonsView>
                         <CancelButton onPress={onClose}>

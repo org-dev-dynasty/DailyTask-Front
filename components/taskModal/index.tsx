@@ -54,12 +54,13 @@ export default function TaskModal(props: TaskModalProps){
     const [categories, setCategories] = useState<Category[]>([]);
     const [fixedHeight, setFixedHeight] = useState(0);
     const [openNewCategory, setOpenNewCategory] = useState(false);
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [selectedCategoryId, setSelectedCategoryId] = useState('');
     const [openConfirmCategory, setOpenConfirmCategory] = useState(false);
+    const [openDeleteCategory, setOpenDeleteCategory] = useState(false);
 
     const {create, update, get} = useContext(TaskContext);
 
-    const {getAll, createCategory} = useContext(CategoryContext);
+    const {getAll, createCategory, deleteCategory} = useContext(CategoryContext);
 
     const formatTime = (inputTime: string): string => {
         let formattedInput = inputTime.replace(/\D/g, "");
@@ -164,7 +165,7 @@ export default function TaskModal(props: TaskModalProps){
             case 8:
                 const yearEnd = parseInt(formattedInput.slice(6, 8));
                 if (
-                    /^(20[2-9][4-9]|21[0-9][0-9])/.test(
+                    /^(202[4-9]|20[3-9][0-9]|21[0-9][0-9])/.test(
                         formattedInput.slice(4, 8)
                     ) &&
                     (formattedInput.slice(0, 2) !== "29" || yearEnd % 4 === 0)
@@ -209,7 +210,6 @@ export default function TaskModal(props: TaskModalProps){
 
     async function getCategories() {
         const result = await getAll();
-        console.log(result);
         setCategories(result.categories);
     }
 
@@ -300,6 +300,13 @@ export default function TaskModal(props: TaskModalProps){
             }
             return
         }
+        if(categories.find(category => category.category_name === taskCategory)){
+            console.log("Categoria encontrada")
+        }   else{
+            console.log("Categoria não encontrada")
+            setOpenConfirmCategory(true);
+            return
+        }
 
         // Request
         //  MISSING CATEGORY AND WEEKDAYS
@@ -311,13 +318,6 @@ export default function TaskModal(props: TaskModalProps){
 
 
         if(props.confirm){
-            if(taskCategory != selectedCategory){
-                //if else getAllCategories compare
-
-                setOpenConfirmCategory(true);
-                return
-            }
-
             if (weekDays.length > 0 && isSwitchOn){
                 // const task = new Task(null, taskName, formatedDate, taskTime, weekDays,taskDescription, taskLocation, taskCategory, "ACTIVE")
                 // const response = await create(task);
@@ -331,7 +331,7 @@ export default function TaskModal(props: TaskModalProps){
                     formatedTime,
                     taskDescription === '' ? null : taskDescription,
                     taskLocation === '' ? null : taskLocation,
-                    "d3b447493b2a4203a35284517dbd5e95",
+                    selectedCategoryId,
                     "ACTIVE"
                 )
 
@@ -360,40 +360,40 @@ export default function TaskModal(props: TaskModalProps){
     }
 
     const handleCreateCategory = async (categoryName: string, categoryColor: string, categorySecondaryColor: string) => {
-        const category = new Category(null, categoryName, categoryColor, categorySecondaryColor);
+        const category = new Category(null, null, categoryName, categoryColor, categorySecondaryColor);
         const response = await createCategory(category);
         if(response){
-            console.log(response);
-            props.onClose();
+            setOpenNewCategory(false);
+            await getCategories();
         }
+        return response
     }
-
-    const handleCategoryConfirm = (name: any, color: any, secondColor: any) => {
-        if(name === ''){
-            return 'Categoria é obrigatória';
-        }
-        if(color === ''){
-            return 'Cor é obrigatória';
-        }
-        if(secondColor === ''){
-            handleCreateCategory(name, color, color);
-            setOpenNewCategory(false)
-        }
-        else{
-            handleCreateCategory(name, color, secondColor);
-            setOpenNewCategory(false)
-        }
-    };
 
     const handleLayout = (event: LayoutChangeEvent) => {
         const { height } = event.nativeEvent.layout;
         if(!openCategory) setFixedHeight(height)
     };
 
-    const handleCategory = (category: string) => {
+    const handleCategory = (category: string, id: string) => {
         setTaskCategory(category);
         setOpenCategory(false);
-        setSelectedCategory(category);
+        setSelectedCategoryId(id)
+    }
+
+    const handleDeleteCategory = async () => {
+        // DELETE CATEGORY REQUEST AND REFRESH CATEGORIES
+        const response = await deleteCategory(selectedCategoryId);
+
+        if(response){
+            console.log('Category deleted');
+            await getCategories();
+        }
+        else{
+            console.log('Error deleting category');
+        }
+
+        setOpenDeleteCategory(false);
+        setSelectedCategoryId('');
     }
 
     return (
@@ -402,10 +402,14 @@ export default function TaskModal(props: TaskModalProps){
                 <CategoryModal
                     visible={openNewCategory}
                     onClose={() => setOpenNewCategory(false)}
-                    onConfirm={handleCategoryConfirm}
+                    onConfirm={handleCreateCategory}
                 />
-                {openConfirmCategory &&
-                <ConfirmCategoryModal onClose={() => setOpenConfirmCategory(false)} onConfirm={() => {setOpenConfirmCategory(false); setOpenCategory(true); setOpenNewCategory(true)}}/>}
+                {(openConfirmCategory || openDeleteCategory) &&
+                <ConfirmCategoryModal onClose={openConfirmCategory ? () => setOpenConfirmCategory(false) : () => setOpenDeleteCategory(false)}
+                   onConfirm={openConfirmCategory ? () => {setOpenConfirmCategory(false); setOpenCategory(true); setOpenNewCategory(true)} : () => {handleDeleteCategory()}}
+                   title={openConfirmCategory ? 'Nova Categoria' : 'Excluir Categoria'}
+                   subtitle={openConfirmCategory ? 'A categoria digitada não foi encontrada, gostaria de criá-la?' : 'Deseja realmente excluir a categoria?'}
+                />}
                 <Container onLayout={handleLayout}>
                     <LinearGradient
                         colors={['#3C0B50', '#2E083D', '#0F0413']}
@@ -427,9 +431,9 @@ export default function TaskModal(props: TaskModalProps){
                                 <FlatList
                                     data={categories}
                                     keyExtractor={(item) =>
-                                        "Pressure FlatList " + item.category_name
+                                        "Pressure FlatList " + item.category_id
                                     }
-                                    renderItem={({ item }) => <CategoryCard title={item.category_name != null ? item.category_name : ""} color={item.category_primary_color} color2={item.category_secondary_color} close={() => handleCategory(item.category_name != null ? item.category_name : "")} />}
+                                    renderItem={({ item }) => <CategoryCard id={item.category_id!} title={item.category_name != null ? item.category_name : ""} onDelete={(id: string) => {setOpenDeleteCategory(true); setSelectedCategoryId(id)}} color={item.category_primary_color} color2={item.category_secondary_color} close={() => handleCategory(item.category_name != null ? item.category_name : "", item.category_id!)} />}
                                 />
 
                                 <CategoryFooter>
