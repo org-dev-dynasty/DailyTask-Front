@@ -12,6 +12,7 @@ type TaskContextType = {
     deleteTask: (task_id: string) => Promise<boolean>;
     updateStatus: (task_id: string, status: string) => Promise<Task>;
     taskByDay: (day: string) => Promise<Task>;
+    loadTaskOpenAI: (task_massage: string) => Promise<Task>;
 }
 
 const defaultTaskContext: TaskContextType = {
@@ -35,6 +36,9 @@ const defaultTaskContext: TaskContextType = {
     },
     taskByDay: async (day: string) => {
         return { id: '', title: '', description: '', status: '', date: '' };
+    },
+    loadTaskOpenAI: async (task_massage: string) => {
+        return new Task('', '', '', '', '', '', '', '');
     }
 };
 
@@ -101,8 +105,17 @@ export function TaskContextProvider({ children }: { children: React.ReactNode })
         }
     }
 
+    async function loadTaskOpenAI(task_massage: string): Promise<Task> {
+        try {
+            const result = await taskRepository.loadTaskOpenAI(task_massage);
+            return result as Task;
+        } catch (error: any) {
+            throw new Error(error);
+        }
+    }
+
     return (
-        <TaskContext.Provider value={{ getAll, create, get, update, updateStatus, taskByDay, deleteTask }}>
+        <TaskContext.Provider value={{ getAll, create, get, update, updateStatus, taskByDay, deleteTask, loadTaskOpenAI }}>
             {children}
         </TaskContext.Provider>
     );

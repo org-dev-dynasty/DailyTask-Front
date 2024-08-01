@@ -1,12 +1,13 @@
 import { Background } from "@/components/background";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {
     TouchableOpacity,
     Animated,
     Easing,
     Pressable,
     PanResponder,
-    PanResponderGestureState, Alert, Keyboard, TouchableWithoutFeedback
+    PanResponderGestureState, Alert, Keyboard, TouchableWithoutFeedback,
+    ActivityIndicator
 } from "react-native";
 import {
     Container,
@@ -48,6 +49,9 @@ import theme from "@/themes/theme";
 import {Microphone, Keyboard as KeyboardIcon, LockSimpleOpen, TrashSimple, CaretLeft} from "phosphor-react-native";
 import TaskModal from "@/components/taskModal";
 import Timer from "@/components/timer";
+import axios from "axios";
+import { AndroidAudioEncoder, AndroidOutputFormat, IOSAudioQuality, IOSOutputFormat } from "expo-av/build/Audio/Recording";
+import { TaskContext } from "@/context/task_context";
 
 export default function Home() {
     const [start, setStart] = useState(false);
@@ -57,8 +61,9 @@ export default function Home() {
     const [openTask, setOpenTask] = useState(false);
     const [isLocked, setIsLocked] = useState(false);
     const [firstRecorder, setFirstRecorder] = useState(true);
-
     const [startTimer, setStartTimer] = useState(false);
+    const [audioTranscript, setAudioTranscript] = useState('');
+    const [sendedButtonPressed, setSendedButtonPressed] = useState(false);
 
     const fadeLock = useRef(new Animated.Value(0)).current;
     const fadeTexts = useRef(new Animated.Value(1)).current;
@@ -103,6 +108,8 @@ export default function Home() {
 
     const sizeAnimatedValue = useRef(new Animated.Value(0)).current;
 
+    const { loadTaskOpenAI } = useContext(TaskContext);
+
     function startRecording() {
         if(!firstRecorder) {
             console.log('Segunda vez')
@@ -116,13 +123,18 @@ export default function Home() {
         setTimeout(() => {
           setStartTimer(true); // Restart the timer
         }, 0); // Ensure state update is processed
+        setSendedButtonPressed(false);
+        setAudioTranscript('');
         console.log('chegou no start recording')
         if(canRepeat.current && !microphoneFixed.current) {
             recordingStarted.current = true;
             holdingAnimation();
             gestureReleased.current = false;
             setStart(true);
-            setTimeout(() => {
+            setTimeout(async () => {
+                if(recording){
+                    await recording.stopAndUnloadAsync();
+                }
                 handleRecordingStart();
             }, 1000);
         }
@@ -514,6 +526,7 @@ export default function Home() {
             stopCircleAnimation()
             iconsOpacity.setValue(0);
             fadeLock.setValue(0);
+            setSendedButtonPressed(true);
         })
     }
 
@@ -764,20 +777,43 @@ export default function Home() {
     }
 
     // Audio Recording
-    async function handleRecordingStart(){
-        const {granted} = await Audio.getPermissionsAsync();
-        if(granted){
+    async function handleRecordingStart() {
+        const { granted } = await Audio.requestPermissionsAsync();
+        if (granted) {
             try {
-                const { recording } = await Audio.Recording.createAsync();
+                const recordingOptions: Audio.RecordingOptions = {
+                    android: {
+                        extension: '.m4a',
+                        outputFormat: Audio.AndroidOutputFormat.MPEG_4,
+                        audioEncoder: Audio.AndroidAudioEncoder.AAC,
+                        sampleRate: 44100,
+                        numberOfChannels: 2,
+                        bitRate: 128000,
+                    },
+                    ios: {
+                        extension: '.m4a',
+                        outputFormat: Audio.IOSOutputFormat.MPEG4AAC,
+                        audioQuality: Audio.IOSAudioQuality.MAX,
+                        sampleRate: 44100,
+                        numberOfChannels: 2,
+                        bitRate: 128000,
+                        linearPCMBitDepth: 16,
+                        linearPCMIsBigEndian: false,
+                        linearPCMIsFloat: false,
+                    },
+                    web: {} // Add this to satisfy TypeScript
+                };
+            
+                const { recording } = await Audio.Recording.createAsync(recordingOptions);
+                setRecording(recording);
                 console.log('TÁ GRAVANDO');
-                setRecording( recording );
             } catch (error) {
                 console.log(error);
-                Alert.alert('Erro ao gravar', 'Ocorreu um erro ao tentar gravar o áudio. Por favor tente Novamente');
+                Alert.alert('Erro ao gravar', 'Ocorreu um erro ao tentar gravar o áudio. Por favor tente novamente.');
             }
         }
     }
-
+    
     const handlePressOut = () => {
         setTimeout(() => {
             if(!panMoving.current) {
@@ -799,6 +835,9 @@ export default function Home() {
                 setRecordingFileUri(fileUri);
                 setRecording(null);
                 // setStart(false);
+                if(fileUri){
+                    transcribeAudio(fileUri);
+                }
             }
             else {
                 console.log('Não está gravando');
@@ -841,19 +880,44 @@ export default function Home() {
     };
 
     // Request to create task
-    function transcribeAudio() {
-        console.log('Task created');
-        try{
-            console.log(recording);
-            if(recordingFileUri){
-                const formData = new FormData();
-                formData.append('audio_file', recordingFileUri);
-                console.log(formData);
-                console.log(formData.get('audio_file')?.valueOf());
-            }
-        } catch (error) {
-            console.log(error);
+    const transcribeAudio = async (uriF: string) => {
+        console.log('Transcribing audio...');
+        if (uriF) {
+            const fileExtension = uriF.split('.').pop();
+            console.log(`Formato do arquivo: ${fileExtension}`);
         }
+        const formData = new FormData();
+        formData.append('file', {
+          uri: uriF,
+          type: 'audio/m4a', // Tipo MIME ajustado.
+          name: 'audiofile.m4a', // Nome do arquivo ajustado.
+        });
+        formData.append('model', 'whisper-1'); // Modelo que você deseja usar.
+      
+        try {
+          const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${process.env.EXPO_PUBLIC_OPENAI_API_KEY}`,
+              'Content-Type': 'multipart/form-data',
+            },
+            body: formData,
+          });
+      
+          const result = await response.json();
+          console.log('Transcription result:', result);
+          setAudioTranscript(result.text);
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      };
+    
+    function handleTaskCreation() {
+        console.log('Creating task...');
+        const result = loadTaskOpenAI(audioTranscript);
+        console.log(result);
+        // Terminar de montar o modal
+        setOpenTask(true)
     }
 
     useEffect(() => {
@@ -957,7 +1021,6 @@ export default function Home() {
                             </TimerView>
                             {/* Keyboard */}
                             <KeyboardInitialView style={{ opacity: fadeTexts, display: start ? 'none' : 'flex'}}>
-                                {/* <TouchableOpacity onPress={() => handlePlayAudio()}> */}
                                 <TouchableOpacity onPress={() => setOpenTask(true)}>
                                     <KeyboardIcon size={64} color={theme.COLORS.WHITE} />
                                 </TouchableOpacity>
@@ -965,7 +1028,18 @@ export default function Home() {
                             {/* Audio Trancription */}
                             <RecordingTimeView style={{display: start ? 'flex' : 'none', opacity: fadeInput, transform: [{ translateY: inputY}]}}>
                                 <RecordingTextInput style={{borderBottomLeftRadius: inputBorderBottomLeftRadius, borderBottomRightRadius: inputBorderBottomRightRadius}}>
-                                    <RecordingTextInputText editable={isEditable}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</RecordingTextInputText>
+                                    {audioTranscript === '' ? (
+                                        <ActivityIndicator
+                                            size='large'
+                                            color={theme.COLORS.BLACK}
+                                            style={{ margin: 20 }}
+                                        />
+                                    ) 
+                                    :
+                                        <RecordingTextInputText editable={isEditable}>
+                                            {audioTranscript}
+                                        </RecordingTextInputText>
+                                    }
                                 </RecordingTextInput>
                                 <InputButtonsView style={{transform: [{ translateY: inputButtonsY}], opacity: inputButtonsOpacity}}>
                                     <InputCancelButton onPress={cancelAnimation}>
@@ -978,7 +1052,7 @@ export default function Home() {
                                             Editar
                                         </SendButtonText>
                                     </InputEditButton>
-                                    <InputConfirmButton onPress={() => setOpenTask(true)}>
+                                    <InputConfirmButton onPress={() => handleTaskCreation()}>
                                         <SendButtonText>
                                             Confirmar
                                         </SendButtonText>
@@ -986,7 +1060,7 @@ export default function Home() {
                                 </InputButtonsView>
 
                                 <Animated.View style = {{alignItems: "center" ,width: "100%",  transform: [{ translateX: sendButtonX}, {translateY: sendButtonY}]}}>
-                                    <SendButton onPress={confirmRecording}>
+                                    <SendButton style={{display: sendedButtonPressed ? 'none' : 'flex'}} onPress={confirmRecording}>
                                         <SendButtonText>
                                             Enviar
                                         </SendButtonText>

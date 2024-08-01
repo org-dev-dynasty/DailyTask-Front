@@ -101,4 +101,18 @@ export class TaskRepositoryHttp implements ITaskRepository {
             throw new Error(error);
         }
     }
+
+    async loadTaskOpenAI(task_massage: string): Promise<Task> {
+        try {
+            const response = await this.httpTask.post(`${process.env.EXPO_PUBLIC_API_URL}/load-task-open-ai`, { 'task_message': task_massage });
+            console.log("RESPOSTA DA REQ LOAD TASK OPENAI");
+            console.log(response.data);
+            return response.data as Task;
+        } catch (error: any) {
+            console.log('----------------')
+            console.log(error.response.data)
+            console.log('----------------')
+            throw new Error(error);
+        }
+    }
 }

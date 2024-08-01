@@ -24,4 +24,7 @@ export class TaskRepositoryMock implements ITaskRepository {
     taskByDay(day: string): Promise<Task> {
         throw new Error("Method not implemented.");
     }
+    loadTaskOpenAI(task_massage: string): Promise<Task> {
+        throw new Error("Method not implemented.");
+    }
 }
