@@ -1,14 +1,15 @@
 import { Background } from "@/components/background";
 import { Logo, Titulo, Container, Text, View, TouchableOpacityEnviar, ButtonText, TextFooter, ViewFooter, ContainerCadastro, Details } from "./styles";
 import { Input } from "@/components/input/input";
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction, useCallback, useEffect, useState } from "react";
 import { Image } from "react-native";
-import { Link, router } from "expo-router";
+import { Link, router, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ForgetPassword() {
     const [email, setEmail] = useState('');
     const [erroEmail, setErroEmail] = useState('');
+    const [themeModeS, setThemeModeS] = useState('dark');
     const validateEmail = (email: string) => {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
@@ -31,14 +32,28 @@ export default function ForgetPassword() {
         }
     }, [email]);
 
+    useFocusEffect(
+        useCallback(() => {
+          AsyncStorage.getItem('themeMode').then((value) => {
+            console.log(themeModeS)
+            if (value) {
+              console.log('value ' + value)
+              setThemeModeS(value);
+            }
+          });
+        }, [themeModeS])
+      );
+
     return(
         <Background>
             <Logo
-                source={require('../../assets/appImages/logo-daily-branca.png')}
+                source={themeModeS === 'dark' 
+                    ? require('../../assets/appImages/logo-daily-branca.png') 
+                    : require('../../assets/appImages/logo-daily-preta.png')}
             />
             <Container>
-                <Titulo>Esqueci a senha</Titulo>
-                <Text>Insira o e-mail da sua conta para enviarmos o código de verificação.</Text>
+                <Titulo style={{color: themeModeS === 'dark' ? '#ffffff' : '#000000'}}>Esqueci a senha</Titulo>
+                <Text style={{color: themeModeS === 'dark' ? '#ffffff' : '#000000'}}>Insira o e-mail da sua conta para enviarmos o código de verificação.</Text>
                 <View>
                     <Input label="Email" value={email} onChangeText={(text: SetStateAction<string>) => setEmail(text)} error={erroEmail}/>
                 </View>
@@ -47,11 +62,11 @@ export default function ForgetPassword() {
                 </TouchableOpacityEnviar>
                 <ContainerCadastro>
                     <TextFooter>
-                        <Link href='/signUp'>Novo por aqui? <Details>Crie sua conta</Details></Link>
+                        <Link href='/signUp' style={{color: themeModeS === 'dark' ? '#ffffff' : '#000000'}}>Novo por aqui? <Details>Crie sua conta</Details></Link>
                     </TextFooter>
                 </ContainerCadastro>
                 <ViewFooter>
-                    <TextFooter>Desenvolvido por DevDynasty</TextFooter>
+                    <TextFooter style={{color: themeModeS === 'dark' ? '#ffffff' : '#000000'}}>Desenvolvido por DevDynasty</TextFooter>
                     <Image
                         source={require('../../assets/appImages/logo-dev-dynasty.png')}
                     />

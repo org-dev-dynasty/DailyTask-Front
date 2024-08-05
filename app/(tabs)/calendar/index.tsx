@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Background } from "@/components/background";
 import { Calendar } from 'react-native-calendars';
 import { Animated, Dimensions, View, Text, TouchableOpacity, ScrollView } from 'react-native';
@@ -8,47 +8,16 @@ import theme from '@/themes/theme';
 import { CaretDown, CaretUp, CheckSquare, XSquare } from "phosphor-react-native";
 import { TaskCard } from '@/components/taskCard';
 import { TaskContext } from '@/context/task_context';
+import { useFocusEffect } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Day from 'react-native-calendars/src/calendar/day';
 import { Task } from '@/@clean/shared/domain/entities/task';
 
 // Config the calendar to pt-br
 LocaleConfig.locales['pt-br'] = {
-  monthNames: [
-    'Janeiro',
-    'Fevereiro',
-    'Março',
-    'Abril',
-    'Maio',
-    'Junho',
-    'Julho',
-    'Agosto',
-    'Setembro',
-    'Outubro',
-    'Novembro',
-    'Dezembro'
-  ],
-  monthNamesShort: [
-    'Jan.',
-    'Fev.',
-    'Mar.',
-    'Abr.',
-    'Mai.',
-    'Jun.',
-    'Jul.',
-    'Ago.',
-    'Set.',
-    'Out.',
-    'Nov.',
-    'Dez.'
-  ],
-  dayNames: [
-    'Domingo',
-    'Segunda-feira',
-    'Terça-feira',
-    'Quarta-feira',
-    'Quinta-feira',
-    'Sexta-feira',
-    'Sábado'
-  ],
+  monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+  monthNamesShort: ['Jan.', 'Fev.', 'Mar.', 'Abr.', 'Mai.', 'Jun.', 'Jul.', 'Ago.', 'Set.', 'Out.', 'Nov.', 'Dez.'],
+  dayNames: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'],
   dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
   today: 'Hoje'
 };
@@ -70,6 +39,7 @@ export default function CalendarTasks() {
   const [tasksHeightNotExpanded, setTasksHeightNotExpanded] = useState(0);
   const { getAll } = useContext(TaskContext);
   const { getDisabledTasks } = useContext(TaskContext);
+  const [themeModeS, setThemeModeS] = useState('dark');
 
   const animationValue = useRef(new Animated.Value(1)).current;
 
@@ -150,6 +120,17 @@ export default function CalendarTasks() {
     getHights();
   }, [height]);
 
+  useFocusEffect(
+    useCallback(() => {
+        AsyncStorage.getItem('themeMode').then((value) => {
+          console.log(value)
+            if (value) {
+                setThemeModeS(value);
+                console.log(value);
+            }
+        });
+    }, []));
+
   const translateY = animationValue.interpolate({
     inputRange: [0, 1],
     outputRange: [hiddenCalendarHeight, 0],
@@ -157,29 +138,31 @@ export default function CalendarTasks() {
   
   return (
     <Background>
-      <CalendarContainer style={{ transform: [{ translateY }], display: onlyDisabled ? 'none' : 'flex' }}>
+      <CalendarContainer style={{ paddingTop: expanded ? 20 : '10%', backgroundColor: themeModeS === 'dark' ? '#310842' : '#ffffff', 
+                          borderColor: themeModeS === 'dark' ? '#310842' : '#000000', borderWidth: 2,
+                          transform: [{ translateY }], display: onlyDisabled ? 'none' : 'flex' }}>
         <Animated.View style={{ opacity: animationValue }}>
           <CalendarComponent
-            style={{ width: width / 100 * 90 }}
+            style={{ width: width / 100 * 90, display: expanded ? 'flex' : 'none',  }}
             theme={{
-              calendarBackground: '#310842',
-              textSectionTitleColor: theme.COLORS.WHITE,
+              calendarBackground: themeModeS === 'dark' ? '#ffffff' : '#310842',
+              textSectionTitleColor: themeModeS === 'dark' ? theme.COLORS.BLACK : theme.COLORS.WHITE,
               selectedDayBackgroundColor: theme.COLORS.MAIN,
               selectedDayTextColor: theme.COLORS.WHITE,
               todayTextColor: theme.COLORS.MAIN,
-              dayTextColor: theme.COLORS.WHITE,
+              dayTextColor: themeModeS === 'dark' ? theme.COLORS.BLACK : theme.COLORS.WHITE,
               textDisabledColor: '#6e6c7e',
-              monthTextColor: theme.COLORS.WHITE,
-              indicatorColor: theme.COLORS.WHITE,
+              monthTextColor: themeModeS === 'dark' ? theme.COLORS.BLACK : theme.COLORS.WHITE,
+              indicatorColor: themeModeS === 'dark' ? theme.COLORS.BLACK : theme.COLORS.NEGATIVE,
               textDayFontFamily: theme.FONT_FAMILY.MEDIUM,
               textMonthFontFamily: theme.FONT_FAMILY.MEDIUM,
               textDayHeaderFontFamily: theme.FONT_FAMILY.MEDIUM,
-              textDayFontWeight: theme.FONT_SIZE.SM,
-              textMonthFontWeight: theme.FONT_SIZE.MD,
-              textDayHeaderFontWeight: theme.FONT_SIZE.SM,
+              textDayFontWeight: 'normal',
+              textMonthFontWeight: 'bold',
+              textDayHeaderFontWeight: 'normal',
               textDayFontSize: 16,
               textMonthFontSize: 20,
-              textDayHeaderFontSize: 14
+              textDayHeaderFontSize: 14,
             }}
             onDayPress={(day) => {
               console.log('selected day', day);
@@ -190,7 +173,9 @@ export default function CalendarTasks() {
             }}
             hideArrows={false}
             renderArrow={(direction) => (
-              <Text style={{ color: '#ffffff', fontSize: 24 }}>{direction === 'left' ? '<' : '>'}</Text>
+              <Text style={{ color: themeModeS === 'dark' ? '#ffffff' : '#000000', fontSize: 24 }}>
+                {direction === 'left' ? '<' : '>'}
+              </Text>
             )}
             hideExtraDays={true}
             disableMonthChange={true}
@@ -200,7 +185,7 @@ export default function CalendarTasks() {
             markedDates={markedDates}
           />
         </Animated.View>
-        <Bar onPress={toggleCalendar} />
+        <Bar onPress={toggleCalendar} style={{ backgroundColor: themeModeS === 'dark' ? '#ffffff' : '#000000' }} />
       </CalendarContainer>
       <TasksContainer style={{ top: expanded ? '50%' : '10%', display: onlyDisabled ? 'none' : 'flex' }}>
         <ScrollView style={{height: expanded ? tasksHeightExpanded: tasksHeightNotExpanded}}>
@@ -265,4 +250,4 @@ export default function CalendarTasks() {
       </TasksContainer>
     </Background>
   );
-}
+} 
