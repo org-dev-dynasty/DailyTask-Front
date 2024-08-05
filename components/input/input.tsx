@@ -44,7 +44,7 @@ export const Input = (props: InputProps) => {
                   background: themeModeS === 'dark' ? theme.COLORS.NEGATIVE_ALT : theme.COLORS.WHITE,
                 },
               }}
-              placeholder='Digite aqui...'
+              placeholder={props.placeholder || 'Digite aqui...'}
               placeholderTextColor={themeModeS === 'dark' ? '#ffffff' : '#000000'}
               textColor={themeModeS === 'dark' ? '#ffffff' : '#000000'}
               onFocus={() => setIsFocused(true)}
