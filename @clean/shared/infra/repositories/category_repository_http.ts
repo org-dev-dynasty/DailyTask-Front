@@ -35,10 +35,21 @@ export class CategoryRepositoryHttp implements ICategoryRepository {
             return response.data;
         } catch (error: any) {
             console.log(error.response.data);
-            console.log(error.response.status);
             throw new Error(error);
         }
     }
 
+    async deleteCategory(category_id: string): Promise<boolean> {
+        try {
+            const token = await AsyncStorage.getItem('id_token');
+            const response = await this.httpTask.delete(`${process.env.EXPO_PUBLIC_API_URL}/delete-category-by-id?category_id=${category_id}`, {
+                headers: {Authorization: `Bearer ${token}`}
+            });
+            return response.data;
+        } catch (error: any) {
+            console.log(error.response.data);
+            throw new Error(error);
+        }
+    }
 
 }

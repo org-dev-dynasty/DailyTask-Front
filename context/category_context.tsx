@@ -7,6 +7,7 @@ import {Category} from "@/@clean/shared/domain/entities/category";
 type CategoryContextType = {
     createCategory: (category: Category) => Promise<Category>;
     getAll: () => Promise<GetAllCategoriesResponse>;
+    deleteCategory: (category_id: string) => Promise<boolean>;
 }
 
 const defaultCategoryContext: CategoryContextType = {
@@ -14,8 +15,11 @@ const defaultCategoryContext: CategoryContextType = {
         return category;
     },
     getAll: async (): Promise<GetAllCategoriesResponse> => {
-        return { categories: [{user_id: "", category_name: "", category_primary_color: "", category_secondary_color: ""}], message: '' };
+        return { categories: [{user_id: "", category_id: "",category_name: "", category_primary_color: "", category_secondary_color: ""}], message: '' };
     },
+    deleteCategory: async (category_id: string) => {
+        return true;
+    }
 };
 
 export const CategoryContext = createContext<CategoryContextType>(defaultCategoryContext);
@@ -41,8 +45,17 @@ export function CategoryContextProvider({ children }: { children: React.ReactNod
         }
     }
 
+    async function deleteCategory(category_id: string): Promise<boolean> {
+        try {
+            const result = await categoryRepository.deleteCategory(category_id);
+            return result;
+        } catch (error: any) {
+            throw new Error(error);
+        }
+    }
+
     return (
-        <CategoryContext.Provider value={{ getAll, createCategory }}>
+        <CategoryContext.Provider value={{ getAll, createCategory, deleteCategory}}>
             {children}
         </CategoryContext.Provider>
     );
