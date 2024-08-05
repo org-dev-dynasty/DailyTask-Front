@@ -36,11 +36,11 @@ export default function TaskModal(props: TaskModalProps){
     const weekdaysTranslateX = useRef(new Animated.Value(-width * 0.9)).current; // Start outside of view
 
     // Input Values
-    const [taskName, setTaskName] = useState('');
-    const [taskTime, setTaskTime] = useState('');
-    const [taskDate, setTaskDate] = useState('');
-    const [taskDescription, setTaskDescription] = useState<string>('');
-    const [taskLocation, setTaskLocation] = useState('');
+    const [taskName, setTaskName] = useState(props.taskName ? props.taskName : '');
+    const [taskTime, setTaskTime] = useState(props.taskTime ? props.taskTime : '');
+    const [taskDate, setTaskDate] = useState(props.taskDate ? props.taskDate : '');
+    const [taskDescription, setTaskDescription] = useState<string>(props.taskDescription ? props.taskDescription : '');
+    const [taskLocation, setTaskLocation] = useState(props.taskLocal ? props.taskLocal : '');
     const [taskCategory, setTaskCategory] = useState('');
     const [weekDays, setWeekDays] = useState<number[]>([]);
 

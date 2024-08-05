@@ -110,6 +110,14 @@ export default function Home() {
 
     const { loadTaskOpenAI } = useContext(TaskContext);
 
+    // Consts for modal
+    const [taskName, setTaskName] = useState('');
+    const [taskDescription, setTaskDescription] = useState('');
+    const [taskDate, setTaskDate] = useState('');
+    const [taskTime, setTaskTime] = useState('');
+    const [taskLocal, setTaskLocal] = useState('');
+    //---------------------
+
     function startRecording() {
         if(!firstRecorder) {
             console.log('Segunda vez')
@@ -912,11 +920,17 @@ export default function Home() {
         }
       };
     
-    function handleTaskCreation() {
+    async function handleTaskCreation() {
         console.log('Creating task...');
-        const result = loadTaskOpenAI(audioTranscript);
+        const result = await loadTaskOpenAI(audioTranscript);
         console.log(result);
-        // Terminar de montar o modal
+        if (result) {
+            setTaskName(result.task_name);
+            setTaskDescription(result.task_description);
+            setTaskDate(result.task_date);
+            // setTaskTime(result.task_time);
+            setTaskLocal(result.task_local);
+        }
         setOpenTask(true)
     }
 
@@ -942,7 +956,7 @@ export default function Home() {
             <Background>
                 <Container>
                     {openTask && (
-                        <TaskModal onClose={handleCloseTask} confirm/>
+                        <TaskModal onClose={handleCloseTask} confirm taskName={taskName} taskDescription={taskDescription} taskDate={taskDate} taskLocal={taskLocal} taskTime={taskTime}/>
                     )}
 
                     {/* <--Screen--> */}
