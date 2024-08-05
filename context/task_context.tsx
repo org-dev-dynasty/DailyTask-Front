@@ -9,9 +9,10 @@ type TaskContextType = {
     get: (task_id: string) => Promise<Task | null>;
     getAll: () => Promise<GetAllTasksResponse>;
     update: (task_id: string, task: Task) => Promise<Task>;
-    deleteTask: (task_id: string) => Promise<string>;
-    taskByDay: (day: string) => Promise<Task | null>;
-    getDisabledTasks: () => Promise<Task[]>;
+    deleteTask: (task_id: string) => Promise<boolean>;
+    updateStatus: (task_id: string, status: string) => Promise<Task>;
+    taskByDay: (day: string) => Promise<Task>;
+    loadTaskOpenAI: (task_massage: string) => Promise<Task>;
 }
 
 const defaultTaskContext: TaskContextType = {
@@ -28,13 +29,16 @@ const defaultTaskContext: TaskContextType = {
         return task;
     },
     deleteTask: async (task_id: string) => {
-        return '';
+        return true;
+    },
+    updateStatus: async (task_id: string, status: string) => {
+        return { id: '', title: '', description: '', status: '', date: '' };
     },
     taskByDay: async (day: string) => {
-        return null;
+        return { id: '', title: '', description: '', status: '', date: '' };
     },
-    getDisabledTasks: async () => {
-        return [];
+    loadTaskOpenAI: async (task_massage: string) => {
+        return new Task('', '', '', '', '', '', '', '');
     }
 };
 
@@ -74,9 +78,18 @@ export function TaskContextProvider({ children }: { children: React.ReactNode })
         }
     }
 
-    async function deleteTask(task_id: string): Promise<string> {
+    async function deleteTask(task_id: string): Promise<boolean> {
         try {
             const result = await taskRepository.delete(task_id);
+            return result;
+        } catch (error: any) {
+            throw new Error(error);
+        }
+    }
+
+    async function updateStatus(task_id: string, status: string): Promise<Task> {
+        try {
+            const result = await taskRepository.updateStatus(task_id, status);
             return result;
         } catch (error: any) {
             throw new Error(error);
@@ -92,17 +105,17 @@ export function TaskContextProvider({ children }: { children: React.ReactNode })
         }
     }
 
-    async function getDisabledTasks(): Promise<Task[]> {
+    async function loadTaskOpenAI(task_massage: string): Promise<Task> {
         try {
-            const result = await taskRepository.getDisabledTasks();
-            return result;
+            const result = await taskRepository.loadTaskOpenAI(task_massage);
+            return result as Task;
         } catch (error: any) {
             throw new Error(error);
         }
     }
 
     return (
-        <TaskContext.Provider value={{ getAll, create, get, update, taskByDay, deleteTask, getDisabledTasks }}>
+        <TaskContext.Provider value={{ getAll, create, get, update, updateStatus, taskByDay, deleteTask, loadTaskOpenAI }}>
             {children}
         </TaskContext.Provider>
     );
