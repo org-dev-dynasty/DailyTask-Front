@@ -9,9 +9,9 @@ type TaskContextType = {
     get: (task_id: string) => Promise<Task | null>;
     getAll: () => Promise<GetAllTasksResponse>;
     update: (task_id: string, task: Task) => Promise<Task>;
-    deleteTask: (task_id: string) => Promise<boolean>;
-    updateStatus: (task_id: string, status: string) => Promise<Task>;
-    taskByDay: (day: string) => Promise<Task>;
+    deleteTask: (task_id: string) => Promise<string>;
+    taskByDay: (day: string) => Promise<Task | null>;
+    getDisabledTasks: () => Promise<Task[]>;
 }
 
 const defaultTaskContext: TaskContextType = {
@@ -28,13 +28,13 @@ const defaultTaskContext: TaskContextType = {
         return task;
     },
     deleteTask: async (task_id: string) => {
-        return true;
-    },
-    updateStatus: async (task_id: string, status: string) => {
-        return { id: '', title: '', description: '', status: '', date: '' };
+        return '';
     },
     taskByDay: async (day: string) => {
-        return { id: '', title: '', description: '', status: '', date: '' };
+        return null;
+    },
+    getDisabledTasks: async () => {
+        return [];
     }
 };
 
@@ -74,18 +74,9 @@ export function TaskContextProvider({ children }: { children: React.ReactNode })
         }
     }
 
-    async function deleteTask(task_id: string): Promise<boolean> {
+    async function deleteTask(task_id: string): Promise<string> {
         try {
             const result = await taskRepository.delete(task_id);
-            return result;
-        } catch (error: any) {
-            throw new Error(error);
-        }
-    }
-
-    async function updateStatus(task_id: string, status: string): Promise<Task> {
-        try {
-            const result = await taskRepository.updateStatus(task_id, status);
             return result;
         } catch (error: any) {
             throw new Error(error);
@@ -101,8 +92,17 @@ export function TaskContextProvider({ children }: { children: React.ReactNode })
         }
     }
 
+    async function getDisabledTasks(): Promise<Task[]> {
+        try {
+            const result = await taskRepository.getDisabledTasks();
+            return result;
+        } catch (error: any) {
+            throw new Error(error);
+        }
+    }
+
     return (
-        <TaskContext.Provider value={{ getAll, create, get, update, updateStatus, taskByDay, deleteTask }}>
+        <TaskContext.Provider value={{ getAll, create, get, update, taskByDay, deleteTask, getDisabledTasks }}>
             {children}
         </TaskContext.Provider>
     );

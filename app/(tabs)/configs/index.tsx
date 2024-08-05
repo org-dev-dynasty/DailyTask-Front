@@ -11,10 +11,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import { router } from 'expo-router';
 
 export default function Configs() {
-    const [isEmailModalVisible, setEmailModalVisible] = useState(false);
     const [isPasswordModalVisible, setPasswordModalVisible] = useState(false);
     const [isDeleteAccountModalVisible, setDeleteAccountModalVisible] = useState(false);
-    const [email, setEmail] = useState('');
     const [erroEmail, setErroEmail] = useState('');
     const [senhaAtual, setsenhaAtual] = useState('');
     const [erroSenhaAtual, setErroSenhaAtual] = useState('');
@@ -23,16 +21,13 @@ export default function Configs() {
     const [themeModeS, setThemeModeS] = useState('dark'); // dark or light theme const
     
     useEffect(() => {
-        if (email !== '') {
-            setErroEmail('');
-        }
         if (senhaAtual !== '') {
             setErroSenhaAtual('');
         }
         if (senhaNova !== '') {
             setErroSenhaNova('');
         }
-    }, [email, senhaAtual, senhaNova]);
+    }, [senhaAtual, senhaNova]);
 
     // UseEffect to get the theme mode from the AsyncStorage && to get token from the AsyncStorage
     useFocusEffect(
@@ -69,16 +64,12 @@ export default function Configs() {
                     <ViewSwitch>
                         <CustomToggleSwitch themeMode={themeModeS} onValueChange={handleThemeChange}/>
                     </ViewSwitch>
-                    <ButtonChangeEmail onPress={() => setEmailModalVisible(true)}>
-                        <ButtonText>Alterar E-mail</ButtonText>
-                    </ButtonChangeEmail>
                     <ButtonChangePassword onPress={() => setPasswordModalVisible(true)}>
-                        <ButtonText>Alterar Senha</ButtonText>
+                        <ButtonText>Alterar senha</ButtonText>
                     </ButtonChangePassword>
                     <ButtonDeleteAccount onPress={() => setDeleteAccountModalVisible(true)}>
                         <ButtonText>Deletar Conta</ButtonText>
                     </ButtonDeleteAccount>
-                    <ModalConfigs type='email' modalVisible={isEmailModalVisible} closeModal={() => setEmailModalVisible(false)}></ModalConfigs>
                     <ModalConfigs type='senha' modalVisible={isPasswordModalVisible} closeModal={() => setPasswordModalVisible(false)}></ModalConfigs>
                     <ModalConfigs type='' modalVisible={isDeleteAccountModalVisible} closeModal={() => setDeleteAccountModalVisible(false)}></ModalConfigs>
                 </Container>
