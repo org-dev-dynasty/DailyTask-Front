@@ -3,56 +3,50 @@ import { Background } from '@/components/background';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import { Alert, Image, Text, TouchableOpacity, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
-import { Link, router } from 'expo-router';
-import { useContext, useEffect, useState } from 'react';
+import { Link, router, useFocusEffect } from 'expo-router';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { Input } from '@/components/input/input';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserContext } from '../../context/user_context';
 
-import * as WebBrowser from 'expo-web-browser'
-import * as Google from 'expo-auth-session/providers/google'
+// import * as WebBrowser from 'expo-web-browser'
+// import * as Google from 'expo-auth-session/providers/google'
+// import * as AuthSession from 'expo-auth-session'
+
+import { GoogleSignin } from "@react-native-google-signin/google-signin"
+import theme from '@/themes/theme';
 
 const Logo = require('../../assets/appImages/logo-daily-branca.png');
 const LogoDevDynasty = require('../../assets/appImages/logo-dev-dynasty.png');
 const LogoGoogle = require('../../assets/appImages/logo-google.png');
 const LogoGitHub = require('../../assets/appImages/logo-gitHub.png');
 
-WebBrowser.maybeCompleteAuthSession()
+// GoogleSignin.configure({
+//   scopes: ['email', 'profile'],
+//   webClientId: '477785692735-olm3sejb8innr21hts1affdfrso98m8o.apps.googleusercontent.com',
+//   iosClientId: '477785692735-m38lmcvn3lp2u4q2r0m7hi4nquim8gjq.apps.googleusercontent.com',
+// })
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [erroPassword, setErroPassword] = useState('');
   const [erroEmail, setErroEmail] = useState('');
+  const [themeModeS, setThemeModeS] = useState('dark');
 
   // const [isAuthenticating, setIsAuthenticating] = useState(false)
 
-  const [request, responseGoogle, promptAsyncGoogle] = Google.useIdTokenAuthRequest({
-    clientId: '477785692735-olm3sejb8innr21hts1affdfrso98m8o.apps.googleusercontent.com',
-    scopes: ['email', 'profile'],
-    iosClientId: '477785692735-m38lmcvn3lp2u4q2r0m7hi4nquim8gjq.apps.googleusercontent.com',
-    androidClientId: '477785692735-u29cmvh39var7vmd8kgtd5mjlu72f12u.apps.googleusercontent.com'
-  })
-
-  async function getUserInfoFromOAuth(accessToken: string) {
-    const response = await fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    })
-    const userInfo = await response.json()
-    console.log(userInfo)
-  }
+  // async function googleSignIn() {
+  //   try {
+  //     const resp = await GoogleSignin.signIn()
+  //     console.log(resp)
+  //   } catch(e: any) {
+  //     console.log(e)
+  //     Alert.alert("Entrar", "Não foi possível conectar com sua conta google")
+  //   }
+  // }
 
   const { login } = useContext(UserContext);
-
-  useEffect(() => {
-    if (responseGoogle?.type === 'success') {
-      console.log(responseGoogle);
-      const { authentication } = responseGoogle;
-      console.log(authentication);
-      const accessToken = authentication?.accessToken
-      accessToken && getUserInfoFromOAuth(accessToken);
-    }
-  }, [responseGoogle])
 
   useEffect(() => {
     if (email !== '') {
@@ -103,10 +97,24 @@ export default function Login() {
     }
   }
 
+  useFocusEffect(
+    useCallback(() => {
+      AsyncStorage.getItem('themeMode').then((value) => {
+        console.log(themeModeS)
+        if (value) {
+          console.log('value ' + value)
+          setThemeModeS(value);
+        }
+      });
+    }, [])
+  );
+
   return (
     <Background>
       <CenteredView>
-        <LogoImage source={Logo} />
+        <LogoImage source={themeModeS === 'dark' 
+                    ? require('../../assets/appImages/logo-daily-branca.png') 
+                    : require('../../assets/appImages/logo-daily-preta.png')} />
         {/* <Title>Login</Title> */}
         <InputView>
           <Input label='Email' value={email} onChangeText={setEmail} error={erroEmail} />
@@ -119,27 +127,25 @@ export default function Login() {
           <LoginButtonText>Entrar</LoginButtonText>
         </LoginButton>
         <SeparatorContainer>
-          <SeparatorLine />
-          <SeparatorText>ou</SeparatorText>
-          <SeparatorLine />
+          <SeparatorLine style={{borderColor: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK}}/>
+            <SeparatorText style={{color: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK}}>ou</SeparatorText>
+          <SeparatorLine style={{borderColor: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK}}/>
         </SeparatorContainer>
         <SocialIcons>
-          <TouchableOpacity onPress={() => {
-            promptAsyncGoogle()
-            }}  >
+          <TouchableOpacity onPress={()=>{}}  >
             <Image source={LogoGoogle} />
           </TouchableOpacity>
-          <Image source={LogoGitHub} />
+          {/* <Image source={LogoGitHub} /> */}
         </SocialIcons>
         <SignUpLink>
-          <SignUpLinkText>Ainda não tem cadastro? </SignUpLinkText>
+          <SignUpLinkText style={{color: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK}}>Ainda não tem cadastro? </SignUpLinkText>
           <Link
             href={"/signUp"}
           >
             <Text style={{ color: '#F06B41', fontSize: 16 }}>Faça seu cadastro!</Text>
           </Link>
         </SignUpLink>
-        <DevDynastyText>Desenvolvido por DevDynasty</DevDynastyText>
+        <DevDynastyText style={{color: themeModeS === 'dark' ? theme.COLORS.WHITE : theme.COLORS.BLACK}}>Desenvolvido por DevDynasty</DevDynastyText>
         <Image style={{ marginTop: 20, marginBottom: 47 }} source={LogoDevDynasty} />
       </CenteredView>
     </Background>

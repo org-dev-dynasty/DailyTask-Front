@@ -3,7 +3,6 @@ import theme from '@/themes/theme';
 
 export const Titulo = styled.Text`
     font-size: ${theme.FONT_SIZE.XL};
-    color: ${theme.COLORS.WHITE};
     font-family: ${theme.FONT_FAMILY.MEDIUM};
     padding-top: 65px;
 `;
@@ -125,7 +124,6 @@ export const ModalView = styled.View`
     margin: 20px;
     width: 80%;
     height: 70%;
-    background-color: ${theme.COLORS.NEGATIVE_ALT};
     border-width: 2px;
     border-color: ${theme.COLORS.WHITE};
     border-radius: 20px;
@@ -138,4 +136,14 @@ export const ModalText = styled.Text`
     font-size: ${theme.FONT_SIZE.MD};
     color: ${theme.COLORS.WHITE};
     text-align: center;
+`;
+
+
+export const ViewCheckBox = styled.View`
+    background-color: transparent;
+    border-width: 1px;
+    border-color: ${theme.COLORS.WHITE};
+    border-radius: 5px;
+    margin-top: 5px;
+    transform: { scale: 0.1 };
 `;

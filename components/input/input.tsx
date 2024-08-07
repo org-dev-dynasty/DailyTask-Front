@@ -40,7 +40,7 @@ export const Input = (props: InputProps) => {
               cursorColor={theme.COLORS.MAIN}
               theme={{
                 colors: {
-                  background: theme.COLORS.NEGATIVE_ALT,
+                  background: themeModeS === 'dark' ? theme.COLORS.NEGATIVE_ALT : theme.COLORS.WHITE,
                 },
               }}
               placeholder={props.placeholder || 'Digite aqui...'}
@@ -49,7 +49,7 @@ export const Input = (props: InputProps) => {
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
               secureTextEntry={showPassword}
-              // right={props.hide ? <TextInput.Icon icon={showPassword ? "eye-off" : "eye"} color={theme.COLORS.WHITE} onPress={togglePasswordVisibility} /> : null}
+              right={props.hide ? <TextInput.Icon icon={showPassword ? "eye-off" : "eye"} color={themeModeS === 'dark' ? '#ffffff' : '#000000'} onPress={togglePasswordVisibility} /> : null}
             />
             <Text style={{color: theme.COLORS.NEGATIVE}}>{props.error}</Text>
         </View>

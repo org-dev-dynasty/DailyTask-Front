@@ -1,5 +1,5 @@
 import { ModalProps } from "@/interfaces/modalConfigs";
-import { SetStateAction, useCallback, useEffect, useState } from "react";
+import React, { SetStateAction, useCallback, useEffect, useState } from "react";
 import { Image, Modal, View, Keyboard } from "react-native";
 import { Title, ButtonOut, Subtitle, ButtonModal, ButtonTextModal, ModalContainer, ModalContent, ButtonDelete } from "./styles"
 import { Background } from "../background";
@@ -7,6 +7,7 @@ import { Input } from "../input/input";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, router, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {XCircle} from "phosphor-react-native";
 
 export const ModalConfigs = (props: ModalProps) => {
     const [email, setEmail] = useState('');
@@ -100,9 +101,7 @@ export const ModalConfigs = (props: ModalProps) => {
                         }} 
                     >
                         <ButtonOut onPress={props.closeModal}>
-                            <Image
-                                source={require('../../assets/appImages/button-out.png')}
-                            />
+                            <XCircle size={32} color='#F06B41' />
                         </ButtonOut>
                         <Title style={{color: themeModeS === 'dark' ? '#ffffff' : '#000000' }}>
                             {props.type == 'email' ? 
