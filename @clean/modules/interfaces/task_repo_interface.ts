@@ -9,4 +9,5 @@ export interface ITaskRepository {
     delete(task_id: string): Promise<string>;
     taskByDay(day: string): Promise<Task>;
     getDisabledTasks(): Promise<Task[]>;
+    loadTaskOpenAI(task_massage: string): Promise<Task>;
 }

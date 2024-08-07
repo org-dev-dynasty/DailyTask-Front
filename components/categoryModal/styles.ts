@@ -1,9 +1,10 @@
 import styled from 'styled-components/native';
 import theme from "@/themes/theme";
+import {LinearGradient} from "expo-linear-gradient";
 
 interface ColorCircleProps {
     color: string;
-    selected: boolean;
+    selected?: boolean;
 }
 
 export const ModalContainer = styled.View`
@@ -14,46 +15,36 @@ export const ModalContainer = styled.View`
   padding: 5%;
 `;
 
-export const ModalContent = styled.View`
-  width: 100%;
-  align-items: center;
-  border-radius: 30px;
-  background-color: ${theme.COLORS.NEGATIVE_ALT};
-  padding: 3%;
-`;
+export const ModalContent = styled(LinearGradient)`
+    width: 100%;
+    align-items: center;
+    border-radius: 15px;
+    background-color: ${theme.COLORS.NEGATIVE_ALT};
+    border: 2px solid ${theme.COLORS.WHITE};
+    padding: 15px 3%;
+`
 
 export const Title = styled.Text`
-  font-size: 24px;
-  color: white;
-  font-weight: bold;
+    color: ${theme.COLORS.WHITE};
+    font-size: 24px;
+    font-family: ${theme.FONT_FAMILY.MEDIUM};
 `;
 
 export const Subtitle = styled.Text`
-  font-size: 14px;
-  color: white;
-  margin: 10px 0;
-  width: 60%;
-  text-align: center;
-`;
-
-export const TextInputStyled = styled.TextInput`
-  width: 80%;
-  height: 40px;
-  border-radius: 5px;
-  background-color: transparent;
-  border-width: 2px;
-  border-color: white;
-  padding: 10px;
-  margin-bottom: 20px;
-  color: black;
+    color: ${theme.COLORS.WHITE};
+    font-size: ${theme.FONT_SIZE.SM};
+    font-family: ${theme.FONT_FAMILY.REGULAR};
+    margin: 10px 0;
+    width: 90%;
+    text-align: center;
 `;
 
 export const ColorTitle = styled.Text`
-    font-size: 16px;
-    color: white;
+    color: ${theme.COLORS.WHITE};
+    font-size: ${theme.FONT_SIZE.MD};
     font-family: ${theme.FONT_FAMILY.REGULAR};
     margin-left: 15px;
-`; 
+`;
 
 export const ColorsContainer = styled.View`
   flex-direction: row;
@@ -70,28 +61,51 @@ export const ColorCircle = styled.TouchableOpacity<ColorCircleProps>`
   margin: 5px;
   border-width: ${props => (props.selected ? '3px' : '0')};
   border-color: ${props => (props.selected ? 'white' : 'transparent')};
-
 `;
 
 export const CustomColorText = styled.Text`
-  font-size: 14px;
-  color: white;
-  margin-top: 10px;
+    color: ${theme.COLORS.WHITE};
+    font-size: ${theme.FONT_SIZE.SM};
+    font-family: ${theme.FONT_FAMILY.MEDIUM};
 `;
 
 export const ConfirmButton = styled.TouchableOpacity`
-  background-color: ${theme.COLORS.MAIN};
-  width: 40%;
-  border-radius: 10px;
-  padding: 10px 20px;
-  margin-top: 20px;
+    background-color: ${theme.COLORS.MAIN};
+    width: 40%;
+    border-radius: 10px;
+    padding: 10px 20px;
+    margin-top: 5px;
+    align-items: center;
 `;
 
-export const ConfirmButtonText = styled.Text`
-  font-size: 16px;
-  color: white;
-  font-weight: bold;
-  align-self: center;
+export const ButtonTxt = styled.Text`
+    color: ${theme.COLORS.WHITE};
+    font-size: ${theme.FONT_SIZE.MD};
+    font-family: ${theme.FONT_FAMILY.REGULAR};
+`;
+
+export const ButtonsView = styled.View`
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 10px 0;
+    width: 90%;
+    align-self: center;
+`;
+
+export const ConfirmButtonRow = styled.TouchableOpacity`
+    background-color: ${theme.COLORS.MAIN};
+    border-radius: 10px;
+    align-items: center;
+    padding: 5px 0;
+    width: 47%;
+`;
+
+export const CancelButton = styled.TouchableOpacity`
+    background-color: ${theme.COLORS.NEGATIVE_ALT};
+    border-radius: 10px;
+    align-items: center;
+    padding: 5px 0;
+    width: 47%;
 `;
 
 export const CloseButton = styled.TouchableOpacity`
@@ -100,7 +114,12 @@ export const CloseButton = styled.TouchableOpacity`
   right: 10px;
 `;
 
-export const CloseButtonText = styled.Text`
-  font-size: 18px;
-  color: ${theme.COLORS.MAIN};
+export const PickerColorCircle = styled.TouchableOpacity<ColorCircleProps>`
+    width: 32px;
+    height: 32px;
+    border-radius: 20px;
+    background-color: ${props => props.color};
+    margin-inline: 5px;
+    border-width: 3px;
+    border-color: white;
 `;

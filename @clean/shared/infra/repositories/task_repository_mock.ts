@@ -3,6 +3,9 @@ import { Task } from "../../domain/entities/task";
 import { GetAllTasksResponse } from "../../domain/types/task_responses";
 
 export class TaskRepositoryMock implements ITaskRepository {
+    loadTaskOpenAI(task_massage: string): Promise<Task> {
+        throw new Error("Method not implemented.");
+    }
     create(task: Task): Promise<Task> {
         throw new Error("Method not implemented.");
     }

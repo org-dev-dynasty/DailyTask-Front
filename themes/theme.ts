@@ -2,11 +2,13 @@ export default {
     COLORS: {
         WHITE: "#FFFFFF",
         BLACK: "#000000",
+        GRAY: "#2F2F2F",
 
         // Button Colors
         MAIN: "#F06B41",
         NEGATIVE: "#DE4343",
-        NEGATIVE_ALT: "#22092C",
+        NEGATIVE_ALT: "#360F45",
+        NEGATIVE_ALT_2: "#22092C",
 
         // Card Colors
         BLUE_100: "#9CD4F4",
@@ -17,6 +19,7 @@ export default {
 
         RED_100: "#FF9494",
         RED_200: "#EB5757",
+        RED_300: "#DF4B4B",
 
         YELLOW_100: "#FFE7A0",
         YELLOW_200: "#F2C84D",

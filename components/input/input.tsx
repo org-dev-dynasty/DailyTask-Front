@@ -37,12 +37,13 @@ export const Input = (props: InputProps) => {
               onChangeText={props.onChangeText}
               style={{ backgroundColor: "transparent", color: theme.COLORS.WHITE}}
               outlineStyle={{ borderColor: props.error ? theme.COLORS.NEGATIVE : isFocused ? theme.COLORS.MAIN : themeModeS === 'dark' ? '#ffffff' : '#000000' }}
+              cursorColor={theme.COLORS.MAIN}
               theme={{
                 colors: {
                   background: theme.COLORS.NEGATIVE_ALT,
                 },
               }}
-              placeholder='Digite aqui...'
+              placeholder={props.placeholder || 'Digite aqui...'}
               placeholderTextColor={themeModeS === 'dark' ? '#ffffff' : '#000000'}
               textColor={themeModeS === 'dark' ? '#ffffff' : '#000000'}
               onFocus={() => setIsFocused(true)}
