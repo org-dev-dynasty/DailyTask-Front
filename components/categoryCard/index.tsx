@@ -56,7 +56,7 @@ export const CategoryCard = (props: CategoryCardProps) => {
                 {...panResponder.panHandlers}
                 style={{ transform: pan.getTranslateTransform() }}
             >
-                <TouchableOpacity onPress={props.close}>
+                <TouchableOpacity onPressIn={props.close}>
                     <View style={{flexDirection: "row", justifyContent: 'center', marginVertical: 6}}>
                         <View style={{width: '8%', height: height/15, backgroundColor: props.color, borderTopLeftRadius: 12, borderBottomLeftRadius: 12}}></View>
                         <View

@@ -376,6 +376,7 @@ export default function TaskModal(props: TaskModalProps){
 
     const handleCategory = (category: string, id: string) => {
         setTaskCategory(category);
+        console.log(taskCategory);
         setOpenCategory(false);
         setSelectedCategoryId(id)
     }
