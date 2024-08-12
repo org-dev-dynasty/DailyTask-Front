@@ -1,5 +1,5 @@
 import { Task } from "@/@clean/shared/domain/entities/task";
-import { GetAllTasksResponse } from "@/@clean/shared/domain/types/task_responses";
+import { GetAllTasksResponse, TaskResponse } from "@/@clean/shared/domain/types/task_responses";
 import { httpUser } from "@/@clean/shared/infra/http";
 import { TaskRepositoryHttp } from "@/@clean/shared/infra/repositories/task_repository_http";
 import { createContext } from "react";
@@ -8,7 +8,7 @@ type TaskContextType = {
     create: (task: Task) => Promise<Task>;
     get: (task_id: string) => Promise<Task | null>;
     getAll: () => Promise<GetAllTasksResponse>;
-    update: (task_id: string, task: Task) => Promise<Task>;
+    update: (task_id: string, task: Task) => Promise<TaskResponse>;
     deleteTask: (task_id: string) => Promise<string>;
     taskByDay: (day: string) => Promise<Task | null>;
     getDisabledTasks: () => Promise<Task[]>;
@@ -25,7 +25,7 @@ const defaultTaskContext: TaskContextType = {
         return { tasks: {}, dots: {}, CurrentDay: '', message: '' };
     },
     update: async (task_id: string, task: Task) => {
-        return task;
+        return { message: '' };
     },
     deleteTask: async (task_id: string) => {
         return '';
@@ -65,7 +65,7 @@ export function TaskContextProvider({ children }: { children: React.ReactNode })
         }
     }
 
-    async function update(task_id: string, task: Task): Promise<Task> {
+    async function update(task_id: string, task: Task): Promise<TaskResponse> {
         try {
             const result = await taskRepository.update(task_id, task);
             return result;

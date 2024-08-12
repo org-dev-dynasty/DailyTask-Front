@@ -1,7 +1,7 @@
 import { AxiosInstance } from "axios";
 import { ITaskRepository } from "../../../modules/interfaces/task_repo_interface";
 import { Task } from "../../domain/entities/task";
-import { GetAllTasksResponse } from "../../domain/types/task_responses";
+import { GetAllTasksResponse, TaskResponse } from "../../domain/types/task_responses";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -54,15 +54,25 @@ export class TaskRepositoryHttp implements ITaskRepository {
         }
     }
 
-    async update(task_id: string, task: Task): Promise<Task> {
+    async update(task_id: string, task: Task): Promise<TaskResponse> {
         try {
-            const response = await this.httpTask.put(`${process.env.EXPO_PUBLIC_API_URL}/update-task`, task);
+            const token = await AsyncStorage.getItem('id_token');
+            const response = await this.httpTask.put(`${process.env.EXPO_PUBLIC_API_URL}/update-task?task_id=${task_id}`, {
+                task_name: task.task_name,
+                task_date: task.task_date,
+                task_hour: task.task_hour,
+                task_description: task.task_description,
+                task_local: task.task_local,
+                category_id: task.category_id,
+                task_status: task.task_status
+            }, {
+                headers: {Authorization: `Bearer ${token}`}
+            });
             if (response?.status == 200) {
                 console.log(task)
-                router.replace('/home');
             }
-            console.log("RESPOSTA DA REQ UPDATE" + response.data);
-            return response.data as Task;
+            console.log("RESPOSTA DA REQ UPDATE");
+            return response.data as TaskResponse;
         } catch (error: any) {
             throw new Error(error);
         }
@@ -70,13 +80,16 @@ export class TaskRepositoryHttp implements ITaskRepository {
 
     async delete(task_id: string): Promise<string> {
         try {
-            const response = await this.httpTask.delete(`${process.env.EXPO_PUBLIC_API_URL}/delete-task?task_id=${task_id}`);
+            const token = await AsyncStorage.getItem('id_token');
+            const response = await this.httpTask.delete(`${process.env.EXPO_PUBLIC_API_URL}/delete-task?task_id=${task_id}`,
+                { headers: {Authorization: `Bearer ${token}`} }
+            );
             if (response?.status == 200) {
             }
             console.log("RESPOSTA DA REQ DELETE" + response.data);
             return response.data as string;
         } catch (error: any) {
-            throw new Error(error);
+            throw new Error(error.message);
         }
     }
 
