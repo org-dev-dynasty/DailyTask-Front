@@ -1,10 +1,11 @@
 import { Background } from "@/components/background";
 import { Logo, Titulo, Container, Text, View, TouchableOpacityEnviar, ButtonText, TextFooter, ViewFooter, ContainerCadastro, Details } from "./styles";
 import { Input } from "@/components/input/input";
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction, useContext, useEffect, useState } from "react";
 import { Image } from "react-native";
 import { Link, router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UserContext } from "@/context/user_context";
 
 export default function ForgetPassword() {
     const [email, setEmail] = useState('');
@@ -14,16 +15,23 @@ export default function ForgetPassword() {
         return re.test(email);
     };
 
+    const { forgotPassword } = useContext(UserContext);
+
     async function handleButtonPress() {
         if ( email == '') {
             setErroEmail('Preencha o campo abaixo.')
         } else if (!validateEmail(email)) {
             setErroEmail('Por favor, insira um e-mail válido.');
         } else {
+            const resp = await forgotPassword(email);
+            console.log(resp);
             await AsyncStorage.setItem('email', email);
-            router.replace('/emailConfirm');
+            router.replace('/login');
         }
     }
+
+    
+
 
     useEffect(() => {
         if (email !== '') {
@@ -38,7 +46,7 @@ export default function ForgetPassword() {
             />
             <Container>
                 <Titulo>Esqueci a senha</Titulo>
-                <Text>Insira o e-mail da sua conta para enviarmos o código de verificação.</Text>
+                <Text>Insira o e-mail da sua conta para enviarmos as instruções para a troca de senha.</Text>
                 <View>
                     <Input label="Email" value={email} onChangeText={(text: SetStateAction<string>) => setEmail(text)} error={erroEmail}/>
                 </View>

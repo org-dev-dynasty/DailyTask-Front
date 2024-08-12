@@ -6,6 +6,7 @@ import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export class UserRepositoryHttp implements IUserRepository {
+    
     constructor(private readonly httpUser: AxiosInstance) {}
 
     async create(user: User): Promise<CreateUserResponse> {
@@ -104,6 +105,22 @@ export class UserRepositoryHttp implements IUserRepository {
             return response.data;
         } catch (error: any) {
             console.log("ERRO NA REQ DELETE ACCOUNT");
+            console.log(error.response.data);
+            throw new Error(error);
+        }
+    }
+
+    async forgotPassword(email: string): Promise<string> {
+        type ForgotPasswordResponse = {
+            message: string;
+        }
+        try {
+            const response = await this.httpUser.post<ForgotPasswordResponse>(`${process.env.EXPO_PUBLIC_API_URL}/forgot-password`, { email });
+            console.log("RESPOSTA DA REQ FORGOT PASSWORD");
+            console.log(response.data);
+            return response.data.message;
+        } catch (error: any) {
+            console.log("ERRO NA REQ FORGOT PASSWORD");
             console.log(error.response.data);
             throw new Error(error);
         }

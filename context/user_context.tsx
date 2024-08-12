@@ -12,6 +12,7 @@ type UserContextType = {
     comfirmEmail: (email: string, verificationCode: string) => Promise<ComfirmEmailResponse>;
     changePassword: (access_token: string, newPassword: string, oldPassword: string) => Promise<string>;
     deleteAccount: () => Promise<string>;
+    forgotPassword: (email: string) => Promise<string>;
 }
 
 const defaultUserContext: UserContextType = { 
@@ -32,6 +33,9 @@ const defaultUserContext: UserContextType = {
     },
     deleteAccount: async () => { 
         return '';
+    },
+    forgotPassword: async (email: string) => { 
+        return '';
     }
 };
 
@@ -40,7 +44,7 @@ export const UserContext = createContext<UserContextType>(defaultUserContext);
 
 export function UserContextProvider({ children }: { children: React.ReactNode }) {
     const userRepository = new UserRepositoryHttp(httpUser);
-
+    
     async function login(email: string, password: string): Promise<LoginResponse> { 
         try {
             const result = await userRepository.login(email, password);
@@ -96,8 +100,19 @@ export function UserContextProvider({ children }: { children: React.ReactNode })
         }
     }
 
+    async function forgotPassword(email: string): Promise<string> {
+        try {
+            const result = await userRepository.forgotPassword(email);
+            console.log("CONTEXTO DE USUÁRIO FORGOT PASSWORD" + result);
+            return result; 
+        } catch (error: any) {
+            throw new Error(error);
+        }
+    }
+    
+
     return (
-        <UserContext.Provider value={{login, create, get, comfirmEmail, changePassword, deleteAccount}}>
+        <UserContext.Provider value={{login, create, get, comfirmEmail, changePassword, deleteAccount, forgotPassword }}>
             {children}
         </UserContext.Provider>
     );

@@ -44,6 +44,7 @@ export const TouchableOpacityEnviar = styled.TouchableOpacity`
     align-items: center; 
     justify-content: center;
     margin-bottom: 20px;
+    margin-top: 10px;
 `;
 
 export const TextLink = styled.Text`

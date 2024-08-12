@@ -8,6 +8,5 @@ export interface IUserRepository {
     comfirmEmail(email: string, verification_code: string): Promise<ComfirmEmailResponse>;
     changePassword(access_token: string, newPassword: string, oldPassword: string): Promise<string>;
     deleteAccount(): Promise<string>;
-
-    // forgotPassword(email: string): Promise<string>;
+    forgotPassword(email: string): Promise<string>;
 }
